@@ -34,19 +34,4 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> f.tags["ARTIST"] = ["A new artist"]
 >>> f.save()
 True
->>> 
-
-$ python3
-Python 3.1.2 (release31-maint, Sep 17 2010, 20:27:33) 
-[GCC 4.4.5] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
->>> import utags
->>> f = utags.File("x.ogg")
->>> f.tags
-{'ALBUM': ['The End is Begun'], 'TITLE': ['The Last Day'], 'ARTIST': ['3'], 'CDDB': ['b00d630e'], 'GENRE': ['Progressive Rock'], 'DATE': ['2008'], 'TRACKNUMBER': ['13']}
->>> f.length
-472
->>> f.sampleRate
-44100
->>> f.tags['ALBUM'].append('another album')
->>> f.store()
+>>>
