@@ -1,0 +1,52 @@
+A python (2.x/3.x) wrapper for my taglib fork providing a unified dictionary-based tag interface. Needs Cython to install.
+Note that you need Cython built for python3.x if you want to use this library with python3.x. Unfortunatelly,
+most of the linux distributions don't ship a python3-aware cython yet. Luckily, you can easily get one by typing 
+
+sudo easy_install3 cython
+
+into a console.
+
+I guess you need at least Cython 0.15 for this package to compile, though I haven't tested this.
+
+
+
+To install this library, first install the taglib-fork from http://github.com/supermihi/taglib. After that, 
+the following two commands should suffice:
+
+python3 setup.py build_ext
+sudo python3 setup.py install
+
+Replace "3" by whatever Python version you use.
+
+Usage:
+$ python3
+Python 3.2.2rc1 (default, Aug 14 2011, 19:02:04) 
+[GCC 4.6.1] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import taglib
+>>> f = taglib.File("x.ogg")
+>>> f.tags
+{'ALBUM': ['omgwtf', 'lol'], 'ARTIST': ['ein grüner Affe']}
+>>> f.length
+472
+>>> f.sampleRate
+44100
+>>> f.tags["ARTIST"] = ["A new artist"]
+>>> f.save()
+True
+>>> 
+
+$ python3
+Python 3.1.2 (release31-maint, Sep 17 2010, 20:27:33) 
+[GCC 4.4.5] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import utags
+>>> f = utags.File("x.ogg")
+>>> f.tags
+{'ALBUM': ['The End is Begun'], 'TITLE': ['The Last Day'], 'ARTIST': ['3'], 'CDDB': ['b00d630e'], 'GENRE': ['Progressive Rock'], 'DATE': ['2008'], 'TRACKNUMBER': ['13']}
+>>> f.length
+472
+>>> f.sampleRate
+44100
+>>> f.tags['ALBUM'].append('another album')
+>>> f.store()
