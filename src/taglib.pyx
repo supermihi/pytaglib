@@ -47,7 +47,7 @@ cdef class File:
     def __cinit__(self, filename):        
         b = filename.encode()
         self._f = ctypes.create(b)
-        if not self._f.isValid():
+        if not self._f or not self._f.isValid():
             raise OSError('Could not read file {0}'.format(filename))
         
     def __init__(self, filename):

@@ -13,7 +13,8 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         raise ValueError('need exactly one argument, the path of the file')
     tags = taglib.File(sys.argv[1]).tags
-    maxKeyLen = max(map(len, tags.keys()))
-    for key, values in tags.items():
-        for value in values:
-            print(('{0:' + str(maxKeyLen) + '} = {1}').format(key, value))
+    if len(tags) > 0:
+        maxKeyLen = max(map(len, tags.keys()))
+        for key, values in tags.items():
+            for value in values:
+                print(('{0:' + str(maxKeyLen) + '} = {1}').format(key, value))
