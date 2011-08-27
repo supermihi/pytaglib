@@ -1,4 +1,3 @@
-#
 # -*- coding: utf-8 -*-
 # Copyright 2011 Michael Helmlnig
 #
@@ -6,7 +5,6 @@
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
 #
-
 # C++ header definitions needed for the pytaglib wrapper
 from libcpp.list cimport list
 from libcpp.utility cimport pair
@@ -56,13 +54,7 @@ cdef extern from "taglib/tfile.h" namespace "TagLib":
         AudioProperties *audioProperties()
         bint save() except +
         bint isValid()
-        
-cdef extern from "taglib/fileref.h" namespace "TagLib":
-    cdef cppclass FileRef:
-        Tag *tag()
-        AudioProperties *audioProperties()
-        bint save() except +
-        FileRef(char* fn) except +
+        bint readOnly()
     
 cdef extern from "taglib/fileref.h" namespace "TagLib::FileRef":
     cdef File* create(char* fn) except +
