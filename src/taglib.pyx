@@ -1,3 +1,11 @@
+#
+# -*- coding: utf-8 -*-
+# Copyright 2011 Michael Helmlnig
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation
+#
 cimport ctypes, cython
 from cython.operator cimport dereference as deref, preincrement as inc
 
@@ -39,7 +47,7 @@ cdef class File:
     def __cinit__(self, filename):        
         b = filename.encode()
         self._f = ctypes.create(b)
-        if not self._f:
+        if not self._f.isValid():
             raise OSError('Could not read file {0}'.format(filename))
         
     def __init__(self, filename):

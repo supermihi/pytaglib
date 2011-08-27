@@ -1,4 +1,13 @@
-# C++ header definitions needed for the cutags wrapper
+#
+# -*- coding: utf-8 -*-
+# Copyright 2011 Michael Helmlnig
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation
+#
+
+# C++ header definitions needed for the pytaglib wrapper
 from libcpp.list cimport list
 from libcpp.utility cimport pair
 from libcpp.string cimport string
