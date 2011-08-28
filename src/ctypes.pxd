@@ -37,10 +37,6 @@ cdef extern from "taglib/tag.h" namespace "TagLib":
         int size()
         void clear()
     
-    cdef cppclass Tag:
-        TagDict toDict()
-        void fromDict(TagDict&)
-    
 cdef extern from "taglib/audioproperties.h" namespace "TagLib":
     cdef cppclass AudioProperties:
         int length()
@@ -50,11 +46,12 @@ cdef extern from "taglib/audioproperties.h" namespace "TagLib":
 
 cdef extern from "taglib/tfile.h" namespace "TagLib":
     cdef cppclass File:
-        Tag *tag()
         AudioProperties *audioProperties()
         bint save() except +
         bint isValid()
         bint readOnly()
+        TagDict toDict()
+        void fromDict(TagDict&)
     
 cdef extern from "taglib/fileref.h" namespace "TagLib::FileRef":
     cdef File* create(char* fn) except +

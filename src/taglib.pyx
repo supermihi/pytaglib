@@ -28,7 +28,7 @@ cdef class File:
     
     cdef _read(self):
         """Internal method: converts the TagDict of the wrapped File* object into a dict"""
-        cdef ctypes.TagDict _tags = self._f.tag().toDict()
+        cdef ctypes.TagDict _tags = self._f.toDict()
         cdef ctypes.mapiter it = _tags.begin()
         cdef ctypes.StringList values
         cdef ctypes.listiter lit
@@ -61,7 +61,7 @@ cdef class File:
                 x = value.encode()
                 s2 = ctypes.String(x, typ)
                 _tagdict[s1].append(s2)
-        self._f.tag().fromDict(_tagdict)
+        self._f.fromDict(_tagdict)
         return self._f.save()
         
     def __dealloc__(self):
