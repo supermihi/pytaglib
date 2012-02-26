@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011 Michael Helmlnig
+# Copyright 2011-2012 Michael Helmlnig
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -16,24 +16,29 @@ cdef extern from "taglib/tstring.h" namespace "TagLib::String":
         Latin1, UTF16, UTF16BE, UTF8, UTF16LE
 
 cdef extern from "taglib/tstring.h" namespace "TagLib":
-    cppclass String:
+    cdef cppclass String:
         String(char*, Type)
         String()
         string to8Bit(bool)
         char* toCString(bool)
 
 cdef extern from "taglib/tstringlist.h" namespace "TagLib":
-    cppclass StringList:
+    cdef cppclass StringList:
+#        cppclass Iterator:
+#            String operator*()
+#            Iterator operator++()
+#            bint operator==(Iterator)
+#            bint operator!=(Iterator)
         list[String].iterator begin()
         list[String].iterator end()
         void append(String&)
 
-
-cdef extern from "taglib/tag.h" namespace "TagLib":
-    cdef cppclass TagDict:
+cdef extern from "taglib/tpropertymap.h" namespace "TagLib":
+    cdef cppclass PropertyMap:
         map[String,StringList].iterator begin()
         map[String,StringList].iterator end()
         StringList& operator[](String&)
+        StringList& unsupportedData()
         int size()
         void clear()
     
@@ -50,12 +55,13 @@ cdef extern from "taglib/tfile.h" namespace "TagLib":
         bint save() except +
         bint isValid()
         bint readOnly()
-        TagDict toDict()
-        void fromDict(TagDict&)
+        PropertyMap properties()
+        PropertyMap setProperties(PropertyMap&)
+        void removeUnsupportedProperties(StringList&)
     
 cdef extern from "taglib/fileref.h" namespace "TagLib::FileRef":
     cdef File* create(char* fn) except +
-
+    
 ctypedef map[String,StringList].iterator mapiter
 
-ctypedef list[String].iterator listiter
+ctypedef list[String].iterator listiter # no idea why StringList.Iterator does not work here

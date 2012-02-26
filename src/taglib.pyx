@@ -6,7 +6,9 @@
 # published by the Free Software Foundation
 
 cimport ctypes, cython
+#from ctypes2 cimport listiter, mapiter
 from cython.operator cimport dereference as deref, preincrement as inc
+
 
 @cython.final
 cdef class File:
@@ -15,6 +17,7 @@ cdef class File:
     # private C attributes, not visible from within Python
     cdef ctypes.File *_f
     cdef public object tags
+    cdef public object unsupported
     def __cinit__(self, filename):        
         b = filename.encode()
         self._f = ctypes.create(b)
@@ -24,11 +27,12 @@ cdef class File:
     def __init__(self, filename):
         """Create a new File for the given path, which must exist. Immediately reads metadata."""
         self.tags = dict()
+        self.unsupported = list()
         self._read()
     
     cdef _read(self):
         """Internal method: converts the TagDict of the wrapped File* object into a dict"""
-        cdef ctypes.TagDict _tags = self._f.toDict()
+        cdef ctypes.PropertyMap _tags = self._f.properties()
         cdef ctypes.mapiter it = _tags.begin()
         cdef ctypes.StringList values
         cdef ctypes.listiter lit
@@ -44,12 +48,18 @@ cdef class File:
                 inc(lit)
             inc(it)
             
+        lit = _tags.unsupportedData().begin()
+        while lit != _tags.unsupportedData().end():
+            s = deref(lit)
+            self.unsupported.append(s.toCString(True).decode('UTF-8'))
+            inc(lit)
+    
     def save(self):
         """Store the tags that are currently hold in the »tags« attribute into the file. Returns a boolean
         flac which indicates success."""
         if self.readOnly:
             raise OSError('Cannot write tags: file is read-only')
-        cdef ctypes.TagDict _tagdict
+        cdef ctypes.PropertyMap _tagdict
         cdef ctypes.String s1, s2
         cdef ctypes.Type typ = ctypes.UTF8
         for key, values in self.tags.items():
@@ -61,8 +71,18 @@ cdef class File:
                 x = value.encode()
                 s2 = ctypes.String(x, typ)
                 _tagdict[s1].append(s2)
-        self._f.fromDict(_tagdict)
+        self._f.setProperties(_tagdict)
         return self._f.save()
+    
+    def removeUnsupportedProperties(self, properties):
+        cdef ctypes.StringList _props
+        cdef ctypes.String s
+        cdef ctypes.Type typ = ctypes.UTF8
+        for value in properties:
+            x = value.encode()
+            s = ctypes.String(x, typ)
+            _props.append(s)
+        self._f.removeUnsupportedProperties(_props)
         
     def __dealloc__(self):
         del self._f       

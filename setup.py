@@ -24,6 +24,6 @@ setup(
   cmdclass = {'build_ext': build_ext},
   ext_modules = ext_modules,
   scripts = ['src/pyprinttags.py'],
-  version = '0.1',
+  version = '0.2',
   
 )
