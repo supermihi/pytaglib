@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011 Michael Helmlnig
+# Copyright 2011-2012 Michael Helmling, helmling@mathematik.uni-kl.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -12,32 +12,58 @@ from cython.operator cimport dereference as deref, preincrement as inc
 
 @cython.final
 cdef class File:
-    """Wrapper class for an audio file with metadata."""
+    """Wrapper class for an audio file with metadata.
+    
+    To read tags from an audio file, simply create a *File* object, passing the file's
+    path to the constructor:
+    
+    f = taglib.File("/path/to/file.ogg")
+    
+    The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
+    to lists of strings (tag values).
+    
+    Additionally, the attributes "length", "bitrate", "sampleRate", and "channels" are
+    available.
+    
+    Changes to the *tags* attribute are saved using the *save* method, which returns a
+    bool value indicating success.
+    
+    Information about tags which are not representable by the "tag name"->"list of values"
+    model is stored in the attribute *unsupported*, which is a list of strings. For example,
+    in case of ID3 tags, the list contains the ID3 frame IDs of unsupported frames. Such
+    unsupported metadata can be removed by passing (a subset of) the *unsupported* list
+    to *removeUnsupportedProperties*. See the TagLib documentation for details. 
+    """
     
     # private C attributes, not visible from within Python
     cdef ctypes.File *_f
     cdef public object tags
     cdef public object unsupported
-    def __cinit__(self, filename):        
-        b = filename.encode()
+    cdef public object path
+    def __cinit__(self, path):        
+        b = path.encode()
         self._f = ctypes.create(b)
         if not self._f or not self._f.isValid():
-            raise OSError('Could not read file {0}'.format(filename))
+            raise OSError('Could not read file "{0}"'.format(path))
         
-    def __init__(self, filename):
+    def __init__(self, path):
         """Create a new File for the given path, which must exist. Immediately reads metadata."""
         self.tags = dict()
         self.unsupported = list()
+        self.path = path
         self._read()
     
     cdef _read(self):
-        """Internal method: converts the TagDict of the wrapped File* object into a dict"""
+        """Convert the PropertyMap of the wrapped File* object into a python dict.
+        
+        This method is not accessible from Python, and is called only once, immediately after
+        object creation."""
         cdef ctypes.PropertyMap _tags = self._f.properties()
         cdef ctypes.mapiter it = _tags.begin()
         cdef ctypes.StringList values
         cdef ctypes.listiter lit
         cdef ctypes.String s
-        while it != _tags.end(): # iterate through the keys of the TagDict
+        while it != _tags.end(): # iterate through the keys of the PropertyMap
             s = deref(it).first # for some reason, <ctypes.pair[...]>deref(it) does not work (bug in Cython?)
             tag = s.toCString(True).decode('UTF-8') # this isn't pretty, but it works
             self.tags[tag] = []
@@ -55,10 +81,10 @@ cdef class File:
             inc(lit)
     
     def save(self):
-        """Store the tags that are currently hold in the »tags« attribute into the file. Returns a boolean
-        flac which indicates success."""
+        """Store the tags currently hold in the *tags* attribute into the file. Returns a boolean
+        flag which indicates success."""
         if self.readOnly:
-            raise OSError('Cannot write tags: file is read-only')
+            raise OSError('Unable to write tags: file "{0}" is not writable'.format(self.path))
         cdef ctypes.PropertyMap _tagdict
         cdef ctypes.String s1, s2
         cdef ctypes.Type typ = ctypes.UTF8
@@ -75,6 +101,7 @@ cdef class File:
         return self._f.save()
     
     def removeUnsupportedProperties(self, properties):
+        """This is a direct binding for the corresponding TagLib method."""
         cdef ctypes.StringList _props
         cdef ctypes.String s
         cdef ctypes.Type typ = ctypes.UTF8

@@ -1,0 +1,6 @@
+src/taglib.cpp
+build
+src
+.settings
+.project
+.pydevproject

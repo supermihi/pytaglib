@@ -1,6 +1,6 @@
-A python (2.x/3.x) wrapper for my taglib fork providing a unified dictionary-based tag interface. Needs Cython to install.
-Note that you need Cython built for python3.x if you want to use this library with python3.x. Unfortunatelly,
-most of the linux distributions don't ship a python3-aware cython yet. Luckily, you can easily get one by typing 
+A python (2.x/3.x) wrapper for TagLib; needs Cython to install. Note that you need Cython built for python3.x
+if you want to use this library with python3.x. Unfortunatelly, most of the linux distributions don't ship
+a python3-aware Cython yet. Luckily, you can easily get one by typing 
 
 sudo easy_install3 cython
 
@@ -8,9 +8,7 @@ into a console.
 
 I guess you need at least Cython 0.15 for this package to compile, though I haven't tested this.
 
-
-
-To install this library, first install the taglib-fork from http://github.com/supermihi/taglib. After that, 
+To install this library, be sure to have TagLib>=1.8 installed, along with development headers. After that, 
 the following two commands should suffice:
 
 python3 setup.py build_ext
