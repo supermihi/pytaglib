@@ -27,9 +27,13 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
+def readme():
+    with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as rm:
+        return rm.read()
 setup(
   name='pytaglib',
   description='TagLib bindings for python 2.x/3.x, written using cython',
+  long_description=readme(),
   version='0.2.2',
   license='GPLv3+',
   author='Michael Helmling',
