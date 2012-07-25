@@ -30,7 +30,7 @@ CLASSIFIERS = [
 setup(
   name='pytaglib',
   description='TagLib bindings for python 2.x/3.x, written using cython',
-  versio ='0.2.2',
+  version='0.2.2',
   license='GPLv3+',
   author='Michael Helmling',
   author_email='helmling@mathematik.uni-kl.de',
