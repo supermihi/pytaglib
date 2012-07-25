@@ -1,17 +1,21 @@
-A python (2.x/3.x) wrapper for TagLib; needs Cython to install. Note that you need Cython built for python3.x
-if you want to use this library with python3.x. Unfortunatelly, most of the linux distributions don't ship
-a python3-aware Cython yet. Luckily, you can easily get one by typing 
+pytaglib -- TagLib bindings for python 2.x/3.x
+==============================================
+
+pytaglib is a package of python (2.x/3.x) bindings for TagLib
+(http://taglib.github.com). It needs Cython (see http://www.cython.org)
+to install. Note that you need Cython built for python3.x if you want to
+use this library with python3.x. If your distribution does not ship a
+python3-aware Cython yet, you can easily get one by typing 
 
 sudo easy_install3 cython
 
 into a console.
 
-I guess you need at least Cython 0.15 for this package to compile, though I haven't tested this.
+To install this library, be sure to have TagLib>=1.8-BETA installed, along with
+development headers. After that, the following two commands should suffice:
 
-To install this library, be sure to have TagLib>=1.8 installed, along with development headers. After that, 
-the following two commands should suffice:
-
-python3 setup.py build_ext
+python3 setup.py build
+python3 setup.py test  # optional
 sudo python3 setup.py install
 
 Replace "3" by whatever Python version you use.
@@ -24,12 +28,14 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> import taglib
 >>> f = taglib.File("x.ogg")
 >>> f.tags
-{'ALBUM': ['omgwtf', 'lol'], 'ARTIST': ['ein grüner Affe']}
+{'ALBUM': ['omgwtf', 'lol'], 'ARTIST': ['öätrnüö']}
 >>> f.length
 472
 >>> f.sampleRate
 44100
 >>> f.tags["ARTIST"] = ["A new artist"]
+>>> del f.tags['ALBUM']
+>>> 
 >>> f.save()
 True
 >>>

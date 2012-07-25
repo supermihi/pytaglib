@@ -4,11 +4,17 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
-
+from __future__ import print_function, unicode_literals
 cimport ctypes, cython
+from libcpp.string cimport string
 #from ctypes2 cimport listiter, mapiter
 from cython.operator cimport dereference as deref, preincrement as inc
 
+cdef object tounicode(ctypes.String s):
+    """Convert a TagLib::String object to unicode python (str in python3, uncode python2) string."""
+    cdef string cppstr = s.to8Bit(True)
+    cdef bytes bstr = cppstr.c_str() # necessary to avoid compilation error due to "const" violation
+    return bstr.decode('UTF-8', 'replace')
 
 @cython.final
 cdef class File:
@@ -22,8 +28,8 @@ cdef class File:
     The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
     to lists of strings (tag values).
     
-    Additionally, the attributes "length", "bitrate", "sampleRate", and "channels" are
-    available.
+    Additionally, the readonly attributes "length", "bitrate", "sampleRate", and
+    "channels" are available.
     
     Changes to the *tags* attribute are saved using the *save* method, which returns a
     bool value indicating success.
@@ -35,15 +41,16 @@ cdef class File:
     to *removeUnsupportedProperties*. See the TagLib documentation for details. 
     """
     
-    # private C attributes, not visible from within Python
     cdef ctypes.File *_f
     cdef public object tags
     cdef public object unsupported
     cdef public object path
-    def __cinit__(self, path):        
-        b = path.encode()
-        self._f = ctypes.create(b)
+    
+    def __cinit__(self, path):
+        path_b = path.encode('UTF-8')
+        self._f = ctypes.create(path_b)
         if not self._f or not self._f.isValid():
+            
             raise OSError('Could not read file "{0}"'.format(path))
         
     def __init__(self, path):
@@ -63,28 +70,30 @@ cdef class File:
         cdef ctypes.StringList values
         cdef ctypes.listiter lit
         cdef ctypes.String s
+        cdef char* cstr
+        cdef bytes bstr
         while it != _tags.end(): # iterate through the keys of the PropertyMap
             s = deref(it).first # for some reason, <ctypes.pair[...]>deref(it) does not work (bug in Cython?)
-            tag = s.toCString(True).decode('UTF-8') # this isn't pretty, but it works
+            tag = tounicode(s)
             self.tags[tag] = []
             values = deref(it).second
             lit = values.begin()
             while lit != values.end():
-                self.tags[tag].append((<ctypes.String>deref(lit)).toCString(True).decode('UTF-8','replace'))
+                self.tags[tag].append(tounicode(<ctypes.String>deref(lit)))
                 inc(lit)
             inc(it)
             
         lit = _tags.unsupportedData().begin()
         while lit != _tags.unsupportedData().end():
             s = deref(lit)
-            self.unsupported.append(s.toCString(True).decode('UTF-8'))
+            self.unsupported.append(tounicode(s))
             inc(lit)
     
     def save(self):
         """Store the tags currently hold in the *tags* attribute into the file. Returns a boolean
         flag which indicates success."""
         if self.readOnly:
-            raise OSError('Unable to write tags: file "{0}" is not writable'.format(self.path))
+            raise OSError('Unable to save tags: file "{0}" is read-only'.format(self.path))
         cdef ctypes.PropertyMap _tagdict
         cdef ctypes.String s1, s2
         cdef ctypes.Type typ = ctypes.UTF8
@@ -94,10 +103,11 @@ cdef class File:
             if isinstance(values, str):
                 values = [ values ]
             for value in values:
-                x = value.encode()
+                x = value.encode('utf-8')
                 s2 = ctypes.String(x, typ)
                 _tagdict[s1].append(s2)
-        self._f.setProperties(_tagdict)
+        cdef ctypes.PropertyMap remaining = self._f.setProperties(_tagdict)
+        print(remaining.size())
         return self._f.save()
     
     def removeUnsupportedProperties(self, properties):
@@ -106,7 +116,7 @@ cdef class File:
         cdef ctypes.String s
         cdef ctypes.Type typ = ctypes.UTF8
         for value in properties:
-            x = value.encode()
+            x = value.encode('utf-8')
             s = ctypes.String(x, typ)
             _props.append(s)
         self._f.removeUnsupportedProperties(_props)

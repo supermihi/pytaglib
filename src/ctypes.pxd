@@ -11,6 +11,9 @@ from libcpp.utility cimport pair
 from libcpp.string cimport string
 from libcpp.map cimport map
 
+cdef extern from *:
+    ctypedef char const_char "const char"
+	
 cdef extern from "taglib/tstring.h" namespace "TagLib::String":
     cdef enum Type:
         Latin1, UTF16, UTF16BE, UTF8, UTF16LE
@@ -20,7 +23,7 @@ cdef extern from "taglib/tstring.h" namespace "TagLib":
         String(char*, Type)
         String()
         string to8Bit(bool)
-        char* toCString(bool)
+        const_char* toCString(bool)
 
 cdef extern from "taglib/tstringlist.h" namespace "TagLib":
     cdef cppclass StringList:

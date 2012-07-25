@@ -1,0 +1,6 @@
+pytaglib 0.2.2
+==============
+
+- Switch to setuptools/distribute, prepare publishing on PyPI
+- Add some basic unit tests (test files stolen from taglib)
+- Ensure package works with Python2.x/3.x
