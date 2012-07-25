@@ -8,6 +8,7 @@
 #
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
  
+import os.path
 from distutils.core import setup
 from setuptools import setup
 from distutils.extension import Extension
