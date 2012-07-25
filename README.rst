@@ -36,14 +36,15 @@ so you need at least that version along with development headers.
   
 Installation
 ------------
-:: 
+::
 	python3 setup.py build
 	python3 setup.py test  # optional
 	sudo python3 setup.py install
 
 Replace ``3`` by whatever Python version you use.
 
-Usage:
+Usage
+-----
 ::
 	$ python3
 	Python 3.2.2rc1 (default, Aug 14 2011, 19:02:04) 
