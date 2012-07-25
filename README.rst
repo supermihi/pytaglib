@@ -1,4 +1,4 @@
-pytaglib -- TagLib bindings for Python 2.x/3.x
+pytaglib – TagLib bindings for Python 2.x/3.x
 ==============================================
 
 Overview
@@ -8,10 +8,10 @@ pytaglib is a package of Python_ (2.x/3.x) bindings for TagLib_. To my
 knowledge this so far is the only full-featured audio metadata library that
 supports python3.x.
 
-Also, the package gives you complete freedom over the tag names -- you are
-not limited to common tags like 'ARTIST', 'ALBUM' etc.; instead you may use
+Also, the package gives you complete freedom over the tag names – you are
+not limited to common tags like ``ARTIST``, ``ALBUM`` etc.; instead you may use
 any string as key as long as the underlying metadata format supports it (most
-of them do, including MP3, OGG, and FLAC). Moreover, you can even use multiple
+of them do, including mp3, ogg, and FLAC). Moreover, you can even use multiple
 values of the same tag, to e.g. store two artists, several genres, and so on.
  
 .. _Python: http://www.python.org
@@ -36,7 +36,9 @@ so you need at least that version along with development headers.
   
 Installation
 ------------
+
 ::
+
 	python3 setup.py build
 	python3 setup.py test  # optional
 	sudo python3 setup.py install
@@ -45,7 +47,9 @@ Replace ``3`` by whatever Python version you use.
 
 Usage
 -----
+
 ::
+
 	$ python3
 	Python 3.2.2rc1 (default, Aug 14 2011, 19:02:04) 
 	[GCC 4.6.1] on linux2
