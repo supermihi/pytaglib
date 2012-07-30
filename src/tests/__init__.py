@@ -12,7 +12,12 @@ def copyTestFile(name):
     """Make a temporary copy of test data file *name* (without dir) and return its full path. The file
     is deleted on exit."""
     orig_file = os.path.join(os.path.dirname(__file__), 'data', name)
-    with tempfile.TemporaryDirectory() as tempdir:
-        copy_file = os.path.join(tempdir, name)
-        shutil.copy(orig_file, copy_file)
+    tempdir = tempfile.mkdtemp()
+    copy_file = os.path.join(tempdir, name)
+    shutil.copy(orig_file, copy_file)
+    print(tempdir)
+    try:
         yield copy_file
+    finally:
+        shutil.rmtree(tempdir)
+    

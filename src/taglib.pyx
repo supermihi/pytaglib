@@ -7,7 +7,6 @@
 from __future__ import print_function, unicode_literals
 cimport ctypes, cython
 from libcpp.string cimport string
-#from ctypes2 cimport listiter, mapiter
 from cython.operator cimport dereference as deref, preincrement as inc
 
 cdef object tounicode(ctypes.String s):
