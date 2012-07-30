@@ -9,11 +9,35 @@ cimport ctypes, cython
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref, preincrement as inc
 
+version = "0.2.3"
+
 cdef object tounicode(ctypes.String s):
-    """Convert a TagLib::String object to unicode python (str in python3, uncode python2) string."""
+    """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
     cdef string cppstr = s.to8Bit(True)
-    cdef bytes bstr = cppstr.c_str() # necessary to avoid compilation error due to "const" violation
+    cdef bytes bstr = cppstr.c_str() # avoids compilation error due to "const" violation
     return bstr.decode('UTF-8', 'replace')
+
+
+cdef object todict(ctypes.PropertyMap map):
+    """Convert a TagLib::PropertyMap to a dict mapping unicode to list of unicode."""
+    cdef:
+        ctypes.StringList values
+        ctypes.listiter lit
+        ctypes.String s
+        ctypes.mapiter it = map.begin()
+    dct = dict()
+    #  read tags
+    while it != map.end():
+        s = deref(it).first # for some reason, <ctypes.pair[...]>deref(it) does not work
+        tag = tounicode(s)
+        dct[tag] = []
+        values = deref(it).second
+        lit = values.begin()
+        while lit != values.end():
+            dct[tag].append(tounicode(<ctypes.String>deref(lit)))
+            inc(lit)
+        inc(it)
+    return dct
 
 @cython.final
 cdef class File:
@@ -40,18 +64,20 @@ cdef class File:
     to *removeUnsupportedProperties*. See the TagLib documentation for details. 
     """
     
-    cdef ctypes.File *_f
-    cdef public object tags
-    cdef public object unsupported
-    cdef public object path
+    cdef:
+        ctypes.File *_f
+        public object tags
+        public object unsupported
+        public object path
+    
     
     def __cinit__(self, path):
         path_b = path.encode('UTF-8')
         self._f = ctypes.create(path_b)
         if not self._f or not self._f.isValid():
-            
             raise OSError('Could not read file "{0}"'.format(path))
-        
+    
+    
     def __init__(self, path):
         """Create a new File for the given path, which must exist. Immediately reads metadata."""
         self.tags = dict()
@@ -63,25 +89,15 @@ cdef class File:
         """Convert the PropertyMap of the wrapped File* object into a python dict.
         
         This method is not accessible from Python, and is called only once, immediately after
-        object creation."""
-        cdef ctypes.PropertyMap _tags = self._f.properties()
-        cdef ctypes.mapiter it = _tags.begin()
-        cdef ctypes.StringList values
-        cdef ctypes.listiter lit
-        cdef ctypes.String s
-        cdef char* cstr
-        cdef bytes bstr
-        while it != _tags.end(): # iterate through the keys of the PropertyMap
-            s = deref(it).first # for some reason, <ctypes.pair[...]>deref(it) does not work (bug in Cython?)
-            tag = tounicode(s)
-            self.tags[tag] = []
-            values = deref(it).second
-            lit = values.begin()
-            while lit != values.end():
-                self.tags[tag].append(tounicode(<ctypes.String>deref(lit)))
-                inc(lit)
-            inc(it)
-            
+        object creation.
+        """
+        cdef:
+            ctypes.PropertyMap _tags = self._f.properties()
+            ctypes.listiter lit
+            ctypes.String s
+        self.tags = todict(_tags)
+
+        #  read unsupported data
         lit = _tags.unsupportedData().begin()
         while lit != _tags.unsupportedData().end():
             s = deref(lit)
@@ -89,25 +105,36 @@ cdef class File:
             inc(lit)
     
     def save(self):
-        """Store the tags currently hold in the *tags* attribute into the file. Returns a boolean
-        flag which indicates success."""
+        """Store the tags currently hold in the *tags* attribute into the file.
+        
+        If some tags could not be stored because the underlying metadata format does not
+        support them, the unsuccesful tags are returned as a "subdict" of self.tags which
+        will be empty if everything is ok.
+        If the save operation completely fails (file does not exist, insufficient rights),
+        an OSError is raised.
+        """
+        
         if self.readOnly:
             raise OSError('Unable to save tags: file "{0}" is read-only'.format(self.path))
-        cdef ctypes.PropertyMap _tagdict
+        cdef ctypes.PropertyMap _tagdict, _remaining
         cdef ctypes.String s1, s2
-        cdef ctypes.Type typ = ctypes.UTF8
+        
         for key, values in self.tags.items():
-            x = key.upper().encode() # needed to satisfy Cython; since the String() constructor copies the data, no memory problems should arise here
-            s1 = ctypes.String(x,typ)
+            x = key.upper().encode('utf-8') # needed to satisfy Cython; since the String() constructor copies the data, no memory problems should arise here
+            s1 = ctypes.String(x, ctypes.UTF8)
             if isinstance(values, str):
                 values = [ values ]
             for value in values:
                 x = value.encode('utf-8')
-                s2 = ctypes.String(x, typ)
+                s2 = ctypes.String(x, ctypes.UTF8)
                 _tagdict[s1].append(s2)
-        cdef ctypes.PropertyMap remaining = self._f.setProperties(_tagdict)
-        print(remaining.size())
-        return self._f.save()
+        _remaining = self._f.setProperties(_tagdict)
+        print(_remaining.size())
+        success = self._f.save()
+        if not success:
+            raise OSError("Unable to save tags: Unknown OS error")
+        return todict(_remaining)
+        
     
     def removeUnsupportedProperties(self, properties):
         """This is a direct binding for the corresponding TagLib method."""
@@ -119,6 +146,7 @@ cdef class File:
             s = ctypes.String(x, typ)
             _props.append(s)
         self._f.removeUnsupportedProperties(_props)
+        
         
     def __dealloc__(self):
         del self._f       

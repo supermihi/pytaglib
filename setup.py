@@ -35,7 +35,7 @@ setup(
   name='pytaglib',
   description='TagLib bindings for python 2.x/3.x, written using cython',
   long_description=readme(),
-  version='0.2.2',
+  version='0.2.3',
   license='GPLv3+',
   author='Michael Helmling',
   author_email='helmling@mathematik.uni-kl.de',

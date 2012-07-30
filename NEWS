@@ -1,5 +1,18 @@
-pytaglib 0.2.2
-==============
+Changelog
+=========
+
+pytaglib 0.2.3 (2012/07/30)
+---------------------------
+
+- save() now returns unsuccessful tags due to metadata format
+- add taglib.version attribute to get module version
+- all tests pass with my taglib fork
+- fix Python2 compatibility
+- README now in ReSt format
+- code cleanup and documentation improvement 
+
+pytaglib 0.2.2 (2012/07/25)
+---------------------------
 
 - Switch to setuptools/distribute, prepare publishing on PyPI
 - Add some basic unit tests (test files stolen from taglib)

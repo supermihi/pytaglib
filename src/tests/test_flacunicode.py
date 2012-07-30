@@ -22,16 +22,12 @@ class FLACUnicodeTest(unittest.TestCase):
             self.assertEqual(tfile.tags["ARTIST"][0], "artøst 1")
             self.assertEqual(tfile.tags["ARTIST"][1], "artöst 2")
             
-    def test_unicode_tag(self):
-        """This failes ATM; need to rework PropertyMap stuff in taglib."""
+    def test_unicode_key(self):
         with copyTestFile('testöü.flac') as copy_file:
             tfile = taglib.File(copy_file)
             tfile.tags["HÄÜ"] = ["omg"]
-            tfile.save()
-            
-            tfile = taglib.File(copy_file)
-            self.assertEqual(tfile.tags["HÄÜ"], ["omg"])
-        
+            remaining =  tfile.save()
+            self.assertIn("HÄÜ", remaining)        
         
 if __name__ == '__main__':
     unittest.main()
