@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 0.2.4 (2012/09/09)
+---------------------------
+- add test script for python2.x/3.x
+
 pytaglib 0.2.3 (2012/07/30)
 ---------------------------
 
@@ -9,7 +13,7 @@ pytaglib 0.2.3 (2012/07/30)
 - all tests pass with my taglib fork
 - fix Python2 compatibility
 - README now in ReSt format
-- code cleanup and documentation improvement 
+- code cleanup and documentation improvement
 
 pytaglib 0.2.2 (2012/07/25)
 ---------------------------
