@@ -9,14 +9,8 @@
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
  
 import os.path
-from distutils.core import setup
 from setuptools import setup
-from distutils.extension import Extension
-from Cython.Distutils import build_ext
-
-extensions = [Extension('taglib', ['src/taglib.pyx', 'src/ctypes.pxd'],
-                     libraries=['tag', 'stdc++'],
-                     language='c++')]
+from Cython.Build import cythonize
 
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
@@ -28,9 +22,12 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
+
 def readme():
     with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as rm:
         return rm.read()
+
+
 setup(
   name='pytaglib',
   description='TagLib bindings for python 2.x/3.x, written using cython',
@@ -40,10 +37,8 @@ setup(
   author='Michael Helmling',
   author_email='helmling@mathematik.uni-kl.de',
   url='http://github.com/supermihi/pytaglib',
-  
-  install_requires=['cython'],
-  cmdclass={'build_ext': build_ext},
-  ext_modules=extensions,
+  install_requires=['cython>=0.16'],
+  ext_modules=cythonize("src/taglib.pyx"),
   scripts=['src/pyprinttags.py'],
   package_dir={'': 'src'},
   test_suite='tests',

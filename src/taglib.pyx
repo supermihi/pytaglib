@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
+# distutils: language = c++
+# distutils: libraries = [tag, stdc++]
 # Copyright 2011-2012 Michael Helmling, helmling@mathematik.uni-kl.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
+
 from __future__ import print_function, unicode_literals
+
 cimport ctypes, cython
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref, preincrement as inc
 
-version = "0.2.3"
+version = "0.2.4"
 
 cdef object tounicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
+    
     cdef string cppstr = s.to8Bit(True)
     cdef bytes bstr = cppstr.c_str() # avoids compilation error due to "const" violation
     return bstr.decode('UTF-8', 'replace')
@@ -26,7 +31,6 @@ cdef object todict(ctypes.PropertyMap map):
         ctypes.String s
         ctypes.mapiter it = map.begin()
     dct = dict()
-    #  read tags
     while it != map.end():
         s = deref(it).first # for some reason, <ctypes.pair[...]>deref(it) does not work
         tag = tounicode(s)
@@ -38,6 +42,7 @@ cdef object todict(ctypes.PropertyMap map):
             inc(lit)
         inc(it)
     return dct
+
 
 @cython.final
 cdef class File:
@@ -70,16 +75,15 @@ cdef class File:
         public object unsupported
         public object path
     
-    
     def __cinit__(self, path):
         path_b = path.encode('UTF-8')
         self._f = ctypes.create(path_b)
         if not self._f or not self._f.isValid():
             raise OSError('Could not read file "{0}"'.format(path))
     
-    
     def __init__(self, path):
         """Create a new File for the given path, which must exist. Immediately reads metadata."""
+        
         self.tags = dict()
         self.unsupported = list()
         self.path = path
@@ -91,13 +95,13 @@ cdef class File:
         This method is not accessible from Python, and is called only once, immediately after
         object creation.
         """
+        
         cdef:
             ctypes.PropertyMap _tags = self._f.properties()
             ctypes.listiter lit
             ctypes.String s
         self.tags = todict(_tags)
 
-        #  read unsupported data
         lit = _tags.unsupportedData().begin()
         while lit != _tags.unsupportedData().end():
             s = deref(lit)
@@ -116,11 +120,11 @@ cdef class File:
         
         if self.readOnly:
             raise OSError('Unable to save tags: file "{0}" is read-only'.format(self.path))
-        cdef ctypes.PropertyMap _tagdict, _remaining
-        cdef ctypes.String s1, s2
-        
+        cdef:
+            ctypes.PropertyMap _tagdict, _remaining
+            ctypes.String s1, s2
         for key, values in self.tags.items():
-            x = key.upper().encode('utf-8') # needed to satisfy Cython; since the String() constructor copies the data, no memory problems should arise here
+            x = key.upper().encode('utf-8')
             s1 = ctypes.String(x, ctypes.UTF8)
             if isinstance(values, str):
                 values = [ values ]
@@ -129,12 +133,10 @@ cdef class File:
                 s2 = ctypes.String(x, ctypes.UTF8)
                 _tagdict[s1].append(s2)
         _remaining = self._f.setProperties(_tagdict)
-        print(_remaining.size())
         success = self._f.save()
         if not success:
             raise OSError("Unable to save tags: Unknown OS error")
         return todict(_remaining)
-        
     
     def removeUnsupportedProperties(self, properties):
         """This is a direct binding for the corresponding TagLib method."""
@@ -146,7 +148,6 @@ cdef class File:
             s = ctypes.String(x, typ)
             _props.append(s)
         self._f.removeUnsupportedProperties(_props)
-        
         
     def __dealloc__(self):
         del self._f       
