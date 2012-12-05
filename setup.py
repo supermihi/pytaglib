@@ -19,6 +19,8 @@ CLASSIFIERS = [
     'Natural Language :: English',
     'Operating System :: OS Independent',
     'Programming Language :: Cython',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
@@ -32,7 +34,8 @@ setup(
   name='pytaglib',
   description='TagLib bindings for python 2.x/3.x, written using cython',
   long_description=readme(),
-  version='0.2.4',
+  classifiers=CLASSIFIERS,
+  version='0.2.5',
   license='GPLv3+',
   author='Michael Helmling',
   author_email='helmling@mathematik.uni-kl.de',

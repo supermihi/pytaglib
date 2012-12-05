@@ -18,7 +18,7 @@ class TestProblems(unittest.TestCase):
         self.assertRaises(OSError, taglib.File, "/this/file/almost/certainly/does/not/exist.flac")
         self.assertRaises(OSError, taglib.File, "/spæciäl/chàracterß.mp3")
         self.assertRaises(OSError, taglib.File, "/usr")
-        # self.assertRaises(OSError, taglib.File, "/nonexistent.ogg") segfault due to taglib bug
+        # self.assertRaises(OSError, taglib.File, "/nonexistent.ogg") # segfaults due to taglib bug
         
     def test_readOnly(self):
         """Ensure OSError is raised when save() is called on read-only files."""

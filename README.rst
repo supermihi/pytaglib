@@ -30,12 +30,35 @@ python3, but you can easily get it by typing::
 into a console.
 
 pytaglib uses TagLib_ features that have been added only in version 1.8-BETA,
-so you need at least that version along with development headers.
+so you need at least that version along with development headers. The recent
+releases of most linux flavours nowadays ship taglib-1.8, including:
+
+- Ubuntu 12.10
+- Debian "experimental" branch
+- Linux Mint 14
+- Up-To-Date Arch Linux
+- Gentoo Linux (unstable)
+- Fedora 17
 
 ..  _Cython: http://www.cython.org
   
 Installation
 ------------
+
+The easiest version is to use easy_install:
+
+::
+    sudo easy_install -U pytaglib
+
+On most systems, this will install the python2 version; use something like
+
+::
+    sudo easy_install3 -U pytaglib
+
+to build the package for python3 (the exact command depends on your
+distribution).
+
+Alternatively, you can download the source tarball and compile manually:
 
 ::
 

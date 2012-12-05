@@ -13,7 +13,7 @@ cimport ctypes, cython
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref, preincrement as inc
 
-version = "0.2.4"
+version = "0.2.5"
 
 cdef object tounicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
