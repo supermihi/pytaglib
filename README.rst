@@ -45,14 +45,12 @@ releases of most linux flavours nowadays ship taglib-1.8, including:
 Installation
 ------------
 
-The easiest version is to use easy_install:
+The easiest version is to use easy_install::
 
-::
     sudo easy_install -U pytaglib
 
-On most systems, this will install the python2 version; use something like
+On most systems, this will install the python2 version; use something like::
 
-::
     sudo easy_install3 -U pytaglib
 
 to build the package for python3 (the exact command depends on your
