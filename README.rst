@@ -45,7 +45,10 @@ releases of most linux flavours nowadays ship taglib-1.8, including:
 Installation
 ------------
 
-The easiest version is to use easy_install::
+As long as pytaglib is not contained in the major distribution's package
+repositories, you have to install it manually by one of the following methods.
+
+The easiest way is to use easy_install::
 
     sudo easy_install -U pytaglib
 
@@ -68,6 +71,10 @@ Replace ``3`` by whatever Python version you use.
 
 Usage
 -----
+
+The use of the library is pretty straightforward. In principle, the
+following snippet should show most of its features. For more detail,
+consult the python documentation via help(taglib.File).
 
 ::
 
