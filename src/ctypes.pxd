@@ -5,6 +5,8 @@
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
 
+"""This file contains the external C/C++ definitions used by taglib.pyx."""
+
 from libcpp.list cimport list
 from libcpp.utility cimport pair
 from libcpp.string cimport string
@@ -17,6 +19,8 @@ cdef extern from *:
 
 cdef extern from "taglib/tstring.h" namespace "TagLib::String":
     cdef enum Type:
+        # this is a bit ugly since it relies on the order in TagLib never being
+        # changed, but it seems to be the only way
         Latin1, UTF16, UTF16BE, UTF8, UTF16LE
 
 
