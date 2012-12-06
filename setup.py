@@ -13,7 +13,7 @@ from setuptools import setup
 from Cython.Build import cythonize
 
 CLASSIFIERS = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
     'Natural Language :: English',
@@ -42,7 +42,7 @@ setup(
   url='http://github.com/supermihi/pytaglib',
   install_requires=['cython>=0.16'],
   ext_modules=cythonize("src/taglib.pyx"),
-  scripts=['src/pyprinttags.py'],
+  entry_points={ 'console_scripts': ['pyprinttags = pyprinttags:script'] },
   package_dir={'': 'src'},
   test_suite='tests',
 )

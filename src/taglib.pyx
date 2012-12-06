@@ -9,6 +9,7 @@
 
 from __future__ import print_function, unicode_literals
 
+import sys
 cimport ctypes, cython
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref, preincrement as inc
@@ -55,40 +56,45 @@ cdef class File:
     
     The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
     to lists of strings (tag values).
+
+    If the file contains some metadata that is not supported by pytaglib or not representable
+    as strings (e.g. cover art, proprietary data written by some programs, ...), according
+    identifiers will be placed into the *unsupported* attribute of the File object. Using the
+    method *removeUnsupportedProperties*, some or all of those can be removed.
     
     Additionally, the readonly attributes "length", "bitrate", "sampleRate", and
     "channels" are available.
     
-    Changes to the *tags* attribute are saved using the *save* method, which returns a
-    bool value indicating success.
-    
-    Information about tags which are not representable by the "tag name"->"list of values"
-    model is stored in the attribute *unsupported*, which is a list of strings. For example,
-    in case of ID3 tags, the list contains the ID3 frame IDs of unsupported frames. Such
-    unsupported metadata can be removed by passing (a subset of) the *unsupported* list
-    to *removeUnsupportedProperties*. See the TagLib documentation for details. 
+    Changes to the *tags* attribute are saved using the *save* method.
     """
     
     cdef:
         ctypes.File *_f
         public object tags
-        public object unsupported
         public object path
-    
+        public object unsupported
+   
+ 
     def __cinit__(self, path):
-        path_b = path.encode('UTF-8')
-        self._f = ctypes.create(path_b)
+        if sys.version_info.major == 3 or isinstance(path, unicode):
+            path = path.encode('UTF-8')
+        self._f = ctypes.create(path)
         if not self._f or not self._f.isValid():
             raise OSError('Could not read file "{0}"'.format(path))
     
+
     def __init__(self, path):
-        """Create a new File for the given path, which must exist. Immediately reads metadata."""
+        """Create a new File for the given path and read metadata.
+
+        If the path does not exist or cannot be opened, an OSError will be raised.
+        """
         
         self.tags = dict()
         self.unsupported = list()
         self.path = path
         self._read()
     
+
     cdef _read(self):
         """Convert the PropertyMap of the wrapped File* object into a python dict.
         
@@ -107,7 +113,8 @@ cdef class File:
             s = deref(lit)
             self.unsupported.append(tounicode(s))
             inc(lit)
-    
+   
+ 
     def save(self):
         """Store the tags currently hold in the *tags* attribute into the file.
         
