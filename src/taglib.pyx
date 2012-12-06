@@ -77,8 +77,10 @@ cdef class File:
  
     def __cinit__(self, path):
         if sys.version_info.major == 3 or isinstance(path, unicode):
-            path = path.encode('UTF-8')
-        self._f = ctypes.create(path)
+            path_b = path.encode('UTF-8')
+        else:
+            path_b = path
+        self._f = ctypes.create(path_b)
         if not self._f or not self._f.isValid():
             raise OSError('Could not read file "{0}"'.format(path))
     
