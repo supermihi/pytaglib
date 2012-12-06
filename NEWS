@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 0.2.5 (2012/12/05)
+---------------------------
+- fix integration into PyPI, clean up code & documentation
+
 pytaglib 0.2.4 (2012/09/09)
 ---------------------------
 - add test script for python2.x/3.x
