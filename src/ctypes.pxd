@@ -12,7 +12,6 @@ from libcpp.utility cimport pair
 from libcpp.string cimport string
 from libcpp.map cimport map
 
-
 cdef extern from *:
     ctypedef char const_char "const char"
 	
@@ -66,7 +65,6 @@ cdef extern from "taglib/tfile.h" namespace "TagLib":
         PropertyMap properties()
         PropertyMap setProperties(PropertyMap&)
         void removeUnsupportedProperties(StringList&)
-    
 
 cdef extern from "taglib/fileref.h" namespace "TagLib::FileRef":
     cdef File* create(char* fn) except +

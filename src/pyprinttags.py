@@ -30,8 +30,10 @@ def script():
     if len(audioFile.unsupported) > 0:
         print('Unsupported tag elements: ' + "; ".join(audioFile.unsupported))
         if sys.version_info.major == 2:
-            input = raw_input
-        if input("remove unsupported properties? [yN] ") in "yY":
+            inputFunction = raw_input
+        else:
+            inputFunction = input
+        if inputFunction("remove unsupported properties? [yN] ") in "yY":
             audioFile.removeUnsupportedProperties(audioFile.unsupported)
             audioFile.save()
 

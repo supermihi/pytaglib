@@ -10,11 +10,14 @@
 from __future__ import print_function, unicode_literals
 
 import sys
-cimport ctypes, cython
+
+cimport cython
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref, preincrement as inc
 
-version = "0.2.5"
+cimport ctypes, mpeg
+
+version = "0.2.6"
 
 cdef object tounicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
@@ -73,9 +76,10 @@ cdef class File:
         public object tags
         public object path
         public object unsupported
+        bint isMPEG
    
  
-    def __cinit__(self, path):
+    def __cinit__(self, path, applyID3v2Hack=False):
         if sys.version_info.major == 3 or isinstance(path, unicode):
             path_b = path.encode('UTF-8')
         else:
@@ -83,9 +87,15 @@ cdef class File:
         self._f = ctypes.create(path_b)
         if not self._f or not self._f.isValid():
             raise OSError('Could not read file "{0}"'.format(path))
+        
+        if applyID3v2Hack and len(path_b) >= 4 and path_b[-4:].lower() == b".mp3":
+            print('applying MPEG hack')
+            self.isMPEG = True
+        else:
+            self.isMPEG = False
     
 
-    def __init__(self, path):
+    def __init__(self, path, applyID3v2Hack=False):
         """Create a new File for the given path and read metadata.
 
         If the path does not exist or cannot be opened, an OSError will be raised.
@@ -95,6 +105,7 @@ cdef class File:
         self.unsupported = list()
         self.path = path
         self._read()
+        
     
 
     cdef _read(self):
@@ -132,6 +143,8 @@ cdef class File:
         cdef:
             ctypes.PropertyMap _tagdict, _remaining
             ctypes.String s1, s2
+        if self.isMPEG:
+            (<mpeg.File*>self._f).save(2, False)
         for key, values in self.tags.items():
             x = key.upper().encode('utf-8')
             s1 = ctypes.String(x, ctypes.UTF8)
@@ -141,8 +154,12 @@ cdef class File:
                 x = value.encode('utf-8')
                 s2 = ctypes.String(x, ctypes.UTF8)
                 _tagdict[s1].append(s2)
+        
         _remaining = self._f.setProperties(_tagdict)
-        success = self._f.save()
+        if self.isMPEG:
+            success = (<mpeg.File*>self._f).save(2, True)
+        else:
+            success = self._f.save()
         if not success:
             raise OSError("Unable to save tags: Unknown OS error")
         return todict(_remaining)
