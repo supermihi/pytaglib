@@ -1,6 +1,17 @@
 Changelog
 =========
 
+pytaglib 0.3.0 (2012/12/14)
+---------------------------
+- implement a hack that works around a bug in taglib, leading
+  to several problems in connection with MP3 files with ID3v1
+  tags. Open files with ``f=taglib.File(path, applyID3v2Hack=True)``
+  to ensure that MPEG files will always get updated to ID3v2 if
+  necessary. Use at your own risk!
+- update documentation
+- declare development stadium as "beta" since no critical bugs
+  seem to exist.
+
 pytaglib 0.2.5 (2012/12/05)
 ---------------------------
 - fix integration into PyPI, clean up code & documentation

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 2011-2012 Michael Helmling
+# Copyright 2011-2012 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -35,10 +35,10 @@ setup(
   description='TagLib bindings for python 2.x/3.x, written using cython',
   long_description=readme(),
   classifiers=CLASSIFIERS,
-  version='0.2.6',
+  version='0.3.0',
   license='GPLv3+',
   author='Michael Helmling',
-  author_email='helmling@mathematik.uni-kl.de',
+  author_email='michaelhelmling@posteo.de',
   url='http://github.com/supermihi/pytaglib',
   install_requires=['cython>=0.16'],
   ext_modules=cythonize("src/taglib.pyx"),
