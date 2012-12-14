@@ -73,24 +73,26 @@ Basic Usage
 -----------
 
 The use of the library is pretty straightforward:
-1. Load the library: ``import taglib``
-2. Open a file: ``f = taglib.File("/path/to/file.mp3")``
-3. Read tags from the dict ``f.tags``, mapping uppercase tag names to lists
-   of tag values (note that even single values are stored as list in order
-   to be consistent).
-4. Some other information about the file is available as well: ``f.length``,
-   ``f.sampleRate``, ``f.channels``, ``f.bitrate``, and ``f.readOnly``.
-5. Alter the tags by manipulating the dictionary ``f.tags``. You should always
-   use uppercase tag names and the values must be strings.
-6. Save everything: ``retval = f.save()``.
-7. If some tags could not be saved because they are not supported by the
-   underlying format, those will be contained in the value returned from
-   ``f.save()``.
+
+#.  Load the library: ``import taglib``
+#.  Open a file: ``f = taglib.File("/path/to/file.mp3")``
+#.  Read tags from the dict ``f.tags``, mapping uppercase tag names to lists
+    of tag values (note that even single values are stored as list in order
+    to be consistent).
+#.  Some other information about the file is available as well: ``f.length``,
+    ``f.sampleRate``, ``f.channels``, ``f.bitrate``, and ``f.readOnly``.
+#.  Alter the tags by manipulating the dictionary ``f.tags``. You should always
+    use uppercase tag names and the values must be strings.
+#.  Save everything: ``retval = f.save()``.
+#.  If some tags could not be saved because they are not supported by the
+    underlying format, those will be contained in the value returned from
+    ``f.save()``.
  
 The following snippet should show the most relevant features. For a complete
 reference confer the online help via ``help(taglib.File)``.
 
 ::
+
 	$ python
 	Python 3.3.0 (default, Sep 29 2012, 15:50:43) 
 	[GCC 4.7.1 20120721 (prerelease)] on linux
