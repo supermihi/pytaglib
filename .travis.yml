@@ -1,5 +1,7 @@
 language: python
 python:
   - "2.7"
-install: sudo apt-get install cython libtag1-dev
+install:
+  - sudo apt-get install libtag1-dev
+  - pip install Cython
 script: python setup.py test
