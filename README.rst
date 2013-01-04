@@ -40,6 +40,9 @@ releases of most linux flavours nowadays ship taglib-1.8, including:
 - Gentoo Linux (unstable)
 - Fedora 17
 
+The upcoming release 1.9 of taglib is recommended, since it fixes some bugs
+that may affect pytaglib in less common circumstances.
+
 ..  _Cython: http://www.cython.org
   
 Installation
