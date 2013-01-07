@@ -31,18 +31,18 @@ def readme():
 
 
 setup(
-  name='pytaglib',
-  description='TagLib bindings for python 2.x/3.x, written using cython',
-  long_description=readme(),
-  classifiers=CLASSIFIERS,
-  version='0.3.0',
-  license='GPLv3+',
-  author='Michael Helmling',
-  author_email='michaelhelmling@posteo.de',
-  url='http://github.com/supermihi/pytaglib',
-  install_requires=['cython>=0.16'],
-  ext_modules=cythonize("src/taglib.pyx"),
-  entry_points={ 'console_scripts': ['pyprinttags = pyprinttags:script'] },
-  package_dir={'': 'src'},
-  test_suite='tests',
+    name='pytaglib',
+    description='TagLib bindings for python 2.x/3.x, written using cython',
+    long_description=readme(),
+    classifiers=CLASSIFIERS,
+    version='0.3.1',
+    license='GPLv3+',
+    author='Michael Helmling',
+    author_email='michaelhelmling@posteo.de',
+    url='http://github.com/supermihi/pytaglib',
+    install_requires=['cython>=0.16'],
+    ext_modules=cythonize("src/taglib.pyx"),
+    entry_points={ 'console_scripts': ['pyprinttags = pyprinttags:script'] },
+    package_dir={'': 'src'},
+    test_suite='tests'
 )
