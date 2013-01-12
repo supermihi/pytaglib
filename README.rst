@@ -51,13 +51,17 @@ Installation
 As long as pytaglib is not contained in the major distribution's package
 repositories, you have to install it manually by one of the following methods.
 
-The easiest way is to use easy_install::
+The easiest way is to use pip or easy_install::
 
-    sudo easy_install -U pytaglib
+    sudo pip pytaglib
+
+or::
+
+    sudo easy_install pytaglib
 
 On most systems, this will install the python2 version; use something like::
 
-    sudo easy_install3 -U pytaglib
+    sudo easy_install3 pytaglib
 
 to build the package for python3 (the exact command depends on your
 distribution).
@@ -117,6 +121,7 @@ reference confer the online help via ``help(taglib.File)``.
 pyprinttags
 -----------
 
-This package also installs the small script ``pyprinttags``. It takes a file as
-its single command-line parameter and will display all known metadata of that
-file on the terminal.
+This package also installs the small script ``pyprinttags``. It takes one or more files as
+command-line parameters and will display all known metadata of that files on the terminal.
+If unsupported tags (a.k.a. non-textual information) are found, they can optionally be removed
+from the file.

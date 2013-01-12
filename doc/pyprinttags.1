@@ -1,0 +1,43 @@
+.TH pyprinttags 1 "12 January 2013" "version 0.3.2"
+.\" Copyright 2013 Michael Helmling.
+.\" Copying permitted according to the GNU General Public License V3.
+
+
+.SH NAME
+pyprinttags - print tags of audio files to stdout
+
+.SH SYNOPSIS
+.SY pyprinttags
+.OP -b|--batch
+.I
+file1 [file2] ... 
+.SY
+
+.SH DESCRIPTION
+.B pyprinttags
+is a small script that comes with the 
+.BR pytaglib " python tag reading library. It prints all tags found in the audio files given as command line
+parameters.
+.PP
+If a file contains metadata that can not be textually represented, this is indicated in the output as well, and the
+program gives asks whether to remove those pieces from the file. That behavior can be disabled by the
+.B -b
+option.
+
+.SH OPTIONS
+.TP
+.B -b, --batch
+disable user interaction in case of unsupported metadata
+
+.SH AUTHOR
+.MT michaelhelmling@posteo.de
+Michael Helmling 
+.ME
+.SH AVAILABILITY
+The newest version of
+.B pytaglib
+containing 
+.B pyprinttags
+can be always obtained from the package's home page
+.UR http://github.com/supermihi/pytaglib
+.UE

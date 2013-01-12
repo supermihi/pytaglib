@@ -35,7 +35,7 @@ setup(
     description='TagLib bindings for python 2.x/3.x, written using cython',
     long_description=readme(),
     classifiers=CLASSIFIERS,
-    version='0.3.1',
+    version='0.3.2',
     license='GPLv3+',
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',

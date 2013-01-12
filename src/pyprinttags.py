@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 2011-2012 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2013 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -14,28 +14,37 @@ of certain tags they know.
 """
 from __future__ import unicode_literals, print_function
 
-import sys
+import argparse, os.path, sys
+
 import taglib
 
 def script():
-    if len(sys.argv) != 2:
-        raise ValueError('need exactly one argument, the path of the file')
-    audioFile = taglib.File(sys.argv[1])
-    tags = audioFile.tags
-    if len(tags) > 0:
-        maxKeyLen = max(len(key) for key in tags.keys())
-        for key, values in tags.items():
-            for value in values:
-                print(('{0:' + str(maxKeyLen) + '} = {1}').format(key, value))
-    if len(audioFile.unsupported) > 0:
-        print('Unsupported tag elements: ' + "; ".join(audioFile.unsupported))
-        if sys.version_info.major == 2:
-            inputFunction = raw_input
-        else:
-            inputFunction = input
-        if inputFunction("remove unsupported properties? [yN] ") in "yY":
-            audioFile.removeUnsupportedProperties(audioFile.unsupported)
-            audioFile.save()
+    """Run the command-line script."""
+    parser = argparse.ArgumentParser(description="Print all textual tags of one or more audio files.")
+    parser.add_argument("-b", "--batch", help="disable user interaction", action="store_true")
+    parser.add_argument("file", nargs="+", help="file(s) to print tags of")
+    args = parser.parse_args()
+    for filename in args.file:
+        line = "TAGS OF '{0}'".format(os.path.basename(filename))
+        print("*" * len(line))
+        print(line)
+        print("*" * len(line))
+        audioFile = taglib.File(filename)
+        tags = audioFile.tags
+        if len(tags) > 0:
+            maxKeyLen = max(len(key) for key in tags.keys())
+            for key, values in tags.items():
+                for value in values:
+                    print(('{0:' + str(maxKeyLen) + '} = {1}').format(key, value))
+        if len(audioFile.unsupported) > 0:
+            print('Unsupported tag elements: ' + "; ".join(audioFile.unsupported))
+            if sys.version_info.major == 2:
+                inputFunction = raw_input
+            else:
+                inputFunction = input
+            if not args.batch and inputFunction("remove unsupported properties? [yN] ") in "yY":
+                audioFile.removeUnsupportedProperties(audioFile.unsupported)
+                audioFile.save()
 
 if __name__ == '__main__':
     script()
