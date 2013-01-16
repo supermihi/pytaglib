@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 0.3.4 (2013/01/16)
+---------------------------
+- move cython from install_requires to setup_requires
+
 pytaglib 0.3.3 (2013/01/16)
 ---------------------------
 - ensure sources are included in sdist packages 
