@@ -1,6 +1,13 @@
 Changelog
 =========
 
+pytaglib 0.3.3 (2013/01/16)
+---------------------------
+- ensure sources are included in sdist packages 
+- fix call to pyprinttags
+- fix setup.py handling for non-utf8-locales
+- rename pyprinttags to pyprinttags3 for python3 installs
+
 pytaglib 0.3.2 (2013/01/12)
 ---------------------------
 - add "batch mode" to pyprinttags and allow several files at once
