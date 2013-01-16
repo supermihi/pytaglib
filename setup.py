@@ -44,7 +44,7 @@ setup(
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',
     url='http://github.com/supermihi/pytaglib',
-    install_requires=['cython>=0.16'],
+    setup_requires=['cython>=0.16'],
     ext_modules=cythonize("src/taglib.pyx"),
     package_dir={'': 'src'},
     py_modules=['pyprinttags'],
