@@ -15,34 +15,34 @@ class ID3v2Test(unittest.TestCase):
         """See https://bugs.kde.org/show_bug.cgi?id=298183"""
         with copyTestFile('rare_frames.mp3') as f:
             tfile = taglib.File(f, True)
-            self.assertIn('GENRE', tfile.tags)
+            self.assert_('GENRE' in tfile.tags)
             self.assertEqual(len(tfile.tags['GENRE']), 1)
             del tfile.tags['GENRE']
             tfile.save()
             del tfile
             tfile = taglib.File(f)
-            self.assertNotIn('GENRE', tfile.tags)
+            self.assert_('GENRE' not in tfile.tags)
             
     def test_removeFrame2(self):
         """See https://bugs.kde.org/show_bug.cgi?id=298183"""
         with copyTestFile('id3v22-tda.mp3') as f:
             tfile = taglib.File(f, True)
-            self.assertIn('TITLE', tfile.tags)
+            self.assert_('TITLE' in tfile.tags)
             self.assertEqual(len(tfile.tags['TITLE']), 1)
             del tfile.tags['TITLE']
             tfile.save()
             del tfile
             tfile = taglib.File(f)
-            self.assertNotIn('TITLE', tfile.tags)
+            self.assert_('TITLE' not in tfile.tags)
 
     def test_id3v1Tov2(self):
         with copyTestFile('onlyv1.mp3') as f:
             tfile = taglib.File(f, True)
-            self.assertIn('ARTIST', tfile.tags)
+            self.assert_('ARTIST' in tfile.tags)
             self.assertEqual(tfile.tags['ARTIST'][0], 'Bla')
             tfile.tags["NONID3V1"] = ["omg", "wtf"]
             ret = tfile.save()
             self.assertEqual(len(ret), 0)
             
             tfile = taglib.File(f)
-            self.assertIn('NONID3V1', tfile.tags)
+            self.assert_('NONID3V1' in tfile.tags)

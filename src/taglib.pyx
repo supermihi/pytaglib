@@ -17,7 +17,7 @@ from cython.operator cimport dereference as deref, preincrement as inc
 
 cimport ctypes, mpeg
 
-version = "0.3.4"
+version = "0.3.5"
 
 cdef object tounicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
@@ -80,7 +80,7 @@ cdef class File:
    
  
     def __cinit__(self, path, applyID3v2Hack=False):
-        if sys.version_info.major == 3 or isinstance(path, unicode):
+        if sys.version_info[0] >= 3 or isinstance(path, unicode):
             path_b = path.encode('UTF-8')
         else:
             path_b = path

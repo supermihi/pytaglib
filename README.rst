@@ -4,7 +4,7 @@ pytaglib – TagLib bindings for Python 2.x/3.x
 Overview
 --------
 
-pytaglib is a package of Python_ (2.x/3.x) bindings for TagLib_. To my
+pytaglib is a package of Python_ (2.6+/3.1+) bindings for TagLib_. To my
 knowledge this so far is the only full-featured audio metadata library that
 supports python3.x.
 

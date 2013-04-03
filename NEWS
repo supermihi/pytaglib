@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 0.3.5 (2013/04/03)
+---------------------------
+- add support for Python 2.6 by replacing some methods added in 2.7
+
 pytaglib 0.3.4 (2013/01/16)
 ---------------------------
 - move cython from install_requires to setup_requires

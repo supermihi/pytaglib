@@ -27,19 +27,19 @@ CLASSIFIERS = [
 
 def readme():
     readmeFile = os.path.join(os.path.dirname(__file__), 'README.rst')
-    if sys.version_info.major >= 3:
+    if sys.version_info[0] >= 3:
         return open(readmeFile, "rt", encoding='utf-8').read()
     else:
         return open(readmeFile, "rt").read()
 
-script_name = 'pyprinttags3' if sys.version_info.major >= 3 else 'pyprinttags'
+script_name = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
 
 setup(
     name='pytaglib',
-    description='Python (2.7+/3.1+) bindings for the TagLib audio metadata library',
+    description='Python (2.6+/3.1+) bindings for the TagLib audio metadata library',
     long_description=readme(),
     classifiers=CLASSIFIERS,
-    version='0.3.4',
+    version='0.3.5',
     license='GPLv3+',
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',
@@ -48,6 +48,6 @@ setup(
     ext_modules=cythonize("src/taglib.pyx"),
     package_dir={'': 'src'},
     py_modules=['pyprinttags'],
-    entry_points={ 'console_scripts': ['{} = pyprinttags:script'.format(script_name)] },
+    entry_points={ 'console_scripts': ['{0} = pyprinttags:script'.format(script_name)] },
     test_suite='tests'
 )
