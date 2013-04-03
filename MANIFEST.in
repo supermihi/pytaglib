@@ -2,3 +2,4 @@ include COPYING
 include doc/pyprinttags.1
 include src/*.pxd
 include src/*.pyx
+recursive-include src/tests *.py *.flac *.mp3
