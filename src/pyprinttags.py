@@ -38,7 +38,7 @@ def script():
                     print(('{0:' + str(maxKeyLen) + '} = {1}').format(key, value))
         if len(audioFile.unsupported) > 0:
             print('Unsupported tag elements: ' + "; ".join(audioFile.unsupported))
-            if sys.version_info.major == 2:
+            if sys.version_info[0] == 2:
                 inputFunction = raw_input
             else:
                 inputFunction = input
