@@ -1,6 +1,11 @@
 Changelog
 =========
 
+pytaglib 0.3.6 (2013/08/13)
+---------------------------
+- fix Python 2.6 support in pyprinttags
+- update copyright dates
+
 pytaglib 0.3.5 (2013/04/03)
 ---------------------------
 - add support for Python 2.6 by replacing some methods added in 2.7
