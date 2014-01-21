@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2013 Michael Helmling
+# Copyright 2011-2014 Michael Helmling
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -12,7 +12,10 @@ from . import copyTestFile
 class ID3v2Test(unittest.TestCase):
     
     def test_removeFrame1(self):
-        """See https://bugs.kde.org/show_bug.cgi?id=298183"""
+        """See https://bugs.kde.org/show_bug.cgi?id=298183
+        
+        Should be fixed in recent taglib versions.
+        """
         with copyTestFile('rare_frames.mp3') as f:
             tfile = taglib.File(f, True)
             self.assert_('GENRE' in tfile.tags)
@@ -24,8 +27,8 @@ class ID3v2Test(unittest.TestCase):
             self.assert_('GENRE' not in tfile.tags)
             
     def test_removeFrame2(self):
-        """See https://bugs.kde.org/show_bug.cgi?id=298183"""
-        with copyTestFile('id3v22-tda.mp3') as f:
+        """See https://bugs.kde.org/show_bug.cgi?id=298183."""
+        with copyTestFile('r2.mp3') as f:
             tfile = taglib.File(f, True)
             self.assert_('TITLE' in tfile.tags)
             self.assertEqual(len(tfile.tags['TITLE']), 1)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 2011-2013 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2014 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -39,7 +39,7 @@ setup(
     description='Python (2.6+/3.1+) bindings for the TagLib audio metadata library',
     long_description=readme(),
     classifiers=CLASSIFIERS,
-    version='0.3.6',
+    version='0.3.7',
     license='GPLv3+',
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',

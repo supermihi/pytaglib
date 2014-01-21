@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2013 Michael Helmling
+# Copyright 2011-2014 Michael Helmling
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
 #
+
 from __future__ import absolute_import, unicode_literals
 import unittest, taglib
 from . import copyTestFile
 
 class FLACUnicodeTest(unittest.TestCase):
     """A test for unicode tags in FLAC"""
+    
     def test_unicode_value(self):
         with copyTestFile('testöü.flac') as copy_file:
             tfile = taglib.File(copy_file)
