@@ -6,7 +6,7 @@ Overview
 
 pytaglib is a package of Python_ (2.6+/3.1+) bindings for TagLib_. To my
 knowledge this so far is the only full-featured audio metadata library that
-supports python3.x.
+supports Python 3.x.
 
 Also, the package gives you complete freedom over the tag names – you are
 not limited to common tags like ``ARTIST``, ``ALBUM`` etc.; instead you may use
@@ -22,22 +22,22 @@ Requirements
 ------------
 
 To compile the bindings you need need the Cython_ compiler for your version
-of python. Note that some distributions do not yet ship Cython compiled for
-python3, but you can easily get it by typing:: 
+of Python. Note that some distributions do not yet ship Cython compiled for
+Python 3, but you can easily get it by typing:: 
 
 	sudo easy_install3 cython
 
 into a console.
 
-pytaglib uses TagLib_ features that have been added only in version 1.8-BETA,
+Pytaglib uses TagLib_ features that have been added only in version 1.8-BETA,
 so you need at least that version along with development headers. The recent
 releases of most linux flavours nowadays ship taglib-1.8, including:
 
 - Ubuntu 12.10
-- Debian "experimental" branch
+- Debian jessie (currently testing)
 - Linux Mint 14
-- Up-To-Date Arch Linux
-- Gentoo Linux (unstable)
+- Up-to-date Arch Linux
+- Up-to-date Gentoo Linux
 - Fedora 17
 
 The use of taglib >= 1.9 is recommended, since that release fixes some bugs
@@ -48,8 +48,10 @@ that may affect pytaglib in less common circumstances.
 Installation
 ------------
 
-As long as pytaglib is not contained in the major distribution's package
-repositories, you have to install it manually by one of the following methods.
+Debian sid and Ubuntu trusty have binary packages for the python3 version, called python3-taglib.
+For Arch users, there is a [package](https://aur.archlinux.org/packages/python-pytaglib/) in the user repository (AUR).
+
+If your distribution does not ship pytaglib, it can easily be installed by one of the following methods.
 
 The easiest way is to use pip or easy_install::
 
@@ -59,12 +61,13 @@ or::
 
     sudo easy_install pytaglib
 
-On most systems, this will install the python2 version; use something like::
+On systems which use Python 2 by default, this will compile and instal the Python 2 version. Use something like::
 
     sudo easy_install3 pytaglib
 
-to build the package for python3 (the exact command depends on your
-distribution).
+to build the package for Python 3 (the exact command depends on your
+distribution). Both commands can be run with the ``--user`` option (and without ``sudo``) which will
+install everything into your home directory.
 
 Alternatively, you can download the source tarball and compile manually:
 
@@ -74,7 +77,8 @@ Alternatively, you can download the source tarball and compile manually:
 	python3 setup.py test  # optional
 	sudo python3 setup.py install
 
-Replace ``3`` by whatever Python version you use.
+Replace ``python3`` by the interpreter executable of the desired Python version.
+
 
 Basic Usage
 -----------
