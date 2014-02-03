@@ -4,7 +4,7 @@ pytaglib – TagLib bindings for Python 2.x/3.x
 Overview
 --------
 
-pytaglib is a package of Python_ (2.6+/3.1+) bindings for TagLib_. To my
+pytaglib is a package of [Python] (2.6+/3.1+) bindings for [Taglib]. To my
 knowledge this so far is the only full-featured audio metadata library that
 supports Python 3.x.
 
@@ -14,14 +14,14 @@ any string as key as long as the underlying metadata format supports it (most
 of them do, including mp3, ogg, and FLAC). Moreover, you can even use multiple
 values of the same tag, to e.g. store two artists, several genres, and so on.
  
-.. _Python: http://www.python.org
-.. _Taglib:  http://taglib.github.com
+[Python]: http://www.python.org
+[Taglib]: http://taglib.github.com
 
 
 Requirements
 ------------
 
-To compile the bindings you need need the Cython_ compiler for your version
+To compile the bindings you need need the [Cython] compiler for your version
 of Python. Note that some distributions do not yet ship Cython compiled for
 Python 3, but you can easily get it by typing:: 
 
@@ -29,7 +29,7 @@ Python 3, but you can easily get it by typing::
 
 into a console.
 
-Pytaglib uses TagLib_ features that have been added only in version 1.8-BETA,
+Pytaglib uses [Taglib] features that have been added only in version 1.8-BETA,
 so you need at least that version along with development headers. The recent
 releases of most linux flavours nowadays ship taglib-1.8, including:
 
@@ -43,8 +43,8 @@ releases of most linux flavours nowadays ship taglib-1.8, including:
 The use of taglib >= 1.9 is recommended, since that release fixes some bugs
 that may affect pytaglib in less common circumstances.
 
-..  _Cython: http://www.cython.org
-  
+[Cython]: http://www.cython.org
+ 
 Installation
 ------------
 
