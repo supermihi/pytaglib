@@ -1,7 +1,9 @@
-src/taglib.cpp
 build
+dist
+*.egg-info
 .settings
 .project
 .pydevproject
+.idea
 *.pyc
 *.so

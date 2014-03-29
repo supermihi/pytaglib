@@ -13,11 +13,12 @@ import sys
 
 cimport cython
 from libcpp.string cimport string
+from libcpp.utility cimport pair
 from cython.operator cimport dereference as deref, preincrement as inc
 
 cimport ctypes, mpeg
 
-version = "0.3.7"
+version = '0.4'
 
 cdef object tounicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
@@ -31,20 +32,15 @@ cdef object todict(ctypes.PropertyMap map):
     """Convert a TagLib::PropertyMap to a dict mapping unicode to list of unicode."""
     cdef:
         ctypes.StringList values
-        ctypes.listiter lit
-        ctypes.String s
-        ctypes.mapiter it = map.begin()
+        pair[ctypes.String,ctypes.StringList] mapIter
+
     dct = dict()
-    while it != map.end():
-        s = deref(it).first # for some reason, <ctypes.pair[...]>deref(it) does not work
-        tag = tounicode(s)
+    for mapIter in map:
+        tag = tounicode(mapIter.first)
         dct[tag] = []
-        values = deref(it).second
-        lit = values.begin()
-        while lit != values.end():
-            dct[tag].append(tounicode(<ctypes.String>deref(lit)))
-            inc(lit)
-        inc(it)
+        values = mapIter.second
+        for value in values:
+            dct[tag].append(tounicode(value))
     return dct
 
 
@@ -117,15 +113,12 @@ cdef class File:
         
         cdef:
             ctypes.PropertyMap _tags = self._f.properties()
-            ctypes.listiter lit
             ctypes.String s
+            ctypes.StringList unsupported
         self.tags = todict(_tags)
-
-        lit = _tags.unsupportedData().begin()
-        while lit != _tags.unsupportedData().end():
-            s = deref(lit)
+        unsupported = _tags.unsupportedData()
+        for s in unsupported:
             self.unsupported.append(tounicode(s))
-            inc(lit)
    
  
     def save(self):
@@ -146,12 +139,12 @@ cdef class File:
         if self.isMPEG:
             (<mpeg.File*>self._f).save(2, False)
         for key, values in self.tags.items():
-            x = key.upper().encode('utf-8')
+            x = key.upper().encode('UTF-8')
             s1 = ctypes.String(x, ctypes.UTF8)
             if isinstance(values, str):
                 values = [ values ]
             for value in values:
-                x = value.encode('utf-8')
+                x = value.encode('UTF-8')
                 s2 = ctypes.String(x, ctypes.UTF8)
                 _tagdict[s1].append(s2)
         
@@ -170,7 +163,7 @@ cdef class File:
         cdef ctypes.String s
         cdef ctypes.Type typ = ctypes.UTF8
         for value in properties:
-            x = value.encode('utf-8')
+            x = value.encode('UTF-8')
             s = ctypes.String(x, typ)
             _props.append(s)
         self._f.removeUnsupportedProperties(_props)

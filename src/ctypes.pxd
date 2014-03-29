@@ -8,7 +8,6 @@
 """This file contains the external C/C++ definitions used by taglib.pyx."""
 
 from libcpp.list cimport list
-from libcpp.utility cimport pair
 from libcpp.string cimport string
 from libcpp.map cimport map
 
@@ -68,7 +67,3 @@ cdef extern from "taglib/tfile.h" namespace "TagLib":
 
 cdef extern from "taglib/fileref.h" namespace "TagLib::FileRef":
     cdef File* create(char* fn) except +
-    
-
-ctypedef map[String,StringList].iterator mapiter
-ctypedef list[String].iterator listiter # no idea why StringList.Iterator does not work here

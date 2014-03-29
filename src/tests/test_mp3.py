@@ -14,7 +14,8 @@ class ID3v2Test(unittest.TestCase):
     def test_removeFrame1(self):
         """See https://bugs.kde.org/show_bug.cgi?id=298183
         
-        Should be fixed in recent taglib versions.
+        Uses the applyID3v2Hack to work on older taglib releases. With taglib>=1.9, should
+        also work without the hack.
         """
         with copyTestFile('rare_frames.mp3') as f:
             tfile = taglib.File(f, True)

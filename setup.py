@@ -10,7 +10,7 @@
  
 import os.path, sys
 from setuptools import setup
-from Cython.Build import cythonize
+from distutils.extension import Extension
 
 CLASSIFIERS = [
     'Development Status :: 4 - Beta',
@@ -32,22 +32,28 @@ def readme():
     else:
         return open(readmeFile, "rt").read()
 
-script_name = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
+scriptName = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
+
+if '--cython' in sys.argv:
+    from Cython.Build import cythonize
+    extensions = cythonize(os.path.join('src', 'taglib.pyx'))
+    sys.argv.remove('--cython')
+else:
+    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')])]
 
 setup(
     name='pytaglib',
     description='Python (2.6+/3.1+) bindings for the TagLib audio metadata library',
     long_description=readme(),
     classifiers=CLASSIFIERS,
-    version='0.3.7',
+    version='0.4',
     license='GPLv3+',
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',
     url='http://github.com/supermihi/pytaglib',
-    setup_requires=['cython>=0.16'],
-    ext_modules=cythonize("src/taglib.pyx"),
+    ext_modules=extensions,
     package_dir={'': 'src'},
     py_modules=['pyprinttags'],
-    entry_points={ 'console_scripts': ['{0} = pyprinttags:script'.format(script_name)] },
+    entry_points={ 'console_scripts': ['{0} = pyprinttags:script'.format(scriptName)] },
     test_suite='tests'
 )

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 0.4 (2014/03/29)
+-------------------------
+- remove Cython dependency by shipping taglib.cpp
+
 pytaglib 0.3.7 (2014/01/21)
 ---------------------------
 - remove a test file that looked a little non-free
