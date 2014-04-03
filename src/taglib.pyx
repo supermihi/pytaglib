@@ -18,7 +18,7 @@ from cython.operator cimport dereference as deref, preincrement as inc
 
 cimport ctypes, mpeg
 
-version = '0.4'
+version = '0.4.1'
 
 cdef object tounicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""

@@ -39,14 +39,14 @@ if '--cython' in sys.argv:
     extensions = cythonize(os.path.join('src', 'taglib.pyx'))
     sys.argv.remove('--cython')
 else:
-    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')])]
+    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], libraries=['tag'])]
 
 setup(
     name='pytaglib',
     description='Python (2.6+/3.1+) bindings for the TagLib audio metadata library',
     long_description=readme(),
     classifiers=CLASSIFIERS,
-    version='0.4',
+    version='0.4.1',
     license='GPLv3+',
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',
