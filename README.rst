@@ -26,7 +26,7 @@ so you need at least that version along with development headers. The recent
 releases of most linux flavours nowadays ship taglib-1.8, including:
 
 - Ubuntu 12.10
-- Debian jessie (currently testing)
+- Debian jessie (currently testing) or wheezy-packports
 - Linux Mint 14
 - Up-to-date Arch Linux
 - Up-to-date Gentoo Linux
