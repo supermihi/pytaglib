@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 Michael Helmling
+# Copyright 2011-2015 Michael Helmling
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -10,14 +10,15 @@ import unittest, os, stat
 import taglib
 from . import copyTestFile
 
+
 class TestProblems(unittest.TestCase):
     """Test for various "problem" cases: non-existent files, readonly files, ... more to come"""
     
     def test_fileNotExist(self):
         """Ensure OSError is raised if a file does not exist, or is a directory."""
-        self.assertRaises(OSError, taglib.File, "/this/file/almost/certainly/does/not/exist.flac")
-        self.assertRaises(OSError, taglib.File, "/spæciäl/chàracterß.mp3")
-        self.assertRaises(OSError, taglib.File, "/usr")
+        self.assertRaises(OSError, taglib.File, '/this/file/almost/certainly/does/not/exist.flac')
+        self.assertRaises(OSError, taglib.File, '/spæciäl/chàracterß.mp3')
+        self.assertRaises(OSError, taglib.File, '/usr')
         # self.assertRaises(OSError, taglib.File, "/nonexistent.ogg") # segfaults due to taglib bug
         
     def test_readOnly(self):

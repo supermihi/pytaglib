@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2015 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -9,35 +9,33 @@
 
 from libcpp.list cimport list
 from libcpp.string cimport string
+from libc.string cimport const_char
 from libcpp.map cimport map
 
-cdef extern from *:
-    ctypedef char const_char "const char"
-	
 
-cdef extern from "taglib/tstring.h" namespace "TagLib::String":
-    cdef enum Type:
+cdef extern from 'taglib/tstring.h' namespace 'TagLib::String':
+    cdef extern enum Type:
         # this is a bit ugly since it relies on the order in TagLib never being
         # changed, but it seems to be the only way
         Latin1, UTF16, UTF16BE, UTF8, UTF16LE
 
 
-cdef extern from "taglib/tstring.h" namespace "TagLib":
+cdef extern from 'taglib/tstring.h' namespace 'TagLib':
     cdef cppclass String:
         String(char*, Type)
         String()
-        string to8Bit(bool)
-        const_char* toCString(bool)
+        string to8Bit(bint)
+        const_char* toCString(bint)
 
 
-cdef extern from "taglib/tstringlist.h" namespace "TagLib":
+cdef extern from 'taglib/tstringlist.h' namespace 'TagLib':
     cdef cppclass StringList:
         list[String].iterator begin()
         list[String].iterator end()
         void append(String&)
 
 
-cdef extern from "taglib/tpropertymap.h" namespace "TagLib":
+cdef extern from 'taglib/tpropertymap.h' namespace 'TagLib':
     cdef cppclass PropertyMap:
         map[String,StringList].iterator begin()
         map[String,StringList].iterator end()
@@ -47,7 +45,7 @@ cdef extern from "taglib/tpropertymap.h" namespace "TagLib":
         void clear()
 
     
-cdef extern from "taglib/audioproperties.h" namespace "TagLib":
+cdef extern from 'taglib/audioproperties.h' namespace 'TagLib':
     cdef cppclass AudioProperties:
         int length()
         int bitrate()
@@ -55,7 +53,7 @@ cdef extern from "taglib/audioproperties.h" namespace "TagLib":
         int channels()
 
 
-cdef extern from "taglib/tfile.h" namespace "TagLib":
+cdef extern from 'taglib/tfile.h' namespace 'TagLib':
     cdef cppclass File:
         AudioProperties *audioProperties()
         bint save() except +
@@ -65,5 +63,11 @@ cdef extern from "taglib/tfile.h" namespace "TagLib":
         PropertyMap setProperties(PropertyMap&)
         void removeUnsupportedProperties(StringList&)
 
-cdef extern from "taglib/fileref.h" namespace "TagLib::FileRef":
+
+cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
     cdef File* create(char* fn) except +
+
+
+cdef extern from 'taglib/taglib.h':
+    int TAGLIB_MAJOR_VERSION
+    int TAGLIB_MINOR_VERSION

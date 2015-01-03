@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2015 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -28,9 +28,9 @@ CLASSIFIERS = [
 def readme():
     readmeFile = os.path.join(os.path.dirname(__file__), 'README.rst')
     if sys.version_info[0] >= 3:
-        return open(readmeFile, "rt", encoding='utf-8').read()
+        return open(readmeFile, 'rt', encoding='utf-8').read()
     else:
-        return open(readmeFile, "rt").read()
+        return open(readmeFile, 'rt').read()
 
 scriptName = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
 
@@ -46,7 +46,7 @@ setup(
     description='Python (2.6+/3.1+) bindings for the TagLib audio metadata library',
     long_description=readme(),
     classifiers=CLASSIFIERS,
-    version='0.4.1',
+    version='1.0.0',
     license='GPLv3+',
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',

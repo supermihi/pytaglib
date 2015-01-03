@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 Michael Helmling
+# Copyright 2011-2015 Michael Helmling
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -8,6 +8,7 @@
 from __future__ import unicode_literals
 import unittest, taglib
 from . import copyTestFile
+
 
 class ID3v2Test(unittest.TestCase):
     
@@ -44,7 +45,7 @@ class ID3v2Test(unittest.TestCase):
             tfile = taglib.File(f, True)
             self.assert_('ARTIST' in tfile.tags)
             self.assertEqual(tfile.tags['ARTIST'][0], 'Bla')
-            tfile.tags["NONID3V1"] = ["omg", "wtf"]
+            tfile.tags['NONID3V1'] = ['omg', 'wtf']
             ret = tfile.save()
             self.assertEqual(len(ret), 0)
             

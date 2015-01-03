@@ -1,6 +1,16 @@
 Changelog
 =========
 
+pytaglib 1.0 (2015/01/03)
+-------------------------
+- as the library has been used for several years now without any known
+  bugs, I declare it as stable.
+- cleaned up source. Especially simplified several statements due to improvements
+  in recent Cython versions.
+- The workaround for MPEG files with taglib <= 1.8 is now forced disabled if taglib version >= 1.9
+  is detected.
+- update copyright dates
+
 pytaglib 0.4 (2014/03/29)
 -------------------------
 - remove Cython dependency by shipping taglib.cpp

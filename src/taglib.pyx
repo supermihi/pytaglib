@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
 # distutils: libraries = [tag, stdc++]
-# Copyright 2011-2014 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2015 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -12,20 +12,15 @@ from __future__ import print_function, unicode_literals
 import sys
 
 cimport cython
-from libcpp.string cimport string
 from libcpp.utility cimport pair
-from cython.operator cimport dereference as deref, preincrement as inc
 
 cimport ctypes, mpeg
 
-version = '0.4.1'
+version = '1.0.0'
 
 cdef object tounicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
-    
-    cdef string cppstr = s.to8Bit(True)
-    cdef bytes bstr = cppstr.c_str() # avoids compilation error due to "const" violation
-    return bstr.decode('UTF-8', 'replace')
+    return s.to8Bit(True).decode('UTF-8', 'replace')
 
 
 cdef object todict(ctypes.PropertyMap map):
@@ -73,8 +68,7 @@ cdef class File:
         public object path
         public object unsupported
         bint isMPEG
-   
- 
+
     def __cinit__(self, path, applyID3v2Hack=False):
         if sys.version_info[0] >= 3 or isinstance(path, unicode):
             path_b = path.encode('UTF-8')
@@ -83,13 +77,11 @@ cdef class File:
         self._f = ctypes.create(path_b)
         if not self._f or not self._f.isValid():
             raise OSError('Could not read file "{0}"'.format(path))
-        
-        if applyID3v2Hack and len(path_b) >= 4 and path_b[-4:].lower() == b".mp3":
-            print('applying MPEG hack')
+        self.isMPEG = False
+        if ctypes.TAGLIB_MAJOR_VERSION <= 1 and ctypes.TAGLIB_MINOR_VERSION <= 8 \
+                and applyID3v2Hack and len(path_b) >= 4 and path_b[-4:].lower() == b'.mp3':
+            print('applying MPEG hack on {}'.format(path))
             self.isMPEG = True
-        else:
-            self.isMPEG = False
-    
 
     def __init__(self, path, applyID3v2Hack=False):
         """Create a new File for the given path and read metadata.
@@ -101,8 +93,6 @@ cdef class File:
         self.unsupported = list()
         self.path = path
         self._read()
-        
-    
 
     cdef _read(self):
         """Convert the PropertyMap of the wrapped File* object into a python dict.
@@ -119,8 +109,7 @@ cdef class File:
         unsupported = _tags.unsupportedData()
         for s in unsupported:
             self.unsupported.append(tounicode(s))
-   
- 
+
     def save(self):
         """Store the tags currently hold in the *tags* attribute into the file.
         
@@ -134,39 +123,34 @@ cdef class File:
         if self.readOnly:
             raise OSError('Unable to save tags: file "{0}" is read-only'.format(self.path))
         cdef:
-            ctypes.PropertyMap _tagdict, _remaining
-            ctypes.String s1, s2
+            ctypes.PropertyMap cTagdict, cRemaining
+            ctypes.String cKey, cValue
         if self.isMPEG:
             (<mpeg.File*>self._f).save(2, False)
         for key, values in self.tags.items():
-            x = key.upper().encode('UTF-8')
-            s1 = ctypes.String(x, ctypes.UTF8)
+            cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)
             if isinstance(values, str):
+                # the user might have accidentally used a single tag value instead a length-1 list
                 values = [ values ]
             for value in values:
-                x = value.encode('UTF-8')
-                s2 = ctypes.String(x, ctypes.UTF8)
-                _tagdict[s1].append(s2)
+                cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)
+                cTagdict[cKey].append(cValue)
         
-        _remaining = self._f.setProperties(_tagdict)
+        cRemaining = self._f.setProperties(cTagdict)
         if self.isMPEG:
             success = (<mpeg.File*>self._f).save(2, True)
         else:
             success = self._f.save()
         if not success:
-            raise OSError("Unable to save tags: Unknown OS error")
-        return todict(_remaining)
+            raise OSError('Unable to save tags: Unknown OS error')
+        return todict(cRemaining)
     
     def removeUnsupportedProperties(self, properties):
         """This is a direct binding for the corresponding TagLib method."""
-        cdef ctypes.StringList _props
-        cdef ctypes.String s
-        cdef ctypes.Type typ = ctypes.UTF8
+        cdef ctypes.StringList cProps
         for value in properties:
-            x = value.encode('UTF-8')
-            s = ctypes.String(x, typ)
-            _props.append(s)
-        self._f.removeUnsupportedProperties(_props)
+            cProps.append(ctypes.String(value.encode('UTF-8'), ctypes.UTF8))
+        self._f.removeUnsupportedProperties(cProps)
         
     def __dealloc__(self):
         del self._f       
