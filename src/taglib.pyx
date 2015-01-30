@@ -9,8 +9,6 @@
 
 from __future__ import print_function, unicode_literals
 
-import sys
-
 cimport cython
 from libcpp.utility cimport pair
 
@@ -70,7 +68,7 @@ cdef class File:
         bint isMPEG
 
     def __cinit__(self, path, applyID3v2Hack=False):
-        if sys.version_info[0] >= 3 or isinstance(path, unicode):
+        if isinstance(path, unicode):
             path_b = path.encode('UTF-8')
         else:
             path_b = path
@@ -128,12 +126,18 @@ cdef class File:
         if self.isMPEG:
             (<mpeg.File*>self._f).save(2, False)
         for key, values in self.tags.items():
-            cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)
-            if isinstance(values, str):
-                # the user might have accidentally used a single tag value instead a length-1 list
+            if isinstance(key, bytes):
+                cKey = ctypes.String(key.upper(), ctypes.UTF8)
+            else:
+                cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)
+            if isinstance(values, unicode) or isinstance(values, bytes):
+                # the user has accidentally used a single tag value instead a length-1 list
                 values = [ values ]
             for value in values:
-                cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)
+                if isinstance(value, bytes):
+                    cValue = ctypes.String(value.upper(), ctypes.UTF8)
+                else:
+                    cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)
                 cTagdict[cKey].append(cValue)
         
         cRemaining = self._f.setProperties(cTagdict)

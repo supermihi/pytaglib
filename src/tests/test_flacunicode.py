@@ -30,7 +30,7 @@ class FLACUnicodeTest(unittest.TestCase):
             tfile = taglib.File(copy_file)
             tfile.tags['HÄÜ'] = ['omg']
             remaining = tfile.save()
-            self.assert_('HÄÜ' in remaining)        
+            self.assertTrue('HÄÜ' in remaining)
         
 if __name__ == '__main__':
     unittest.main()

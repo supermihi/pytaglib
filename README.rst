@@ -70,6 +70,11 @@ methods.
 
     Replace ``python3`` by the interpreter executable of the desired Python version.
 
+The compiler must be able to find headers and dynamic library of TagLib_. Usually, they should be
+installed at standard places. If not, you can manually specify include and lib directories, e.g.:
+
+    python setup.py build_ext --include-dirs /usr/local/include --library-dirs /usr/local/lib
+
 The ``taglib`` Python extension is built from the file ``taglib.cpp`` which is, in turn,
 auto-generated with `Cython <www.cython.org>`_ from ``taglib.pyx``. To re-cythonize this file
 instead of using the shipped ``taglib.cpp``, invoke ``setup.py`` with the ``--cython`` option.
