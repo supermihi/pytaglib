@@ -9,23 +9,19 @@
 
 from libcpp.list cimport list
 from libcpp.string cimport string
-from libc.string cimport const_char
 from libcpp.map cimport map
 
 
 cdef extern from 'taglib/tstring.h' namespace 'TagLib::String':
     cdef extern enum Type:
-        # this is a bit ugly since it relies on the order in TagLib never being
-        # changed, but it seems to be the only way
         Latin1, UTF16, UTF16BE, UTF8, UTF16LE
 
 
 cdef extern from 'taglib/tstring.h' namespace 'TagLib':
     cdef cppclass String:
-        String(char*, Type)
         String()
+        String(char*, Type)
         string to8Bit(bint)
-        const_char* toCString(bint)
 
 
 cdef extern from 'taglib/tstringlist.h' namespace 'TagLib':
@@ -42,7 +38,6 @@ cdef extern from 'taglib/tpropertymap.h' namespace 'TagLib':
         StringList& operator[](String&)
         StringList& unsupportedData()
         int size()
-        void clear()
 
     
 cdef extern from 'taglib/audioproperties.h' namespace 'TagLib':

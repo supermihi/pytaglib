@@ -17,7 +17,6 @@ def copyTestFile(name):
     tempdir = tempfile.mkdtemp()
     copy_file = os.path.join(tempdir, name)
     shutil.copy(orig_file, copy_file)
-    print(tempdir)
     try:
         yield copy_file
     finally:

@@ -1,50 +1,46 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
-# distutils: libraries = [tag, stdc++]
+# distutils: libraries = [tag]
+# cython: language_level = 3
 # Copyright 2011-2015 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
 
-from __future__ import print_function, unicode_literals
-
-cimport cython
 from libcpp.utility cimport pair
-
 cimport ctypes, mpeg
 
-version = '1.0.0'
+version = '1.0.1'
 
-cdef object tounicode(ctypes.String s):
+cdef str toUnicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
     return s.to8Bit(True).decode('UTF-8', 'replace')
 
 
-cdef object todict(ctypes.PropertyMap map):
+cdef dict propertyMapToDict(ctypes.PropertyMap map):
     """Convert a TagLib::PropertyMap to a dict mapping unicode to list of unicode."""
     cdef:
         ctypes.StringList values
         pair[ctypes.String,ctypes.StringList] mapIter
-
-    dct = dict()
+        dict dct = {}
+        str tag
     for mapIter in map:
-        tag = tounicode(mapIter.first)
+        tag = toUnicode(mapIter.first)
         dct[tag] = []
         values = mapIter.second
         for value in values:
-            dct[tag].append(tounicode(value))
+            dct[tag].append(toUnicode(value))
     return dct
 
 
-@cython.final
 cdef class File:
     """Wrapper class for an audio file with metadata.
     
     To read tags from an audio file, simply create a *File* object, passing the file's
     path to the constructor:
     
-    f = taglib.File("/path/to/file.ogg")
+    >>> f = taglib.File('/path/to/file.ogg')
     
     The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
     to lists of strings (tag values).
@@ -54,18 +50,18 @@ cdef class File:
     identifiers will be placed into the *unsupported* attribute of the File object. Using the
     method *removeUnsupportedProperties*, some or all of those can be removed.
     
-    Additionally, the readonly attributes "length", "bitrate", "sampleRate", and
-    "channels" are available.
+    Additionally, the readonly attributes *length*, *bitrate*, *sampleRate*, and *channels* are
+    available with their obvious meanings.
     
-    Changes to the *tags* attribute are saved using the *save* method.
+    Changes to the *tags* attribute are stored using the *save* method.
     """
     
     cdef:
         ctypes.File *_f
-        public object tags
-        public object path
-        public object unsupported
-        bint isMPEG
+        public dict tags
+        readonly object path
+        readonly list unsupported
+        bint applyMPEGhack
 
     def __cinit__(self, path, applyID3v2Hack=False):
         if isinstance(path, unicode):
@@ -75,24 +71,19 @@ cdef class File:
         self._f = ctypes.create(path_b)
         if not self._f or not self._f.isValid():
             raise OSError('Could not read file "{0}"'.format(path))
-        self.isMPEG = False
+        self.applyMPEGhack = False
         if ctypes.TAGLIB_MAJOR_VERSION <= 1 and ctypes.TAGLIB_MINOR_VERSION <= 8 \
                 and applyID3v2Hack and len(path_b) >= 4 and path_b[-4:].lower() == b'.mp3':
             print('applying MPEG hack on {}'.format(path))
-            self.isMPEG = True
+            self.applyMPEGhack = True
 
     def __init__(self, path, applyID3v2Hack=False):
-        """Create a new File for the given path and read metadata.
-
-        If the path does not exist or cannot be opened, an OSError will be raised.
-        """
-        
         self.tags = dict()
         self.unsupported = list()
         self.path = path
         self._read()
 
-    cdef _read(self):
+    cdef void _read(self):
         """Convert the PropertyMap of the wrapped File* object into a python dict.
         
         This method is not accessible from Python, and is called only once, immediately after
@@ -103,10 +94,10 @@ cdef class File:
             ctypes.PropertyMap _tags = self._f.properties()
             ctypes.String s
             ctypes.StringList unsupported
-        self.tags = todict(_tags)
+        self.tags = propertyMapToDict(_tags)
         unsupported = _tags.unsupportedData()
         for s in unsupported:
-            self.unsupported.append(tounicode(s))
+            self.unsupported.append(toUnicode(s))
 
     def save(self):
         """Store the tags currently hold in the *tags* attribute into the file.
@@ -123,14 +114,14 @@ cdef class File:
         cdef:
             ctypes.PropertyMap cTagdict, cRemaining
             ctypes.String cKey, cValue
-        if self.isMPEG:
+        if self.applyMPEGhack:
             (<mpeg.File*>self._f).save(2, False)
         for key, values in self.tags.items():
             if isinstance(key, bytes):
                 cKey = ctypes.String(key.upper(), ctypes.UTF8)
             else:
                 cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)
-            if isinstance(values, unicode) or isinstance(values, bytes):
+            if isinstance(values, bytes) or isinstance(values, unicode):
                 # the user has accidentally used a single tag value instead a length-1 list
                 values = [ values ]
             for value in values:
@@ -141,13 +132,13 @@ cdef class File:
                 cTagdict[cKey].append(cValue)
         
         cRemaining = self._f.setProperties(cTagdict)
-        if self.isMPEG:
+        if self.applyMPEGhack:
             success = (<mpeg.File*>self._f).save(2, True)
         else:
             success = self._f.save()
         if not success:
             raise OSError('Unable to save tags: Unknown OS error')
-        return todict(cRemaining)
+        return propertyMapToDict(cRemaining)
     
     def removeUnsupportedProperties(self, properties):
         """This is a direct binding for the corresponding TagLib method."""
@@ -157,7 +148,7 @@ cdef class File:
         self._f.removeUnsupportedProperties(cProps)
         
     def __dealloc__(self):
-        del self._f       
+        del self._f
         
     property length:
         def __get__(self):
