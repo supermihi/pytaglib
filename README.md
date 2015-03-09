@@ -43,7 +43,7 @@ methods.
 
 - The easiest way is to use *pip* or *easy_install*:
 
-        sudo pip pytaglib
+        sudo pip install pytaglib
 
     or
 
