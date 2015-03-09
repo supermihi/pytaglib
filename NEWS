@@ -1,6 +1,12 @@
 Changelog
 =========
 
+pytaglib 1.0.1 (2015/03/09)
+---------------------------
+- cleaned up source code and made it more readable
+- update README to contain more information
+- no functional API changes
+
 pytaglib 1.0 (2015/01/03)
 -------------------------
 - as the library has been used for several years now without any known
