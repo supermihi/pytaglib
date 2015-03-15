@@ -42,7 +42,7 @@ def script():
                 inputFunction = raw_input
             else:
                 inputFunction = input
-            if not args.batch and inputFunction("remove unsupported properties? [yN] ") in "yY":
+            if not args.batch and inputFunction("remove unsupported properties? [yN] ").lower() in ["y", "yes"]:
                 audioFile.removeUnsupportedProperties(audioFile.unsupported)
                 audioFile.save()
 
