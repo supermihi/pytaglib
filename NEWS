@@ -1,6 +1,12 @@
 Changelog
 =========
 
+pytaglib 1.0.2 (2015/03/15)
+---------------------------
+- ensure that pyprinttags removes unsupported properties only when user enters 'y' or 'yes'
+  (thanks to lahwaacz)
+- fix a typo in the readme (thanks to panzl)
+
 pytaglib 1.0.1 (2015/03/09)
 ---------------------------
 - cleaned up source code and made it more readable
