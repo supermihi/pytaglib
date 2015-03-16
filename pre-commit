@@ -1,0 +1,6 @@
+#!/bin/sh
+# use this as git pre-commit hook
+# run tests
+sh testboth.sh
+# create ReST README
+pandoc -s -t rst -f markdown_github -o README.txt README.md

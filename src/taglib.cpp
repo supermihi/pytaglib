@@ -5,9 +5,9 @@
     "distutils": {
         "libraries": [
             "tag"
-        ], 
-        "depends": [], 
-        "language": "c++"
+        ],
+        "language": "c++",
+        "depends": []
     }
 }
 END: Cython Metadata */
@@ -811,7 +811,7 @@ static char __pyx_k_File[] = "File('{}')";
 static char __pyx_k_main[] = "__main__";
 static char __pyx_k_path[] = "path";
 static char __pyx_k_test[] = "__test__";
-static char __pyx_k_1_0_1[] = "1.0.1";
+static char __pyx_k_1_0_3[] = "1.0.3";
 static char __pyx_k_UTF_8[] = "UTF-8";
 static char __pyx_k_items[] = "items";
 static char __pyx_k_lower[] = "lower";
@@ -830,7 +830,7 @@ static char __pyx_k_Could_not_read_file_0[] = "Could not read file \"{0}\"";
 static char __pyx_k_applying_MPEG_hack_on[] = "applying MPEG hack on {}";
 static char __pyx_k_Unable_to_save_tags_Unknown_OS_e[] = "Unable to save tags: Unknown OS error";
 static char __pyx_k_Unable_to_save_tags_file_0_is_re[] = "Unable to save tags: file \"{0}\" is read-only";
-static PyObject *__pyx_kp_u_1_0_1;
+static PyObject *__pyx_kp_u_1_0_3;
 static PyObject *__pyx_kp_u_Could_not_read_file_0;
 static PyObject *__pyx_kp_u_File;
 static PyObject *__pyx_n_s_OSError;
@@ -862,7 +862,7 @@ static PyObject *__pyx_tuple__5;
 static PyObject *__pyx_tuple__6;
 
 /* "taglib.pyx":16
- * version = '1.0.1'
+ * version = '1.0.3'
  * 
  * cdef str toUnicode(ctypes.String s):             # <<<<<<<<<<<<<<
  *     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
@@ -894,7 +894,7 @@ static PyObject *__pyx_f_6taglib_toUnicode(TagLib::String __pyx_v_s) {
   goto __pyx_L0;
 
   /* "taglib.pyx":16
- * version = '1.0.1'
+ * version = '1.0.3'
  * 
  * cdef str toUnicode(ctypes.String s):             # <<<<<<<<<<<<<<
  *     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
@@ -3480,7 +3480,7 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
-  {&__pyx_kp_u_1_0_1, __pyx_k_1_0_1, sizeof(__pyx_k_1_0_1), 0, 1, 0, 0},
+  {&__pyx_kp_u_1_0_3, __pyx_k_1_0_3, sizeof(__pyx_k_1_0_3), 0, 1, 0, 0},
   {&__pyx_kp_u_Could_not_read_file_0, __pyx_k_Could_not_read_file_0, sizeof(__pyx_k_Could_not_read_file_0), 0, 1, 0, 0},
   {&__pyx_kp_u_File, __pyx_k_File, sizeof(__pyx_k_File), 0, 1, 0, 0},
   {&__pyx_n_s_OSError, __pyx_k_OSError, sizeof(__pyx_k_OSError), 0, 0, 1, 1},
@@ -3692,11 +3692,11 @@ PyMODINIT_FUNC PyInit_taglib(void)
   /* "taglib.pyx":14
  * cimport ctypes, mpeg
  * 
- * version = '1.0.1'             # <<<<<<<<<<<<<<
+ * version = '1.0.3'             # <<<<<<<<<<<<<<
  * 
  * cdef str toUnicode(ctypes.String s):
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_version, __pyx_kp_u_1_0_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_version, __pyx_kp_u_1_0_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "taglib.pyx":1
  * # -*- coding: utf-8 -*-             # <<<<<<<<<<<<<<

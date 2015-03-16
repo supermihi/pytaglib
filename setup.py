@@ -26,7 +26,7 @@ CLASSIFIERS = [
 
 
 def readme():
-    readmeFile = os.path.join(os.path.dirname(__file__), 'README.md')
+    readmeFile = os.path.join(os.path.dirname(__file__), 'README.txt')
     if sys.version_info[0] >= 3:
         return open(readmeFile, 'rt', encoding='utf-8').read()
     else:
@@ -46,7 +46,7 @@ setup(
     description='Python (2.6+/3.1+) bindings for the TagLib audio metadata library',
     long_description=readme(),
     classifiers=CLASSIFIERS,
-    version='1.0.2',
+    version='1.0.3',
     license='GPLv3+',
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',

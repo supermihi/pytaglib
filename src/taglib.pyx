@@ -11,7 +11,7 @@
 from libcpp.utility cimport pair
 cimport ctypes, mpeg
 
-version = '1.0.2'
+version = '1.0.3'
 
 cdef str toUnicode(ctypes.String s):
     """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
