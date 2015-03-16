@@ -1,12 +1,9 @@
 # Maintainer: Michael Helmling <michaelhelmling@posteo.de>
 
 pkgbase='python-pytaglib'
-
-# stolen from python-mpd2's PKGBUILD
-pkgname='python-pytaglib'
-true && pkgname=('python-pytaglib' 'python2-pytaglib')
+pkgname=('python-pytaglib' 'python2-pytaglib')
 pkgver=1.0.3
-pkgrel=1
+pkgrel=2
 pkgdesc="Python bindigs for the TagLib audio metadata library"
 arch=('i686' 'x86_64')
 url="http://pypi.python.org/pypi/pytaglib"
