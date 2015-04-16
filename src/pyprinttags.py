@@ -25,6 +25,8 @@ def script():
     parser.add_argument("file", nargs="+", help="file(s) to print tags of")
     args = parser.parse_args()
     for filename in args.file:
+        if isinstance(filename, bytes):
+            filename = filename.decode(sys.getfilesystemencoding())
         line = "TAGS OF '{0}'".format(os.path.basename(filename))
         print("*" * len(line))
         print(line)
