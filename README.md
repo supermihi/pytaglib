@@ -3,8 +3,8 @@
 
 Overview
 --------
-*pytaglib* is a package of [Python](www.python.org) (2.6+/3.1+) bindings for
-[Taglib](taglib.github.io). It provides a full-featured audio metadata ("tag") library supporting
+*pytaglib* is a package of [Python](http://www.python.org) (2.6+/3.1+) bindings for
+[Taglib](http://taglib.github.io). It provides a full-featured audio metadata ("tag") library supporting
 all current versions of Python.
 
 The package gives you complete freedom over the tag names – you are not limited to common tags like
@@ -72,7 +72,7 @@ installed at standard places. If not, you can manually specify include and lib d
     python setup.py build_ext --include-dirs /usr/local/include --library-dirs /usr/local/lib
 
 The `taglib` Python extension is built from the file `taglib.cpp` which is, in turn,
-auto-generated with [Cython](www.cython.org) from `taglib.pyx`. To re-cythonize this file instead of
+auto-generated with [Cython](http://www.cython.org) from `taglib.pyx`. To re-cythonize this file instead of
 using the shipped `taglib.cpp`, invoke `setup.py` with the ``-cython` option.
 
 
@@ -132,4 +132,4 @@ Contact
 -------
 For bug reports or feature requests, please use the
 [issue tracker](https://github.com/supermihi/pytaglib/issues) on GitHub. For anything else, contact
-me by [email](michaelhelmling@posteo.de).
+me by [email](mailto:michaelhelmling@posteo.de).
