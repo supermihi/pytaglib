@@ -11,15 +11,16 @@
 from libcpp.utility cimport pair
 cimport ctypes, mpeg
 
-version = '1.0.3'
+version = '1.1.0'
+
 
 cdef str toUnicode(ctypes.String s):
-    """Convert a TagLib::String to unicode python (str in py3k, unicode python2) string."""
+    """Converts TagLib::String to a unicode string (``str`` in Python 3, ``unicode`` else)."""
     return s.to8Bit(True).decode('UTF-8', 'replace')
 
 
 cdef dict propertyMapToDict(ctypes.PropertyMap map):
-    """Convert a TagLib::PropertyMap to a dict mapping unicode to list of unicode."""
+    """Convert a TagLib::PropertyMap to a dict mapping unicode string to list of unicode strings."""
     cdef:
         ctypes.StringList values
         pair[ctypes.String,ctypes.StringList] mapIter
@@ -35,15 +36,18 @@ cdef dict propertyMapToDict(ctypes.PropertyMap map):
 
 
 cdef class File:
-    """Wrapper class for an audio file with metadata.
+    """Class representing an audio file with metadata ("tags").
     
-    To read tags from an audio file, simply create a *File* object, passing the file's
-    path to the constructor:
+    To read tags from an audio file, create a *File* object, passing the file's path to the
+    constructor:
     
     >>> f = taglib.File('/path/to/file.ogg')
     
     The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
     to lists of strings (tag values).
+
+    >>> for tag, values in f:
+    >>>     print('{}->{}'.format(tag, ', '.join(values)))
 
     If the file contains some metadata that is not supported by pytaglib or not representable
     as strings (e.g. cover art, proprietary data written by some programs, ...), according
@@ -52,12 +56,16 @@ cdef class File:
     
     Additionally, the readonly attributes *length*, *bitrate*, *sampleRate*, and *channels* are
     available with their obvious meanings.
+
+    >>> print('File length: {}'.format(f.length))
     
     Changes to the *tags* attribute are stored using the *save* method.
+
+    >>> f.save()
     """
     
     cdef:
-        ctypes.File *_f
+        ctypes.File *cFile
         public dict tags
         readonly object path
         readonly list unsupported
@@ -65,15 +73,15 @@ cdef class File:
 
     def __cinit__(self, path, applyID3v2Hack=False):
         if isinstance(path, unicode):
-            path_b = path.encode('UTF-8')
+            pathAsBytes = path.encode('UTF-8')
         else:
-            path_b = path
-        self._f = ctypes.create(path_b)
-        if not self._f or not self._f.isValid():
-            raise OSError('Could not read file "{0}"'.format(path))
+            pathAsBytes = path
+        self.cFile = ctypes.create(pathAsBytes)
+        if not self.cFile or not self.cFile.isValid():
+            raise OSError('Could not read file "{}"'.format(path))
         self.applyMPEGhack = False
         if ctypes.TAGLIB_MAJOR_VERSION <= 1 and ctypes.TAGLIB_MINOR_VERSION <= 8 \
-                and applyID3v2Hack and len(path_b) >= 4 and path_b[-4:].lower() == b'.mp3':
+                and applyID3v2Hack and len(pathAsBytes) >= 4 and pathAsBytes[-4:].lower() == b'.mp3':
             print('applying MPEG hack on {}'.format(path))
             self.applyMPEGhack = True
 
@@ -81,41 +89,49 @@ cdef class File:
         self.tags = dict()
         self.unsupported = list()
         self.path = path
-        self._read()
+        self.readProperties()
 
-    cdef void _read(self):
-        """Convert the PropertyMap of the wrapped File* object into a python dict.
+    cdef void readProperties(self):
+        """Convert the Taglib::PropertyMap of the wrapped Taglib::File object into a python dict.
         
         This method is not accessible from Python, and is called only once, immediately after
         object creation.
         """
         
         cdef:
-            ctypes.PropertyMap _tags = self._f.properties()
-            ctypes.String s
+            ctypes.PropertyMap cTags = self.cFile.properties()
+            ctypes.String cString
             ctypes.StringList unsupported
-        self.tags = propertyMapToDict(_tags)
-        unsupported = _tags.unsupportedData()
-        for s in unsupported:
-            self.unsupported.append(toUnicode(s))
+        self.tags = propertyMapToDict(cTags)
+        unsupported = cTags.unsupportedData()
+        for cString in unsupported:
+            self.unsupported.append(toUnicode(cString))
 
     def save(self):
-        """Store the tags currently hold in the *tags* attribute into the file.
+        """Store the tags currently hold in the `tags` attribute into the file.
         
-        If some tags could not be stored because the underlying metadata format does not
-        support them, the unsuccesful tags are returned as a "subdict" of self.tags which
-        will be empty if everything is ok.
-        If the save operation completely fails (file does not exist, insufficient rights),
-        an OSError is raised.
+        If some tags cannot be stored because the underlying metadata format does not support them,
+        the unsuccesful tags are returned as a "sub-dictionary" of `self.tags` which will be empty
+        if everything is ok.
+
+        Raises
+        ------
+        OSError
+            If the save operation fails completely (file does not exist, insufficient rights, ...).
+        ValueError
+            When attempting to save after the file was closed.
         """
-        
+        if not self.cFile:
+            raise ValueError('I/O operation on closed file.')
         if self.readOnly:
-            raise OSError('Unable to save tags: file "{0}" is read-only'.format(self.path))
+            raise OSError('Unable to save tags: file "{}" is read-only'.format(self.path))
         cdef:
             ctypes.PropertyMap cTagdict, cRemaining
             ctypes.String cKey, cValue
         if self.applyMPEGhack:
-            (<mpeg.File*>self._f).save(2, False)
+            (<mpeg.File*>self.cFile).save(2, False)
+
+        # populate cTagdict with the contents of self.tags
         for key, values in self.tags.items():
             if isinstance(key, bytes):
                 cKey = ctypes.String(key.upper(), ctypes.UTF8)
@@ -130,45 +146,65 @@ cdef class File:
                 else:
                     cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)
                 cTagdict[cKey].append(cValue)
-        
-        cRemaining = self._f.setProperties(cTagdict)
+
+        cRemaining = self.cFile.setProperties(cTagdict)
         if self.applyMPEGhack:
-            success = (<mpeg.File*>self._f).save(2, True)
+            success = (<mpeg.File*>self.cFile).save(2, True)
         else:
-            success = self._f.save()
+            success = self.cFile.save()
         if not success:
             raise OSError('Unable to save tags: Unknown OS error')
         return propertyMapToDict(cRemaining)
     
     def removeUnsupportedProperties(self, properties):
         """This is a direct binding for the corresponding TagLib method."""
+        if not self.cFile:
+            raise ValueError('I/O operation on closed file.')
         cdef ctypes.StringList cProps
         for value in properties:
             cProps.append(ctypes.String(value.encode('UTF-8'), ctypes.UTF8))
-        self._f.removeUnsupportedProperties(cProps)
-        
+        self.cFile.removeUnsupportedProperties(cProps)
+
+    def close(self):
+        """Closes the file by deleting the underlying Taglib::File object. This will close any open
+        streams. Calling methods like `save()` or the read-only properties after `close()` will
+        raise an exception."""
+        del self.cFile
+        self.cFile = NULL
+
     def __dealloc__(self):
-        del self._f
+        if self.cFile:
+            del self.cFile
         
     property length:
         def __get__(self):
-            return self._f.audioProperties().length()
+            if not self.cFile:
+                raise ValueError('I/O operation on closed file.')
+            return self.cFile.audioProperties().length()
             
     property bitrate:
         def __get__(self):
-            return self._f.audioProperties().bitrate()
+            if not self.cFile:
+                raise ValueError('I/O operation on closed file.')
+            return self.cFile.audioProperties().bitrate()
     
     property sampleRate:
         def __get__(self):
-            return self._f.audioProperties().sampleRate()
+            if not self.cFile:
+                raise ValueError('I/O operation on closed file.')
+            return self.cFile.audioProperties().sampleRate()
             
     property channels:
         def __get__(self):
-            return self._f.audioProperties().channels()
+            if not self.cFile:
+                raise ValueError('I/O operation on closed file.')
+            return self.cFile.audioProperties().channels()
     
     property readOnly:
         def __get__(self):
-            return self._f.readOnly()
+            if not self.cFile:
+                raise ValueError('I/O operation on closed file.')
+            return self.cFile.readOnly()
         
     def __repr__(self):
         return "File('{}')".format(self.path)
