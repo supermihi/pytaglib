@@ -37,12 +37,12 @@ cdef dict propertyMapToDict(ctypes.PropertyMap map):
 
 cdef class File:
     """Class representing an audio file with metadata ("tags").
-    
+
     To read tags from an audio file, create a *File* object, passing the file's path to the
     constructor:
-    
+
     >>> f = taglib.File('/path/to/file.ogg')
-    
+
     The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
     to lists of strings (tag values).
 
@@ -53,17 +53,17 @@ cdef class File:
     as strings (e.g. cover art, proprietary data written by some programs, ...), according
     identifiers will be placed into the *unsupported* attribute of the File object. Using the
     method *removeUnsupportedProperties*, some or all of those can be removed.
-    
+
     Additionally, the readonly attributes *length*, *bitrate*, *sampleRate*, and *channels* are
     available with their obvious meanings.
 
     >>> print('File length: {}'.format(f.length))
-    
+
     Changes to the *tags* attribute are stored using the *save* method.
 
     >>> f.save()
     """
-    
+
     cdef:
         ctypes.File *cFile
         public dict tags
@@ -93,11 +93,11 @@ cdef class File:
 
     cdef void readProperties(self):
         """Convert the Taglib::PropertyMap of the wrapped Taglib::File object into a python dict.
-        
+
         This method is not accessible from Python, and is called only once, immediately after
         object creation.
         """
-        
+
         cdef:
             ctypes.PropertyMap cTags = self.cFile.properties()
             ctypes.String cString
@@ -109,7 +109,7 @@ cdef class File:
 
     def save(self):
         """Store the tags currently hold in the `tags` attribute into the file.
-        
+
         If some tags cannot be stored because the underlying metadata format does not support them,
         the unsuccesful tags are returned as a "sub-dictionary" of `self.tags` which will be empty
         if everything is ok.
@@ -155,7 +155,7 @@ cdef class File:
         if not success:
             raise OSError('Unable to save tags: Unknown OS error')
         return propertyMapToDict(cRemaining)
-    
+
     def removeUnsupportedProperties(self, properties):
         """This is a direct binding for the corresponding TagLib method."""
         if not self.cFile:
@@ -175,36 +175,36 @@ cdef class File:
     def __dealloc__(self):
         if self.cFile:
             del self.cFile
-        
+
     property length:
         def __get__(self):
             if not self.cFile:
                 raise ValueError('I/O operation on closed file.')
             return self.cFile.audioProperties().length()
-            
+
     property bitrate:
         def __get__(self):
             if not self.cFile:
                 raise ValueError('I/O operation on closed file.')
             return self.cFile.audioProperties().bitrate()
-    
+
     property sampleRate:
         def __get__(self):
             if not self.cFile:
                 raise ValueError('I/O operation on closed file.')
             return self.cFile.audioProperties().sampleRate()
-            
+
     property channels:
         def __get__(self):
             if not self.cFile:
                 raise ValueError('I/O operation on closed file.')
             return self.cFile.audioProperties().channels()
-    
+
     property readOnly:
         def __get__(self):
             if not self.cFile:
                 raise ValueError('I/O operation on closed file.')
             return self.cFile.readOnly()
-        
+
     def __repr__(self):
         return "File('{}')".format(self.path)
