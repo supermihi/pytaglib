@@ -9,6 +9,7 @@
 # published by the Free Software Foundation
 
 from libcpp.utility cimport pair
+import os
 cimport ctypes, mpeg
 
 version = '1.1.0'
@@ -69,6 +70,8 @@ cdef class File:
         public dict tags
         readonly object path
         readonly list unsupported
+        double mtime0
+        double atime
         bint applyMPEGhack
 
     def __cinit__(self, path, applyID3v2Hack=False):
@@ -107,8 +110,9 @@ cdef class File:
         for cString in unsupported:
             self.unsupported.append(toUnicode(cString))
 
-    def save(self):
+    def save(self, preserve_mtime=False):
         """Store the tags currently hold in the `tags` attribute into the file.
+        If `preserve_mtime` is `True`, the file's modification time will not be altered.
 
         If some tags cannot be stored because the underlying metadata format does not support them,
         the unsuccesful tags are returned as a "sub-dictionary" of `self.tags` which will be empty
@@ -121,6 +125,8 @@ cdef class File:
         ValueError
             When attempting to save after the file was closed.
         """
+        if preserve_mtime:
+            mtime0 = os.stat(self.path).st_mtime
         if not self.cFile:
             raise ValueError('I/O operation on closed file.')
         if self.readOnly:
@@ -154,6 +160,9 @@ cdef class File:
             success = self.cFile.save()
         if not success:
             raise OSError('Unable to save tags: Unknown OS error')
+        if preserve_mtime:
+            atime = os.stat(self.path).st_atime
+            os.utime(self.path, (atime, mtime0))
         return propertyMapToDict(cRemaining)
 
     def removeUnsupportedProperties(self, properties):
