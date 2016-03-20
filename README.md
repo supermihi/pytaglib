@@ -77,6 +77,7 @@ page).
 3. Still in the VS2015 command prompt, navigat to the pytaglib directory.
 4. Tell pytaglib where to find taglib: `set TAGLIB_HOME="C:\Path\To\Taglib\install"`
 5. Build pytaglib: `python setup.py build` and install: `python setup.py install`
+
 ## Usage
 
 The use of the library is pretty straightforward:
