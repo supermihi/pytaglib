@@ -24,9 +24,11 @@ class ID3v2Test(unittest.TestCase):
             self.assertEqual(len(tfile.tags['GENRE']), 1)
             del tfile.tags['GENRE']
             tfile.save()
-            del tfile
+            tfile.close()
+            
             tfile = taglib.File(f)
             self.assert_('GENRE' not in tfile.tags)
+            tfile.close()
             
     def test_removeFrame2(self):
         """See https://bugs.kde.org/show_bug.cgi?id=298183."""
@@ -36,9 +38,11 @@ class ID3v2Test(unittest.TestCase):
             self.assertEqual(len(tfile.tags['TITLE']), 1)
             del tfile.tags['TITLE']
             tfile.save()
-            del tfile
+            tfile.close()
+            
             tfile = taglib.File(f)
             self.assert_('TITLE' not in tfile.tags)
+            tfile.close()
 
     def test_id3v1Tov2(self):
         with copyTestFile('onlyv1.mp3') as f:
@@ -48,6 +52,8 @@ class ID3v2Test(unittest.TestCase):
             tfile.tags['NONID3V1'] = ['omg', 'wtf']
             ret = tfile.save()
             self.assertEqual(len(ret), 0)
+            tfile.close()
             
             tfile = taglib.File(f)
             self.assert_('NONID3V1' in tfile.tags)
+            tfile.close()

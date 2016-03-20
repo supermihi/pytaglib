@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 2011-2015 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2016 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -8,7 +8,7 @@
 #
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
  
-import os.path, sys
+import os, os.path, sys
 from setuptools import setup
 from distutils.extension import Extension
 
@@ -34,12 +34,33 @@ def readme():
 
 scriptName = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
 
+if sys.platform.startswith('win'):
+    # on windows, we compile static taglib build into the python module
+    TAGLIB_HOME = os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib')
+    kwargs=dict(
+        define_macros=[('TAGLIB_STATIC', None)],
+        extra_objects=[os.path.join(TAGLIB_HOME, 'lib', 'tag.lib')],
+        include_dirs=[os.path.join(TAGLIB_HOME, 'include')],
+    )
+else:
+    # on unix system,s use the dynamic library and rely on headers at standard location
+    kwargs=dict(libraries=['tag'])
+    
 if '--cython' in sys.argv:
     from Cython.Build import cythonize
-    extensions = cythonize(os.path.join('src', 'taglib.pyx'))
+    extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **kwargs)])
     sys.argv.remove('--cython')
 else:
-    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], libraries=['tag'])]
+    extensions=[Extension('taglib', [os.path.join('src', 'taglib.cpp')], **kwargs)]
+
+    #libraries=['tag'],
+#    include_dirs=["C:\\Libraries\\taglib\\include"],
+    #library_dirs=["."],
+  #extra_objects=["tag.lib"],
+   # define_macros=[("TAGLIB_STATIC", None)]
+    #extra_compile_args=["/MT"],
+    #)]
+
 
 setup(
     name='pytaglib',

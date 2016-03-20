@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
-# distutils: libraries = [tag]
 # cython: language_level = 3
 # Copyright 2011-2015 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
+
+import sys
 
 from libcpp.utility cimport pair
 cimport ctypes, mpeg
@@ -73,7 +74,7 @@ cdef class File:
 
     def __cinit__(self, path, applyID3v2Hack=False):
         if isinstance(path, unicode):
-            pathAsBytes = path.encode('UTF-8')
+            pathAsBytes = path.encode(sys.getfilesystemencoding() or "UTF-8")
         else:
             pathAsBytes = path
         self.cFile = ctypes.create(pathAsBytes)

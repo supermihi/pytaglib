@@ -16,14 +16,16 @@ class TestBytesUnicode(unittest.TestCase):
     def test_bytes_filename(self):
         """Ensure file can be opened if filename is provided as bytes object."""
         with copyTestFile('testöü.flac') as f:
-            taglib.File(f.encode('utf8'))
+            tf = taglib.File(f.encode(sys.getfilesystemencoding()))
+            tf.close()
 
     def test_unicode_filename(self):
         """Ensure file can be opened if filename is provided as bytes object."""
         with copyTestFile('testöü.flac') as f:
             if sys.version_info.major == 2:
                 f = unicode(f)
-            taglib.File(f)
+            tf = taglib.File(f)
+            tf.close()
 
     def test_bytes_tags(self):
         """Ensure bytes keys and values are accepted."""
@@ -31,9 +33,11 @@ class TestBytesUnicode(unittest.TestCase):
             tf = taglib.File(f)
             tf.tags[b'BYTES'] = [b'ONE', b'TWO']
             tf.save()
-            del tf
+            tf.close()
+            
             tf = taglib.File(f)
             self.assertEqual(tf.tags['BYTES'], ['ONE', 'TWO'])
+            tf.close()
 
     def test_unicode_tags(self):
         """Ensure unicode keys and values are accepted."""
@@ -41,7 +45,9 @@ class TestBytesUnicode(unittest.TestCase):
             tf = taglib.File(f)
             tf.tags[u'UNICODE'] = [u'ONE', u'TWO']
             tf.save()
-            del tf
+            tf.close()
+            
             tf = taglib.File(f)
             self.assertEqual(tf.tags['UNICODE'], ['ONE', 'TWO'])
+            tf.close()
 

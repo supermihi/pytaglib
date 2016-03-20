@@ -25,3 +25,4 @@ class TestStringValue(unittest.TestCase):
             tf = taglib.File(f)
             self.assertEqual(tf.tags['AAA'], ['A TAG'])
             self.assertEqual(tf.tags['BBB'], ['ANOTHER TAG'])
+            tf.close()

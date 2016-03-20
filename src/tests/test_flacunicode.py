@@ -19,11 +19,13 @@ class FLACUnicodeTest(unittest.TestCase):
             tfile = taglib.File(copy_file)
             tfile.tags['ARTIST'] = ['artøst 1', 'artöst 2']
             tfile.save()
+            tfile.close()
             
             tfile = taglib.File(copy_file)
             self.assertEqual(len(tfile.tags['ARTIST']), 2)
             self.assertEqual(tfile.tags['ARTIST'][0], 'artøst 1')
             self.assertEqual(tfile.tags['ARTIST'][1], 'artöst 2')
+            tfile.close()
             
     def test_unicode_key(self):
         with copyTestFile('testöü.flac') as copy_file:
@@ -31,6 +33,7 @@ class FLACUnicodeTest(unittest.TestCase):
             tfile.tags['HÄÜ'] = ['omg']
             remaining = tfile.save()
             self.assertTrue('HÄÜ' in remaining)
+            tfile.close()
         
 if __name__ == '__main__':
     unittest.main()
