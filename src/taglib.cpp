@@ -3,20 +3,11 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "define_macros": [
-            [
-                "TAGLIB_STATIC",
-                null
-            ]
-        ],
         "depends": [],
-        "extra_objects": [
-            "C:\\Users\\michael\\Documents\\taglib-1.11beta2\\taglib-1.11beta2\\build\\install\\lib\\tag.lib"
-        ],
-        "include_dirs": [
-            "C:\\Users\\michael\\Documents\\taglib-1.11beta2\\taglib-1.11beta2\\build\\install\\include"
-        ],
-        "language": "c++"
+        "language": "c++",
+        "libraries": [
+            "tag"
+        ]
     }
 }
 END: Cython Metadata */
@@ -491,7 +482,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "src\\taglib.pyx",
+  "src/taglib.pyx",
   "stringsource",
 };
 

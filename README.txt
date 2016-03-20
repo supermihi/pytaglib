@@ -39,6 +39,9 @@ Requirements
 Installation
 ------------
 
+Linux / Unix
+~~~~~~~~~~~~
+
 | Debian sid and Ubuntu trusty have binary packages for the Python 3
   version, called ``python3-taglib``.
 | At time of writing they are outdated, but should work nevertheless.
@@ -99,8 +102,44 @@ Installation
 | instead of using the shipped ``taglib.cpp``, invoke ``setup.py`` with
   the ``--cython`` option.
 
-Usage
------
+Windows
+~~~~~~~
+
+| **Note**: Windows installation was tested for Python 3.5 and Win64
+  only. In theory, pytaglib
+| is compatible with any Python version and architecture, but
+  compilation might not be
+| straightforward (see e.g.
+  `this <https://blog.ionelmc.ro/2014/12/21/compiling-python-extensions-on-windows/>`__
+| page).
+
+#. Install `Microsoft Visual Studio 2015 Community
+   Edition <https://www.visualstudio.com/downloads/download-visual-studio-vs>`__.
+   In the installation process, be sure to enable C/C++ support.
+#. Download and build taglib:
+
+   #. Download the current `taglib
+      release <https://github.com/taglib/taglib/releases>`__ and extract
+      it somewhere on your computer.
+   #. Start the VS2015 x64 Native Tools Command Prompt. On Windows 8/10,
+      it might not appear in your start
+       menu, but you can find it here:
+      ``C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2015\Visual Studio Tools\Windows Desktop Command Prompts``
+   #. Navigate to the extracted taglib folder and type:
+      ``cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=".\install``
+      to generate the Visual Studio project files.
+   #. Type ``msbuild INSTALL.vcxproj /p:Configuration=Release`` which
+      will "install" taglib into the ``install`` subdirectory.
+
+#. Still in the VS2015 command prompt, navigat to the pytaglib
+   directory.
+#. Tell pytaglib where to find taglib:
+   ``set TAGLIB_HOME="C:\Path\To\Taglib\install"``
+#. Build pytaglib: ``python setup.py build`` and install:
+   ``python setup.py install``
+
+   .. rubric:: Usage
+      :name: usage
 
 The use of the library is pretty straightforward:
 

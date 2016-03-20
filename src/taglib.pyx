@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
 # cython: language_level = 3
-# Copyright 2011-2015 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2016 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -12,7 +12,7 @@ import sys
 from libcpp.utility cimport pair
 cimport ctypes, mpeg
 
-version = '1.1.0'
+version = '1.2.0'
 
 
 cdef str toUnicode(ctypes.String s):

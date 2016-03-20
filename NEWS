@@ -1,6 +1,12 @@
 Changelog
 =========
 
+pytaglib 1.2.0 (2016/03/20)
+---------------------------
+- add Windows support (see README)
+- update copyright dates
+- update cython version used to build shipped taglib.cpp to 0.23.4
+
 pytaglib 1.1.0 (2015/09/06)
 ---------------------------
 - add a `File.close()` method that ends all I/O operations.
