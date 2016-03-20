@@ -122,8 +122,7 @@ Windows
       release <https://github.com/taglib/taglib/releases>`__ and extract
       it somewhere on your computer.
    #. Start the VS2015 x64 Native Tools Command Prompt. On Windows 8/10,
-      it might not appear in your start
-       menu, but you can find it here:
+      it might not appear in your start menu, but you can find it here:
       ``C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2015\Visual Studio Tools\Windows Desktop Command Prompts``
    #. Navigate to the extracted taglib folder and type:
       ``cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=".\install``
@@ -138,8 +137,8 @@ Windows
 #. Build pytaglib: ``python setup.py build`` and install:
    ``python setup.py install``
 
-   .. rubric:: Usage
-      :name: usage
+Usage
+-----
 
 The use of the library is pretty straightforward:
 
