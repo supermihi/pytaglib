@@ -19,10 +19,13 @@ flavours nowadays ship taglib ≥ 1.8.
 The use of taglib ≥ 1.9 is recommended, since that release fixes some bugs that may affect
 `pytaglib` in less common circumstances.
 
-In theory, `pytaglib` should also compile and run on Windows, though I did not succeed when I last
-tried. Any help with that issue is appreciated!
-
 ## Installation
+The most recommended installation method is
+
+        pip install pytaglib
+
+where you should ensure that
+* `pip` points to the correct Python version; you might need to use, e.g., `pip-3.5` to install `pytaglib`
 ### Linux / Unix
 Debian sid and Ubuntu trusty have binary packages for the Python 3 version, called `python3-taglib`.
 At time of writing they are outdated, but should work nevertheless. For Arch users, there is a
