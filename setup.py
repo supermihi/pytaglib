@@ -7,7 +7,7 @@
 # published by the Free Software Foundation
 #
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
- 
+
 import os, os.path, sys
 from setuptools import setup
 from distutils.extension import Extension
@@ -32,28 +32,28 @@ def readme():
     else:
         return open(readmeFile, 'rt').read()
 
+
 scriptName = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
 
 if sys.platform.startswith('win'):
     # on windows, we compile static taglib build into the python module
     TAGLIB_HOME = os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib')
-    kwargs=dict(
+    kwargs = dict(
         define_macros=[('TAGLIB_STATIC', None)],
         extra_objects=[os.path.join(TAGLIB_HOME, 'lib', 'tag.lib')],
         include_dirs=[os.path.join(TAGLIB_HOME, 'include')],
     )
 else:
     # on unix system,s use the dynamic library and rely on headers at standard location
-    kwargs=dict(libraries=['tag'])
-    
+    kwargs = dict(libraries=['tag'])
+
 if '--cython' in sys.argv:
     from Cython.Build import cythonize
+
     extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **kwargs)])
     sys.argv.remove('--cython')
 else:
-    extensions=[Extension('taglib', [os.path.join('src', 'taglib.cpp')], **kwargs)]
-    
-
+    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **kwargs)]
 
 setup(
     name='pytaglib',
@@ -68,6 +68,6 @@ setup(
     ext_modules=extensions,
     package_dir={'': 'src'},
     py_modules=['pyprinttags'],
-    entry_points={ 'console_scripts': ['{0} = pyprinttags:script'.format(scriptName)] },
+    entry_points={'console_scripts': ['{0} = pyprinttags:script'.format(scriptName)]},
     test_suite='tests'
 )

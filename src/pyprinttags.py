@@ -14,9 +14,11 @@ of certain tags they know.
 """
 from __future__ import unicode_literals, print_function
 
-import argparse, os.path, sys
-
+import argparse
+import os.path
+import sys
 import taglib
+
 
 def script():
     """Run the command-line script."""
