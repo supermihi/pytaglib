@@ -18,7 +18,7 @@ Features include [support of more than a dozen file formats](http://taglib.githu
 ```python
 >>> song.length
 239
->>> song.channes
+>>> song.channels
 2
 ```
 - Change the file's tags:
