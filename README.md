@@ -1,23 +1,50 @@
-# `pytaglib` – TagLib bindings for Python
+# **pytaglib** – TagLib bindings for Python
 
 ## Overview
-`pytaglib` is a cross-platform package of [Python](http://www.python.org) (2.6+/3.1+) bindings for
-[Taglib](http://taglib.github.io). It provides a full-featured audio metadata ("tag") library supporting
-all current versions of Python.
+**pytaglib** is a full-featured, easy-to-use, cross-platform audio metadata ("tag") library for [Python](http://www.python.org) (all versions supported). It uses the popular, fast and rock-solid [TagLib](http://taglib.github.io) C++ library internally; **pytaglib** is a very thin wrapper about TagLib (<150 lines of code), meaning that you immediately profit from the underlying library's speed and stability.
 
-The package gives you complete freedom over the tag names – you are not limited to common tags like
-`ARTIST`, `ALBUM` etc.; instead you may use any string as key as long as the underlying metadata
-format supports it (most of them do, including *mp3*, *ogg*, and *FLAC*). Moreover, you can even
-use multiple values of the same tag, in order to e.g. store two artists, several genres, and so on.
+Features include [support of more than a dozen file formats](http://taglib.github.io), [arbitrary tag names](#arbitag), and [multiple values per tag](#multival).
+
+## Usage Example
+
+- Open a file and read its tags:
+```python
+>>> import taglib
+>>> song = taglib.File("/path/to/my/file.mp3")
+>>> song.tags
+{'ARTIST': ['piman', 'jzig'], 'ALBUM': ['Quod Libet Test Data'], 'TITLE': ['Silence'], 'GENRE': ['Silence'], 'TRACKNUMBER': ['02/10'], 'DATE': ['2004']}
+```
+- Read some additional properties of the file:
+```python
+>>> song.length
+239
+>>> song.channes
+2
+```
+- Change the file's tags:
+```python
+>>> song.tags["ALBUM"] = ["White Album"] # always use lists, even for single values
+>>> del song.tags["DATE"]
+```
+- Multiple values per tag:<a name="multival"></a>
+```python
+>>> song.tags["GENRE"] = ["Vocal", "Classical"]
+```
+- Non-standard tags:<a name="arbitag"></a>
+```python
+>>> song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
+```
+- Save your chanes:
+```python
+>>> returnvalue = song.save()
+>>> retval
+{}
+```
+The dictionary returned by `save` contains all tags that could not be saved (might happen if the specific format does not support e.g. multi-values).
 
 
-## Requirements
-`pytaglib` uses Taglib features that have been added in version 1.8-BETA, so you need at least that
-version along with development headers to compile `pytaglib`. The recent releases of all linux
-flavours nowadays ship taglib ≥ 1.8.
-
-The use of taglib ≥ 1.9 is recommended, since that release fixes some bugs that may affect
-`pytaglib` in less common circumstances.
+**Note:** All strings in the tag dictionary are unicode strings (type `str` in Python 3 and `unicode` in Python 2). On the input side, however, the library is rather permissive and supports both byte- and unicode-strings. Internally, `pytaglib` converts
+all strings to `UTF-8` before storing them in the files.
 
 ## Installation
 The most recommended installation method is
@@ -66,46 +93,7 @@ Currently, the PyPI archive contains a binary version only for Python3.5/x64. Fo
 4. Tell pytaglib where to find taglib: `set TAGLIB_HOME="C:\Path\To\Taglib\install"`
 5. Build pytaglib: `python setup.py build` and install: `python setup.py install`
 
-## Usage
 
-The use of the library is pretty straightforward:
-
-1.  Load the library: `import taglib`
-2.  Open a file: `f = taglib.File("/path/to/file.mp3")`
-3.  Read tags from the dict `f.tags` which maps uppercase tag names to lists of tag values (note
-    that even single values are stored as list in order to be consistent).
-4.  Some other information about the file is available as well: `f.length`,
-    `f.sampleRate`, `f.channels`, `f.bitrate`, and `f.readOnly`.
-5.  Alter the tags by manipulating the dictionary `f.tags`. You should always
-    use uppercase tag names and lists of strings for the values.
-6.  Store your changes: `retval = f.save()`.
-7.  If some tags could not be saved because they are not supported by the
-    underlying format, those will be contained in the list returned from
-    `f.save()`.
- 
-The following snippet should show the most relevant features. For a complete
-reference confer the online help via `help(taglib.File)`.
-
-    $ python
-    Python 3.3.0 (default, Sep 29 2012, 15:50:43)
-    [GCC 4.7.1 20120721 (prerelease)] on linux
-    Type "help", "copyright", "credits" or "license" for more information.
-    >>> import taglib
-    >>> f = taglib.File("x.flac")
-    >>> f
-    File('x.flac')
-    >>> f.tags
-    {'ARTIST': ['piman', 'jzig'], 'ALBUM': ['Quod Libet Test Data'], 'TITLE': ['Silence'], 'GENRE': ['Silence'], 'TRACKNUMBER': ['02/10'], 'DATE': ['2004']}
-    >>> f.tags["ALBUM"] = ["Always use lists even for single values"]
-    >>> del f.tags["GENRE"]
-    >>> f.tags["ARTIST"].remove("jzig")
-    >>> retval = f.save()
-    >>> retval
-    {}
-    >>>
-
-**Note:** All strings in the tag dictionary are unicode strings (type `str` in Python 3 and `unicode` in Python 2). On the input side, however, the library is rather permissive and supports both byte- and unicode-strings. Internally, `pytaglib` converts
-all strings to `UTF-8` before storing them in the files.
 
 ## `pyprinttags`
 This package also installs the small script `pyprinttags`. It takes one or more files as
