@@ -1,6 +1,12 @@
 Changelog
 =========
 
+pytaglib 1.2.1 (2016/07/17)
+---------------------------
+This is a non-feature release (no change to the code base)
+- update README
+- build windows wheel agains taglib 1.11
+
 pytaglib 1.2.0 (2016/03/20)
 ---------------------------
 - add Windows support (see README)

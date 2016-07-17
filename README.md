@@ -87,10 +87,10 @@ Currently, the PyPI archive contains a binary version only for Python3.5/x64. Fo
 2. Download and build taglib:
     1. Download the current [taglib release](https://github.com/taglib/taglib/releases) and extract it somewhere   on your computer.
     2. Start the VS2015 x64 Native Tools Command Prompt. On Windows 8/10, it might not appear in your start menu, but you can find it here: `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2015\Visual Studio Tools\Windows Desktop Command Prompts`
-    3. Navigate to the extracted taglib folder and type: `cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=".\install` to generate the Visual Studio project files.
+    3. Navigate to the extracted taglib folder and type: `cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=".\taglib-install"` to generate the Visual Studio project files.
     4. Type `msbuild INSTALL.vcxproj /p:Configuration=Release` which will "install" taglib into the `install` subdirectory.
-3. Still in the VS2015 command prompt, navigat to the pytaglib directory.
-4. Tell pytaglib where to find taglib: `set TAGLIB_HOME="C:\Path\To\Taglib\install"`
+3. Still in the VS2015 command prompt, navigate to the pytaglib directory.
+4. Tell pytaglib where to find taglib: `set TAGLIB_HOME=C:\Path\To\Taglib\install`
 5. Build pytaglib: `python setup.py build` and install: `python setup.py install`
 
 

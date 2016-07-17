@@ -12,7 +12,7 @@ import sys
 from libcpp.utility cimport pair
 cimport ctypes, mpeg
 
-version = '1.2.0'
+version = '1.2.1'
 
 
 cdef str toUnicode(ctypes.String s):
