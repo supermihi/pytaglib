@@ -8,7 +8,8 @@
 #
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
 
-import os, os.path, sys
+import io, os, os.path, sys
+import re
 from setuptools import setup
 from distutils.extension import Extension
 
@@ -44,7 +45,7 @@ if sys.platform.startswith('win'):
         include_dirs=[os.path.join(TAGLIB_HOME, 'include')],
     )
 else:
-    # on unix system,s use the dynamic library and rely on headers at standard location
+    # on unix systems, use the dynamic library and rely on headers at standard location
     kwargs = dict(libraries=['tag'])
 
 if '--cython' in sys.argv:
@@ -55,18 +56,24 @@ if '--cython' in sys.argv:
 else:
     extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **kwargs)]
 
+
+def version():
+    with io.open(os.path.join('src', 'taglib.pyx'), 'rt', encoding='UTF-8') as pyx:
+        version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", pyx.read(), re.M)
+        return version_match.group(1)
+
 setup(
     name='pytaglib',
-    description='Python (2.6+/3.1+) bindings for the TagLib audio metadata library',
+    description='cross-platform, Python 2.x/3.x audio metadata ("tagging") library based on TagLib',
     long_description=readme(),
     classifiers=CLASSIFIERS,
-    version='1.2.1',
+    version=version(),
     license='GPLv3+',
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',
     url='http://github.com/supermihi/pytaglib',
     ext_modules=extensions,
-    package_dir={'': 'src'},
+    package_dir={'': 'src', 'tests': ''},
     py_modules=['pyprinttags'],
     entry_points={'console_scripts': ['{0} = pyprinttags:script'.format(scriptName)]},
     test_suite='tests'

@@ -5,4 +5,4 @@ include doc/pyprinttags.1
 include src/*.pxd
 include src/*.pyx
 include src/taglib.cpp
-recursive-include src/tests *.py *.flac *.mp3
+recursive-include tests *.py *.flac *.mp3

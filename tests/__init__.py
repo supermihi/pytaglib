@@ -8,6 +8,7 @@
 from contextlib import contextmanager
 import os.path, shutil, tempfile
 
+
 def onerror(func, path, exc_info):
     """
     Error handler for ``shutil.rmtree``.
@@ -26,6 +27,7 @@ def onerror(func, path, exc_info):
         func(path)
     else:
         raise
+
 
 @contextmanager
 def copyTestFile(name):

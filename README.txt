@@ -1,36 +1,78 @@
-``pytaglib`` – TagLib bindings for Python
+**pytaglib** – TagLib bindings for Python
 =========================================
 
 Overview
 --------
 
-| ``pytaglib`` is a cross-platform package of
-  `Python <http://www.python.org>`__ (2.6+/3.1+) bindings for
-| `Taglib <http://taglib.github.io>`__. It provides a full-featured
-  audio metadata ("tag") library supporting
-| all current versions of Python.
+**pytaglib** is a full-featured, easy-to-use, cross-platform audio
+metadata ("tag") library for `Python <http://www.python.org>`__ (all
+versions supported). It uses the popular, fast and rock-solid
+`TagLib <http://taglib.github.io>`__ C++ library internally;
+**pytaglib** is a very thin wrapper about TagLib (<150 lines of code),
+meaning that you immediately profit from the underlying library's speed
+and stability.
 
-| The package gives you complete freedom over the tag names – you are
-  not limited to common tags like
-| ``ARTIST``, ``ALBUM`` etc.; instead you may use any string as key as
-  long as the underlying metadata
-| format supports it (most of them do, including *mp3*, *ogg*, and
-  *FLAC*). Moreover, you can even
-| use multiple values of the same tag, in order to e.g. store two
-  artists, several genres, and so on.
+Features include `support of more than a dozen file
+formats <http://taglib.github.io>`__, `arbitrary tag
+names <#arbitag>`__, and `multiple values per tag <#multival>`__.
 
-Requirements
-------------
+Usage Example
+-------------
 
-| ``pytaglib`` uses Taglib features that have been added in version
-  1.8-BETA, so you need at least that
-| version along with development headers to compile ``pytaglib``. The
-  recent releases of all linux
-| flavours nowadays ship taglib ≥ 1.8.
+-  Open a file and read its tags:
 
-| The use of taglib ≥ 1.9 is recommended, since that release fixes some
-  bugs that may affect
-| ``pytaglib`` in less common circumstances.
+   .. code:: python
+
+       >>> import taglib
+       >>> song = taglib.File("/path/to/my/file.mp3")
+       >>> song.tags
+       {'ARTIST': ['piman', 'jzig'], 'ALBUM': ['Quod Libet Test Data'], 'TITLE': ['Silence'], 'GENRE': ['Silence'], 'TRACKNUMBER': ['02/10'], 'DATE': ['2004']}
+
+-  Read some additional properties of the file:
+
+   .. code:: python
+
+       >>> song.length
+       239
+       >>> song.channels
+       2
+
+-  Change the file's tags:
+
+   .. code:: python
+
+       >>> song.tags["ALBUM"] = ["White Album"] # always use lists, even for single values
+       >>> del song.tags["DATE"]
+
+-  Multiple values per tag:
+
+   .. code:: python
+
+       >>> song.tags["GENRE"] = ["Vocal", "Classical"]
+
+-  Non-standard tags:
+
+   .. code:: python
+
+       >>> song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
+
+-  Save your chanes:
+
+   .. code:: python
+
+       >>> returnvalue = song.save()
+       >>> retval
+       {}
+
+   The dictionary returned by ``save`` contains all tags that could not
+   be saved (might happen if the specific format does not support e.g.
+   multi-values).
+
+| **Note:** All strings in the tag dictionary are unicode strings (type
+  ``str`` in Python 3 and ``unicode`` in Python 2). On the input side,
+  however, the library is rather permissive and supports both byte- and
+  unicode-strings. Internally, ``pytaglib`` converts
+| all strings to ``UTF-8`` before storing them in the files.
 
 Installation
 ------------
@@ -121,69 +163,17 @@ page.
       it might not appear in your start menu, but you can find it here:
       ``C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Visual Studio 2015\Visual Studio Tools\Windows Desktop Command Prompts``
    #. Navigate to the extracted taglib folder and type:
-      ``cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=".\install``
+      ``cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=".\taglib-install"``
       to generate the Visual Studio project files.
    #. Type ``msbuild INSTALL.vcxproj /p:Configuration=Release`` which
       will "install" taglib into the ``install`` subdirectory.
 
-#. Still in the VS2015 command prompt, navigat to the pytaglib
+#. Still in the VS2015 command prompt, navigate to the pytaglib
    directory.
 #. Tell pytaglib where to find taglib:
-   ``set TAGLIB_HOME="C:\Path\To\Taglib\install"``
+   ``set TAGLIB_HOME=C:\Path\To\Taglib\install``
 #. Build pytaglib: ``python setup.py build`` and install:
    ``python setup.py install``
-
-Usage
------
-
-The use of the library is pretty straightforward:
-
-#. Load the library: ``import taglib``
-#. Open a file: ``f = taglib.File("/path/to/file.mp3")``
-#. Read tags from the dict ``f.tags`` which maps uppercase tag names to
-   lists of tag values (note
-   that even single values are stored as list in order to be
-   consistent).
-#. Some other information about the file is available as well:
-   ``f.length``,
-   ``f.sampleRate``, ``f.channels``, ``f.bitrate``, and ``f.readOnly``.
-#. Alter the tags by manipulating the dictionary ``f.tags``. You should
-   always
-   use uppercase tag names and lists of strings for the values.
-#. Store your changes: ``retval = f.save()``.
-#. If some tags could not be saved because they are not supported by the
-   underlying format, those will be contained in the list returned from
-   ``f.save()``.
-
-| The following snippet should show the most relevant features. For a
-  complete
-| reference confer the online help via ``help(taglib.File)``.
-
-::
-
-    $ python
-    Python 3.3.0 (default, Sep 29 2012, 15:50:43)
-    [GCC 4.7.1 20120721 (prerelease)] on linux
-    Type "help", "copyright", "credits" or "license" for more information.
-    >>> import taglib
-    >>> f = taglib.File("x.flac")
-    >>> f
-    File('x.flac')
-    >>> f.tags
-    {'ARTIST': ['piman', 'jzig'], 'ALBUM': ['Quod Libet Test Data'], 'TITLE': ['Silence'], 'GENRE': ['Silence'], 'TRACKNUMBER': ['02/10'], 'DATE': ['2004']}
-    >>> f.tags["ALBUM"] = ["Always use lists even for single values"]
-    >>> del f.tags["GENRE"]
-    >>> f.tags["ARTIST"].remove("jzig")
-    >>> retval = f.save()
-    >>> retval
-    {}
-    >>>
-
-| **Note:** All strings in the tag dictionary are unicode strings (type
-  ``str`` in Python 3 and ``unicode`` in Python 2). On the input side,
-  however, the library is rather permissive and supports both byte- and
-  unicode-strings. Internally, ``pytaglib`` converts
-| all strings to ``UTF-8`` before storing them in the files.
 
 ``pyprinttags``
 ---------------
