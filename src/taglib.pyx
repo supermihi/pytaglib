@@ -10,9 +10,9 @@
 import sys
 
 from libcpp.utility cimport pair
-cimport ctypes, mpeg
+cimport ctypes
 
-version = '1.2.1'
+version = '1.3.0'
 
 
 cdef str toUnicode(ctypes.String s):
@@ -24,7 +24,7 @@ cdef dict propertyMapToDict(ctypes.PropertyMap map):
     """Convert a TagLib::PropertyMap to a dict mapping unicode string to list of unicode strings."""
     cdef:
         ctypes.StringList values
-        pair[ctypes.String,ctypes.StringList] mapIter
+        pair[ctypes.String, ctypes.StringList] mapIter
         dict dct = {}
         str tag
     for mapIter in map:
@@ -64,13 +64,10 @@ cdef class File:
 
     >>> f.save()
     """
-    
-    cdef:
-        ctypes.File *cFile
-        public dict tags
-        readonly object path
-        readonly list unsupported
-        bint applyMPEGhack
+    cdef ctypes.File *cFile
+    cdef public dict tags
+    cdef readonly object path
+    cdef readonly list unsupported
 
     def __cinit__(self, path, applyID3v2Hack=False):
         if isinstance(path, unicode):
@@ -80,11 +77,8 @@ cdef class File:
         self.cFile = ctypes.create(pathAsBytes)
         if not self.cFile or not self.cFile.isValid():
             raise OSError('Could not read file "{}"'.format(path))
-        self.applyMPEGhack = False
-        if ctypes.TAGLIB_MAJOR_VERSION <= 1 and ctypes.TAGLIB_MINOR_VERSION <= 8 \
-                and applyID3v2Hack and len(pathAsBytes) >= 4 and pathAsBytes[-4:].lower() == b'.mp3':
-            print('applying MPEG hack on {}'.format(path))
-            self.applyMPEGhack = True
+        if applyID3v2Hack:
+            raise RuntimeWarning('applyID3v2Hack parameter is obsolete and will be ignored')
 
     def __init__(self, path, applyID3v2Hack=False):
         self.tags = dict()
@@ -129,8 +123,6 @@ cdef class File:
         cdef:
             ctypes.PropertyMap cTagdict, cRemaining
             ctypes.String cKey, cValue
-        if self.applyMPEGhack:
-            (<mpeg.File*>self.cFile).save(2, False)
 
         # populate cTagdict with the contents of self.tags
         for key, values in self.tags.items():
@@ -149,10 +141,7 @@ cdef class File:
                 cTagdict[cKey].append(cValue)
 
         cRemaining = self.cFile.setProperties(cTagdict)
-        if self.applyMPEGhack:
-            success = (<mpeg.File*>self.cFile).save(2, True)
-        else:
-            success = self.cFile.save()
+        success = self.cFile.save()
         if not success:
             raise OSError('Unable to save tags: Unknown OS error')
         return propertyMapToDict(cRemaining)

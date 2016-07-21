@@ -11,7 +11,6 @@ from libcpp.list cimport list
 from libcpp.string cimport string
 from libcpp.map cimport map
 
-
 cdef extern from 'taglib/tstring.h' namespace 'TagLib::String':
     cdef extern enum Type:
         Latin1, UTF16, UTF16BE, UTF8, UTF16LE
@@ -61,8 +60,3 @@ cdef extern from 'taglib/tfile.h' namespace 'TagLib':
 
 cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
     cdef File* create(char* fn) except +
-
-
-cdef extern from 'taglib/taglib.h':
-    int TAGLIB_MAJOR_VERSION
-    int TAGLIB_MINOR_VERSION
