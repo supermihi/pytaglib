@@ -14,8 +14,7 @@ cimport ctypes
 
 version = '1.3.0'
 
-
-cdef str toUnicode(ctypes.String s):
+cdef unicode toUnicode(ctypes.String s):
     """Converts TagLib::String to a unicode string (``str`` in Python 3, ``unicode`` else)."""
     return s.to8Bit(True).decode('UTF-8', 'replace')
 
@@ -66,24 +65,23 @@ cdef class File:
     """
     cdef ctypes.File *cFile
     cdef public dict tags
+    cdef bytes bPath
     cdef readonly object path
     cdef readonly list unsupported
 
-    def __cinit__(self, path, applyID3v2Hack=False):
+    def __cinit__(self, path):
         if isinstance(path, unicode):
-            pathAsBytes = path.encode(sys.getfilesystemencoding() or "UTF-8")
+            self.bPath = path.encode(sys.getfilesystemencoding() or 'utf8')
         else:
-            pathAsBytes = path
-        self.cFile = ctypes.create(pathAsBytes)
+            self.bPath = path
+        self.cFile = ctypes.create(self.bPath)
         if not self.cFile or not self.cFile.isValid():
-            raise OSError('Could not read file "{}"'.format(path))
-        if applyID3v2Hack:
-            raise RuntimeWarning('applyID3v2Hack parameter is obsolete and will be ignored')
+            raise OSError('Could not read file "{}"'.format(self.bPath.decode('utf8', 'replace')))
 
-    def __init__(self, path, applyID3v2Hack=False):
+    def __init__(self, path):
         self.tags = dict()
-        self.unsupported = list()
         self.path = path
+        self.unsupported = list()
         self.readProperties()
 
     cdef void readProperties(self):
@@ -119,7 +117,7 @@ cdef class File:
         if not self.cFile:
             raise ValueError('I/O operation on closed file.')
         if self.readOnly:
-            raise OSError('Unable to save tags: file "{}" is read-only'.format(self.path))
+            raise OSError('Unable to save tags: file "{}" is read-only'.format(self.bPath.decode('utf8', 'replace')))
         cdef:
             ctypes.PropertyMap cTagdict, cRemaining
             ctypes.String cKey, cValue
