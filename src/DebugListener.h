@@ -3,5 +3,5 @@
 class PytaglibDebugListener : public TagLib::DebugListener
 {
     public:
-    void printMessage(const TagLib::String &msg);
+        virtual void printMessage(const TagLib::String &msg);
 };

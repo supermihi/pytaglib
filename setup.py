@@ -55,7 +55,8 @@ if '--cython' in sys.argv:
                                                  os.path.join('src', 'DebugListener.cpp')], **kwargs)])
     sys.argv.remove('--cython')
 else:
-    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **kwargs)]
+    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp'),
+                                       os.path.join('src', 'DebugListener.cpp')], **kwargs)]
 
 
 def version():
