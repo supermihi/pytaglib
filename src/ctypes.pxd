@@ -57,6 +57,15 @@ cdef extern from 'taglib/tfile.h' namespace 'TagLib':
         PropertyMap setProperties(PropertyMap&)
         void removeUnsupportedProperties(StringList&)
 
+cdef extern from 'taglib/tdebuglistener.h' namespace 'TagLib':
+    cdef cppclass DebugListener:
+        pass
+    cdef void setDebugListener(DebugListener *)
+
 
 cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
     cdef File* create(char* fn) except +
+
+cdef extern from 'DebugListener.h':
+    cdef cppclass PytaglibDebugListener(DebugListener):
+        PytaglibDebugListener()

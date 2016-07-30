@@ -14,6 +14,12 @@ cimport ctypes
 
 version = '1.3.0'
 
+cdef void init():
+    cdef ctypes.PytaglibDebugListener *_dl = new ctypes.PytaglibDebugListener()
+    ctypes.setDebugListener(_dl)
+
+init()
+
 cdef unicode toUnicode(ctypes.String s):
     """Converts TagLib::String to a unicode string (``str`` in Python 3, ``unicode`` else)."""
     return s.to8Bit(True).decode('UTF-8', 'replace')

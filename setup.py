@@ -51,7 +51,8 @@ else:
 if '--cython' in sys.argv:
     from Cython.Build import cythonize
 
-    extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **kwargs)])
+    extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx'),
+                                                 os.path.join('src', 'DebugListener.cpp')], **kwargs)])
     sys.argv.remove('--cython')
 else:
     extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **kwargs)]
