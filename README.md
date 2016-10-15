@@ -34,10 +34,10 @@ Features include [support of more than a dozen file formats](http://taglib.githu
 ```python
 >>> song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
 ```
-- Save your chanes:
+- Save your changes:
 ```python
 >>> returnvalue = song.save()
->>> retval
+>>> returnvalue
 {}
 ```
 The dictionary returned by `save` contains all tags that could not be saved (might happen if the specific format does not support e.g. multi-values).

@@ -56,12 +56,12 @@ Usage Example
 
        >>> song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
 
--  Save your chanes:
+-  Save your changes:
 
    .. code:: python
 
        >>> returnvalue = song.save()
-       >>> retval
+       >>> returnvalue
        {}
 
    The dictionary returned by ``save`` contains all tags that could not
