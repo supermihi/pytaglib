@@ -51,17 +51,21 @@ The most recommended installation method is
 
         pip install pytaglib
 
-where you should ensure that:
-* `pip` points to the correct Python version; you might need to use, e.g., `pip-3.5` to install `pytaglib` for another Python version than your system's default.
-* you may need administrator rights to install a package, i.e., `sudo pip install pytaglib` on Unix or running the command on a Admin console on windows
-* you can alternatively install into your user home with `pip install --user pytaglib`.
+subject to the following notes:
+* Ensure that `pip` points to the correct Python version; you might need to use, e.g., `pip-3.5` if you want to install `pytaglib` for Python 3.5 and your system's default is Python 2.7.
+* You may need administrator rights to install a package, i.e., `sudo pip install pytaglib` on Unix or running the command on a Admin console on windows
+* Alternatively, install locally into your user home with `pip install --user pytaglib`.
+* You need to have `taglib` installed with development headers (package `libtag1-dev` for debian-based linux, `brew install taglib` on OS X).
+* If `taglib` is installed at a non-standard location, you can tell `pip` where to look for its include (`-I`) and library (`-L`) files:
+
+        pip install --global-option=build_ext --global-option="-I/usr/local/include/" --global-option="-L/usr/local/lib" pytaglib
 
 If the above does not work, continue reading for alternative methods of installation.
 
 ### Linux / Unix
 #### Distribution-Specific Packages
 * Debian- and Ubuntu-based linux flavors have binary packages for the Python 3 version, called `python3-taglib`. Unfortunatelly, they are heavily outdated, so you should use the above "pip" method whenever possible.
-* For Arch users, there is a [package](https://aur.archlinux.org/packages/python-pytaglib/) in the user repository (AUR).
+* For Arch users, there is a [package](https://aur.archlinux.org/packages/python-pytaglib/) in the user repository (AUR) which I try to keep up-to-date.
 #### Manual Compilation
 Alternatively, you can download / checkout the sources and compile manually:
 
@@ -69,7 +73,7 @@ Alternatively, you can download / checkout the sources and compile manually:
         python setup.py test  # optional
         sudo python setup.py install
 
-For this to work, you need to have `taglib` installed with development headers (package `libtag1-dev` for deb-based linux). If taglib is installed on a non-standard location, you can manually specify include and library directories:
+You can manually specify `taglib`'s include and library directories:
 
     python setup.py build --include-dirs /usr/local/include --library-dirs /usr/local/lib
 
