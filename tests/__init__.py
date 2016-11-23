@@ -6,7 +6,7 @@
 # published by the Free Software Foundation
 #
 from contextlib import contextmanager
-import os.path, shutil, tempfile
+import os.path, shutil, tempfile, sys
 
 
 def onerror(func, path, exc_info):
@@ -40,4 +40,9 @@ def copyTestFile(name):
     try:
         yield copy_file
     finally:
-        shutil.rmtree(tempdir, onerror=onerror)
+        if sys.platform == 'win32':
+            # there are some problems with open files on windows
+            # which I am currently to tired to debug ...
+            shutil.rmtree(tempdir, ignore_errors=True)
+        else:
+            shutil.rmtree(tempdir, onerror=onerror)
