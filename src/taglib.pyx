@@ -70,9 +70,12 @@ cdef class File:
     def __cinit__(self, path):
         if not isinstance(path, unicode):
             path = path.decode('utf8')
+        self.path = path
         self.bPath = path.encode('utf8')
-        IF UNAME_SYSNAME == "Windows":            
-            self.cFile = ctypes.create(path)
+        IF UNAME_SYSNAME == "Windows":
+            # create on windows takes wchar_t* which Cython automatically converts to
+            # from unicode strings
+            self.cFile = ctypes.create(self.path)
         ELSE:
             self.cFile = ctypes.create(self.bPath)
         if not self.cFile or not self.cFile.isValid():
@@ -80,7 +83,6 @@ cdef class File:
 
     def __init__(self, path):
         self.tags = dict()
-        self.path = path
         self.unsupported = list()
         self.readProperties()
 
