@@ -6,7 +6,8 @@
 # published by the Free Software Foundation
 #
 from __future__ import unicode_literals
-import unittest, sys
+import unittest
+import sys
 import taglib
 from . import copyTestFile
 
@@ -16,7 +17,7 @@ class TestBytesUnicode(unittest.TestCase):
     def test_bytes_filename(self):
         """Ensure file can be opened if filename is provided as bytes object."""
         with copyTestFile('testöü.flac') as f:
-            tf = taglib.File(f.encode(sys.getfilesystemencoding()))
+            tf = taglib.File(f.encode('utf8'))
             tf.close()
 
     def test_unicode_filename(self):

@@ -7,8 +7,6 @@
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
 
-import sys
-
 from libcpp.utility cimport pair
 cimport ctypes
 
@@ -39,7 +37,7 @@ cdef class File:
     """Class representing an audio file with metadata ("tags").
     
     To read tags from an audio file, create a *File* object, passing the file's path to the
-    constructor:
+    constructor (should be a unicode string):
     
     >>> f = taglib.File('/path/to/file.ogg')
     
@@ -70,13 +68,15 @@ cdef class File:
     cdef readonly list unsupported
 
     def __cinit__(self, path):
-        if isinstance(path, unicode):
-            self.bPath = path.encode(sys.getfilesystemencoding() or 'utf8')
-        else:
-            self.bPath = path
-        self.cFile = ctypes.create(self.bPath)
+        if not isinstance(path, unicode):
+            path = path.decode('utf8')
+        self.bPath = path.encode('utf8')
+        IF UNAME_SYSNAME == "Windows":            
+            self.cFile = ctypes.create(path)
+        ELSE:
+            self.cFile = ctypes.create(bPath)
         if not self.cFile or not self.cFile.isValid():
-            raise OSError('Could not read file "{}"'.format(self.bPath.decode('utf8', 'replace')))
+            raise OSError('Could not read file {}'.format(path))
 
     def __init__(self, path):
         self.tags = dict()
@@ -117,7 +117,7 @@ cdef class File:
         if not self.cFile:
             raise ValueError('I/O operation on closed file.')
         if self.readOnly:
-            raise OSError('Unable to save tags: file "{}" is read-only'.format(self.bPath.decode('utf8', 'replace')))
+            raise OSError('Unable to save tags: file "{}" is read-only'.format(self.path))
         cdef:
             ctypes.PropertyMap cTagdict, cRemaining
             ctypes.String cKey, cValue

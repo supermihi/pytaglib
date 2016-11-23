@@ -10,6 +10,7 @@
 from libcpp.list cimport list
 from libcpp.string cimport string
 from libcpp.map cimport map
+from libc.stddef cimport wchar_t
 
 cdef extern from 'taglib/tstring.h' namespace 'TagLib::String':
     cdef extern enum Type:
@@ -59,4 +60,8 @@ cdef extern from 'taglib/tfile.h' namespace 'TagLib':
 
 
 cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
-    cdef File* create(char* fn) except +
+    IF UNAME_SYSNAME == "Windows":
+        cdef File* create(const Py_UNICODE*) except +
+    ELSE:
+        cdef File* create(const char*) except +
+
