@@ -173,12 +173,12 @@ page.
       ``cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX=".\taglib-install"``
       to generate the Visual Studio project files.
    #. Type ``msbuild INSTALL.vcxproj /p:Configuration=Release`` which
-      will "install" taglib into the ``install`` subdirectory.
+      will "install" taglib into the ``taglib-install`` subdirectory.
 
 #. Still in the VS2015 command prompt, navigate to the pytaglib
    directory.
 #. Tell pytaglib where to find taglib:
-   ``set TAGLIB_HOME=C:\Path\To\Taglib\install``
+   ``set TAGLIB_HOME=C:\Path\To\taglib-install``
 #. Build pytaglib: ``python setup.py build`` and install:
    ``python setup.py install``
 
