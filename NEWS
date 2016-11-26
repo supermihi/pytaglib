@@ -1,9 +1,10 @@
 Changelog
 =========
 
-pytaglib 1.3.1 (2016/11/20)
+pytaglib 1.4 (2016/11/26)
 ---------------------------
-This is a non-feature release (no change to the code base)
+
+- Windows version: fix filenames with non-local codepage characters
 - update README (pip options for custom taglib install dir - thanks to qbuchanan)
 - build windows wheel against taglib-1.11.1
 - cython version used to create the shipped cpp-file updated to 0.25.1
