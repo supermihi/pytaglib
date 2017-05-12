@@ -135,7 +135,7 @@ cdef class File:
                 values = [ values ]
             for value in values:
                 if isinstance(value, bytes):
-                    cValue = ctypes.String(value.upper(), ctypes.UTF8)
+                    cValue = ctypes.String(value, ctypes.UTF8)
                 else:
                     cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)
                 cTagdict[cKey].append(cValue)
