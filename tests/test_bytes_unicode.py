@@ -29,26 +29,29 @@ class TestBytesUnicode(unittest.TestCase):
             tf.close()
 
     def test_bytes_tags(self):
-        """Ensure bytes keys and values are accepted."""
+        """Ensure bytes keys and values are accepted.
+        
+        Update 2017-05-12: Use mixed-case tag values as a regression test for issue #33.
+        """
         with copyTestFile('rare_frames.mp3') as f:
             tf = taglib.File(f)
-            tf.tags[b'BYTES'] = [b'ONE', b'TWO']
+            tf.tags[b'BYTES'] = [b'OnE', b'twO']
             tf.save()
             tf.close()
             
             tf = taglib.File(f)
-            self.assertEqual(tf.tags['BYTES'], ['ONE', 'TWO'])
+            self.assertEqual(tf.tags['BYTES'], ['OnE', 'twO'])
             tf.close()
 
     def test_unicode_tags(self):
         """Ensure unicode keys and values are accepted."""
         with copyTestFile('rare_frames.mp3') as f:
             tf = taglib.File(f)
-            tf.tags[u'UNICODE'] = [u'ONE', u'TWO']
+            tf.tags[u'UNICODE'] = [u'OnE', u'twO']
             tf.save()
             tf.close()
             
             tf = taglib.File(f)
-            self.assertEqual(tf.tags['UNICODE'], ['ONE', 'TWO'])
+            self.assertEqual(tf.tags['UNICODE'], ['OnE', 'twO'])
             tf.close()
 
