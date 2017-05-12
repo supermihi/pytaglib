@@ -1,9 +1,12 @@
 Changelog
 =========
 
+pytaglib 1.4.1 (2017/05/12)
+---------------------------
+- Fix #33 (no longer uppercase bytestring tag values)
+
 pytaglib 1.4 (2016/11/26)
 ---------------------------
-
 - Windows version: fix filenames with non-local codepage characters
 - update README (pip options for custom taglib install dir - thanks to qbuchanan)
 - build windows wheel against taglib-1.11.1

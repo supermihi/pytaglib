@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
 # cython: language_level = 3
-# Copyright 2011-2016 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2017 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -10,7 +10,7 @@
 from libcpp.utility cimport pair
 cimport ctypes
 
-version = '1.4.0'
+version = '1.4.1'
 
 cdef unicode toUnicode(ctypes.String s):
     """Converts TagLib::String to a unicode string (``str`` in Python 3, ``unicode`` else)."""
