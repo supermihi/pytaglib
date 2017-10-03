@@ -79,7 +79,7 @@ cdef class File:
         ELSE:
             self.cFile = ctypes.create(self.bPath)
         if not self.cFile or not self.cFile.isValid():
-            raise OSError('Could not read file {}'.format(path))
+            raise OSError(f'Could not read file {path}')
 
     def __init__(self, path):
         self.tags = dict()
@@ -119,7 +119,7 @@ cdef class File:
         if not self.cFile:
             raise ValueError('I/O operation on closed file.')
         if self.readOnly:
-            raise OSError('Unable to save tags: file "{}" is read-only'.format(self.bPath.decode('utf8', 'ignore')))
+            raise OSError(f'Unable to save tags: file is read-only')
         cdef:
             ctypes.PropertyMap cTagdict, cRemaining
             ctypes.String cKey, cValue
@@ -197,4 +197,4 @@ cdef class File:
             return self.cFile.readOnly()
         
     def __repr__(self):
-        return "File('{}')".format(self.path)
+        return f"File('{self.path}')"

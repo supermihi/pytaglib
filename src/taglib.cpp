@@ -3,12 +3,12 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [], 
-        "language": "c++", 
+        "depends": [],
+        "language": "c++",
         "libraries": [
             "tag"
         ]
-    }, 
+    },
     "module_name": "taglib"
 }
 END: Cython Metadata */
@@ -888,6 +888,28 @@ static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
 static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
     Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
 
+/* PyObjectFormatSimple.proto */
+#if CYTHON_COMPILING_IN_PYPY
+    #define __Pyx_PyObject_FormatSimple(s, f) (\
+        likely(PyUnicode_CheckExact(s)) ? (Py_INCREF(s), s) :\
+        PyObject_Format(s, f))
+#elif PY_MAJOR_VERSION < 3
+    #define __Pyx_PyObject_FormatSimple(s, f) (\
+        likely(PyUnicode_CheckExact(s)) ? (Py_INCREF(s), s) :\
+        likely(PyString_CheckExact(s)) ? PyUnicode_FromEncodedObject(s, NULL, "strict") :\
+        PyObject_Format(s, f))
+#elif CYTHON_USE_TYPE_SLOTS
+    #define __Pyx_PyObject_FormatSimple(s, f) (\
+        likely(PyUnicode_CheckExact(s)) ? (Py_INCREF(s), s) :\
+        likely(PyLong_CheckExact(s)) ? PyLong_Type.tp_str(s) :\
+        likely(PyFloat_CheckExact(s)) ? PyFloat_Type.tp_str(s) :\
+        PyObject_Format(s, f))
+#else
+    #define __Pyx_PyObject_FormatSimple(s, f) (\
+        likely(PyUnicode_CheckExact(s)) ? (Py_INCREF(s), s) :\
+        PyObject_Format(s, f))
+#endif
+
 /* PyThreadStateGet.proto */
 #if CYTHON_FAST_THREAD_STATE
 #define __Pyx_PyThreadState_declare  PyThreadState *__pyx_tstate;
@@ -929,6 +951,13 @@ static CYTHON_INLINE PyObject* __Pyx_decode_bytes(
         PyBytes_AS_STRING(string), PyBytes_GET_SIZE(string),
         start, stop, encoding, errors, decode_func);
 }
+
+/* IncludeStringH.proto */
+#include <string.h>
+
+/* JoinPyUnicode.proto */
+static PyObject* __Pyx_PyUnicode_Join(PyObject* value_tuple, Py_ssize_t value_count, Py_ssize_t result_ulength,
+                                      Py_UCS4 max_char);
 
 /* IterFinish.proto */
 static CYTHON_INLINE int __Pyx_IterFinish(void);
@@ -1081,7 +1110,8 @@ int __pyx_module_is_main_taglib = 0;
 /* Implementation of 'taglib' */
 static PyObject *__pyx_builtin_OSError;
 static PyObject *__pyx_builtin_ValueError;
-static const char __pyx_k_File[] = "File('{}')";
+static const char __pyx_k__14[] = "')";
+static const char __pyx_k_File[] = "File('";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_path[] = "path";
 static const char __pyx_k_test[] = "__test__";
@@ -1093,16 +1123,16 @@ static const char __pyx_k_upper[] = "upper";
 static const char __pyx_k_append[] = "append";
 static const char __pyx_k_decode[] = "decode";
 static const char __pyx_k_encode[] = "encode";
-static const char __pyx_k_format[] = "format";
 static const char __pyx_k_OSError[] = "OSError";
 static const char __pyx_k_version[] = "version";
 static const char __pyx_k_readOnly[] = "readOnly";
 static const char __pyx_k_ValueError[] = "ValueError";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
-static const char __pyx_k_Could_not_read_file[] = "Could not read file {}";
+static const char __pyx_k_is_read_only[] = "\" is read-only";
+static const char __pyx_k_Could_not_read_file[] = "Could not read file ";
+static const char __pyx_k_Unable_to_save_tags_file[] = "Unable to save tags: file \"";
 static const char __pyx_k_I_O_operation_on_closed_file[] = "I/O operation on closed file.";
 static const char __pyx_k_Unable_to_save_tags_Unknown_OS_e[] = "Unable to save tags: Unknown OS error";
-static const char __pyx_k_Unable_to_save_tags_file_is_read[] = "Unable to save tags: file \"{}\" is read-only";
 static PyObject *__pyx_kp_u_1_4_1;
 static PyObject *__pyx_kp_u_Could_not_read_file;
 static PyObject *__pyx_kp_u_File;
@@ -1110,12 +1140,13 @@ static PyObject *__pyx_kp_u_I_O_operation_on_closed_file;
 static PyObject *__pyx_n_s_OSError;
 static PyObject *__pyx_kp_u_UTF_8;
 static PyObject *__pyx_kp_u_Unable_to_save_tags_Unknown_OS_e;
-static PyObject *__pyx_kp_u_Unable_to_save_tags_file_is_read;
+static PyObject *__pyx_kp_u_Unable_to_save_tags_file;
 static PyObject *__pyx_n_s_ValueError;
+static PyObject *__pyx_kp_u__14;
 static PyObject *__pyx_n_s_append;
 static PyObject *__pyx_n_s_decode;
 static PyObject *__pyx_n_s_encode;
-static PyObject *__pyx_n_s_format;
+static PyObject *__pyx_kp_u_is_read_only;
 static PyObject *__pyx_n_s_items;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_path;
@@ -1438,8 +1469,6 @@ static int __pyx_pf_6taglib_4File___cinit__(struct __pyx_obj_6taglib_File *__pyx
   PyObject *__pyx_t_4 = NULL;
   char const *__pyx_t_5;
   TagLib::File *__pyx_t_6;
-  PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
   __Pyx_RefNannySetupContext("__cinit__", 0);
   __Pyx_INCREF(__pyx_v_path);
 
@@ -1515,7 +1544,7 @@ static int __pyx_pf_6taglib_4File___cinit__(struct __pyx_obj_6taglib_File *__pyx
  *         ELSE:
  *             self.cFile = ctypes.create(self.bPath)             # <<<<<<<<<<<<<<
  *         if not self.cFile or not self.cFile.isValid():
- *             raise OSError('Could not read file {}'.format(path))
+ *             raise OSError(f'Could not read file {path}')
  */
   __pyx_t_5 = __Pyx_PyObject_AsString(__pyx_v_self->bPath); if (unlikely((!__pyx_t_5) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L1_error)
   try {
@@ -1530,7 +1559,7 @@ static int __pyx_pf_6taglib_4File___cinit__(struct __pyx_obj_6taglib_File *__pyx
  *         ELSE:
  *             self.cFile = ctypes.create(self.bPath)
  *         if not self.cFile or not self.cFile.isValid():             # <<<<<<<<<<<<<<
- *             raise OSError('Could not read file {}'.format(path))
+ *             raise OSError(f'Could not read file {path}')
  * 
  */
   __pyx_t_1 = ((!(__pyx_v_self->cFile != 0)) != 0);
@@ -1547,72 +1576,32 @@ static int __pyx_pf_6taglib_4File___cinit__(struct __pyx_obj_6taglib_File *__pyx
     /* "taglib.pyx":82
  *             self.cFile = ctypes.create(self.bPath)
  *         if not self.cFile or not self.cFile.isValid():
- *             raise OSError('Could not read file {}'.format(path))             # <<<<<<<<<<<<<<
+ *             raise OSError(f'Could not read file {path}')             # <<<<<<<<<<<<<<
  * 
  *     def __init__(self, path):
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_Could_not_read_file, __pyx_n_s_format); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 82, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_7 = NULL;
-    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_7)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_7);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_4, function);
-      }
-    }
-    if (!__pyx_t_7) {
-      __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    } else {
-      #if CYTHON_FAST_PYCALL
-      if (PyFunction_Check(__pyx_t_4)) {
-        PyObject *__pyx_temp[2] = {__pyx_t_7, __pyx_v_path};
-        __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_GOTREF(__pyx_t_3);
-      } else
-      #endif
-      #if CYTHON_FAST_PYCCALL
-      if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-        PyObject *__pyx_temp[2] = {__pyx_t_7, __pyx_v_path};
-        __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_GOTREF(__pyx_t_3);
-      } else
-      #endif
-      {
-        __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 82, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_8);
-        __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_7); __pyx_t_7 = NULL;
-        __Pyx_INCREF(__pyx_v_path);
-        __Pyx_GIVEREF(__pyx_v_path);
-        PyTuple_SET_ITEM(__pyx_t_8, 0+1, __pyx_v_path);
-        __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      }
-    }
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 82, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_GIVEREF(__pyx_t_3);
-    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3);
-    __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_OSError, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_FormatSimple(__pyx_v_path, __pyx_empty_unicode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+    __pyx_t_4 = __Pyx_PyUnicode_Concat(__pyx_kp_u_Could_not_read_file, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 82, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4);
+    __pyx_t_4 = 0;
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_OSError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 82, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_Raise(__pyx_t_4, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __PYX_ERR(0, 82, __pyx_L1_error)
 
     /* "taglib.pyx":81
  *         ELSE:
  *             self.cFile = ctypes.create(self.bPath)
  *         if not self.cFile or not self.cFile.isValid():             # <<<<<<<<<<<<<<
- *             raise OSError('Could not read file {}'.format(path))
+ *             raise OSError(f'Could not read file {path}')
  * 
  */
   }
@@ -1631,8 +1620,6 @@ static int __pyx_pf_6taglib_4File___cinit__(struct __pyx_obj_6taglib_File *__pyx
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_AddTraceback("taglib.File.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
@@ -1642,7 +1629,7 @@ static int __pyx_pf_6taglib_4File___cinit__(struct __pyx_obj_6taglib_File *__pyx
 }
 
 /* "taglib.pyx":84
- *             raise OSError('Could not read file {}'.format(path))
+ *             raise OSError(f'Could not read file {path}')
  * 
  *     def __init__(self, path):             # <<<<<<<<<<<<<<
  *         self.tags = dict()
@@ -1744,7 +1731,7 @@ static int __pyx_pf_6taglib_4File_2__init__(struct __pyx_obj_6taglib_File *__pyx
   ((struct __pyx_vtabstruct_6taglib_File *)__pyx_v_self->__pyx_vtab)->readProperties(__pyx_v_self);
 
   /* "taglib.pyx":84
- *             raise OSError('Could not read file {}'.format(path))
+ *             raise OSError(f'Could not read file {path}')
  * 
  *     def __init__(self, path):             # <<<<<<<<<<<<<<
  *         self.tags = dict()
@@ -1894,6 +1881,7 @@ static PyObject *__pyx_pw_6taglib_4File_5save(PyObject *__pyx_v_self, CYTHON_UNU
 }
 
 static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__pyx_v_self) {
+  CYTHON_UNUSED PyObject *__pyx_v_pathUni = NULL;
   TagLib::PropertyMap __pyx_v_cTagdict;
   TagLib::PropertyMap __pyx_v_cRemaining;
   TagLib::String __pyx_v_cKey;
@@ -1906,15 +1894,15 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
+  Py_ssize_t __pyx_t_3;
+  Py_UCS4 __pyx_t_4;
   PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  Py_ssize_t __pyx_t_7;
-  Py_ssize_t __pyx_t_8;
+  Py_ssize_t __pyx_t_6;
+  int __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
   int __pyx_t_9;
   int __pyx_t_10;
-  int __pyx_t_11;
+  PyObject *__pyx_t_11 = NULL;
   char *__pyx_t_12;
   int __pyx_t_13;
   Py_ssize_t __pyx_t_14;
@@ -1936,7 +1924,7 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  *         if not self.cFile:
  *             raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *         if self.readOnly:
- *             raise OSError('Unable to save tags: file "{}" is read-only'.format(self.bPath.decode('utf8', 'ignore')))
+ *             pathUni = self.bPath.decode('utf8', 'ignore')
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
@@ -1957,8 +1945,8 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  *         if not self.cFile:
  *             raise ValueError('I/O operation on closed file.')
  *         if self.readOnly:             # <<<<<<<<<<<<<<
- *             raise OSError('Unable to save tags: file "{}" is read-only'.format(self.bPath.decode('utf8', 'ignore')))
- *         cdef:
+ *             pathUni = self.bPath.decode('utf8', 'ignore')
+ *             raise OSError(f'Unable to save tags: file "{self.path}" is read-only')
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_readOnly); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -1969,114 +1957,98 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
     /* "taglib.pyx":122
  *             raise ValueError('I/O operation on closed file.')
  *         if self.readOnly:
- *             raise OSError('Unable to save tags: file "{}" is read-only'.format(self.bPath.decode('utf8', 'ignore')))             # <<<<<<<<<<<<<<
+ *             pathUni = self.bPath.decode('utf8', 'ignore')             # <<<<<<<<<<<<<<
+ *             raise OSError(f'Unable to save tags: file "{self.path}" is read-only')
  *         cdef:
- *             ctypes.PropertyMap cTagdict, cRemaining
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_Unable_to_save_tags_file_is_read, __pyx_n_s_format); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
     if (unlikely(__pyx_v_self->bPath == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%s'", "decode");
       __PYX_ERR(0, 122, __pyx_L1_error)
     }
-    __pyx_t_4 = __Pyx_decode_bytes(__pyx_v_self->bPath, 0, PY_SSIZE_T_MAX, NULL, ((char const *)"ignore"), PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 122, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = NULL;
-    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_3);
-      if (likely(__pyx_t_5)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-        __Pyx_INCREF(__pyx_t_5);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_3, function);
-      }
-    }
-    if (!__pyx_t_5) {
-      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_GOTREF(__pyx_t_2);
-    } else {
-      #if CYTHON_FAST_PYCALL
-      if (PyFunction_Check(__pyx_t_3)) {
-        PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_4};
-        __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      } else
-      #endif
-      #if CYTHON_FAST_PYCCALL
-      if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-        PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_4};
-        __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
-        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      } else
-      #endif
-      {
-        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 122, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_6);
-        __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
-        __Pyx_GIVEREF(__pyx_t_4);
-        PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_4);
-        __pyx_t_4 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      }
-    }
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_GIVEREF(__pyx_t_2);
-    PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
-    __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_OSError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_decode_bytes(__pyx_v_self->bPath, 0, PY_SSIZE_T_MAX, NULL, ((char const *)"ignore"), PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_Raise(__pyx_t_2, 0, 0, 0);
+    __pyx_v_pathUni = __pyx_t_2;
+    __pyx_t_2 = 0;
+
+    /* "taglib.pyx":123
+ *         if self.readOnly:
+ *             pathUni = self.bPath.decode('utf8', 'ignore')
+ *             raise OSError(f'Unable to save tags: file "{self.path}" is read-only')             # <<<<<<<<<<<<<<
+ *         cdef:
+ *             ctypes.PropertyMap cTagdict, cRemaining
+ */
+    __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = 0;
+    __pyx_t_4 = 127;
+    __Pyx_INCREF(__pyx_kp_u_Unable_to_save_tags_file);
+    __pyx_t_3 += 27;
+    __Pyx_GIVEREF(__pyx_kp_u_Unable_to_save_tags_file);
+    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_kp_u_Unable_to_save_tags_file);
+    __pyx_t_5 = __Pyx_PyObject_FormatSimple(__pyx_v_self->path, __pyx_empty_unicode); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 123, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_4 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_5) > __pyx_t_4) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_5) : __pyx_t_4;
+    __pyx_t_3 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_5);
+    __Pyx_GIVEREF(__pyx_t_5);
+    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_5);
+    __pyx_t_5 = 0;
+    __Pyx_INCREF(__pyx_kp_u_is_read_only);
+    __pyx_t_3 += 14;
+    __Pyx_GIVEREF(__pyx_kp_u_is_read_only);
+    PyTuple_SET_ITEM(__pyx_t_2, 2, __pyx_kp_u_is_read_only);
+    __pyx_t_5 = __Pyx_PyUnicode_Join(__pyx_t_2, 3, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 123, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 122, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_5);
+    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_5);
+    __pyx_t_5 = 0;
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_OSError, __pyx_t_2, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 123, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_Raise(__pyx_t_5, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __PYX_ERR(0, 123, __pyx_L1_error)
 
     /* "taglib.pyx":121
  *         if not self.cFile:
  *             raise ValueError('I/O operation on closed file.')
  *         if self.readOnly:             # <<<<<<<<<<<<<<
- *             raise OSError('Unable to save tags: file "{}" is read-only'.format(self.bPath.decode('utf8', 'ignore')))
- *         cdef:
+ *             pathUni = self.bPath.decode('utf8', 'ignore')
+ *             raise OSError(f'Unable to save tags: file "{self.path}" is read-only')
  */
   }
 
-  /* "taglib.pyx":128
+  /* "taglib.pyx":129
  * 
  *         # populate cTagdict with the contents of self.tags
  *         for key, values in self.tags.items():             # <<<<<<<<<<<<<<
  *             if isinstance(key, bytes):
  *                 cKey = ctypes.String(key.upper(), ctypes.UTF8)
  */
-  __pyx_t_7 = 0;
+  __pyx_t_3 = 0;
   if (unlikely(__pyx_v_self->tags == Py_None)) {
     PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%s'", "items");
-    __PYX_ERR(0, 128, __pyx_L1_error)
+    __PYX_ERR(0, 129, __pyx_L1_error)
   }
-  __pyx_t_3 = __Pyx_dict_iterator(__pyx_v_self->tags, 1, __pyx_n_s_items, (&__pyx_t_8), (&__pyx_t_9)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_2);
-  __pyx_t_2 = __pyx_t_3;
-  __pyx_t_3 = 0;
+  __pyx_t_2 = __Pyx_dict_iterator(__pyx_v_self->tags, 1, __pyx_n_s_items, (&__pyx_t_6), (&__pyx_t_7)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_5);
+  __pyx_t_5 = __pyx_t_2;
+  __pyx_t_2 = 0;
   while (1) {
-    __pyx_t_10 = __Pyx_dict_iter_next(__pyx_t_2, __pyx_t_8, &__pyx_t_7, &__pyx_t_3, &__pyx_t_6, NULL, __pyx_t_9);
-    if (unlikely(__pyx_t_10 == 0)) break;
-    if (unlikely(__pyx_t_10 == -1)) __PYX_ERR(0, 128, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_XDECREF_SET(__pyx_v_key, __pyx_t_3);
-    __pyx_t_3 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_values, __pyx_t_6);
-    __pyx_t_6 = 0;
+    __pyx_t_9 = __Pyx_dict_iter_next(__pyx_t_5, __pyx_t_6, &__pyx_t_3, &__pyx_t_2, &__pyx_t_8, NULL, __pyx_t_7);
+    if (unlikely(__pyx_t_9 == 0)) break;
+    if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_XDECREF_SET(__pyx_v_key, __pyx_t_2);
+    __pyx_t_2 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_values, __pyx_t_8);
+    __pyx_t_8 = 0;
 
-    /* "taglib.pyx":129
+    /* "taglib.pyx":130
  *         # populate cTagdict with the contents of self.tags
  *         for key, values in self.tags.items():
  *             if isinstance(key, bytes):             # <<<<<<<<<<<<<<
@@ -2084,41 +2056,41 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  *             else:
  */
     __pyx_t_1 = PyBytes_Check(__pyx_v_key); 
-    __pyx_t_11 = (__pyx_t_1 != 0);
-    if (__pyx_t_11) {
+    __pyx_t_10 = (__pyx_t_1 != 0);
+    if (__pyx_t_10) {
 
-      /* "taglib.pyx":130
+      /* "taglib.pyx":131
  *         for key, values in self.tags.items():
  *             if isinstance(key, bytes):
  *                 cKey = ctypes.String(key.upper(), ctypes.UTF8)             # <<<<<<<<<<<<<<
  *             else:
  *                 cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)
  */
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_key, __pyx_n_s_upper); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
-        if (likely(__pyx_t_4)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-          __Pyx_INCREF(__pyx_t_4);
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_key, __pyx_n_s_upper); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_11 = NULL;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+        __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_2);
+        if (likely(__pyx_t_11)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+          __Pyx_INCREF(__pyx_t_11);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
+          __Pyx_DECREF_SET(__pyx_t_2, function);
         }
       }
-      if (__pyx_t_4) {
-        __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 130, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (__pyx_t_11) {
+        __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_11); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 131, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       } else {
-        __pyx_t_6 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 130, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 131, __pyx_L1_error)
       }
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_12 = __Pyx_PyObject_AsString(__pyx_t_6); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 130, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_12 = __Pyx_PyObject_AsString(__pyx_t_8); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L1_error)
       __pyx_v_cKey = TagLib::String(__pyx_t_12, TagLib::String::UTF8);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-      /* "taglib.pyx":129
+      /* "taglib.pyx":130
  *         # populate cTagdict with the contents of self.tags
  *         for key, values in self.tags.items():
  *             if isinstance(key, bytes):             # <<<<<<<<<<<<<<
@@ -2128,7 +2100,7 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
       goto __pyx_L7;
     }
 
-    /* "taglib.pyx":132
+    /* "taglib.pyx":133
  *                 cKey = ctypes.String(key.upper(), ctypes.UTF8)
  *             else:
  *                 cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)             # <<<<<<<<<<<<<<
@@ -2136,39 +2108,39 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  *                 # the user has accidentally used a single tag value instead a length-1 list
  */
     /*else*/ {
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_key, __pyx_n_s_upper); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
-        if (likely(__pyx_t_4)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-          __Pyx_INCREF(__pyx_t_4);
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_key, __pyx_n_s_upper); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_11 = NULL;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+        __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_2);
+        if (likely(__pyx_t_11)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+          __Pyx_INCREF(__pyx_t_11);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
+          __Pyx_DECREF_SET(__pyx_t_2, function);
         }
       }
-      if (__pyx_t_4) {
-        __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 132, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (__pyx_t_11) {
+        __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_11); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 133, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       } else {
-        __pyx_t_6 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 132, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 133, __pyx_L1_error)
       }
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 132, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_12 = __Pyx_PyObject_AsString(__pyx_t_6); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_encode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 133, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_12 = __Pyx_PyObject_AsString(__pyx_t_8); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 133, __pyx_L1_error)
       __pyx_v_cKey = TagLib::String(__pyx_t_12, TagLib::String::UTF8);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     }
     __pyx_L7:;
 
-    /* "taglib.pyx":133
+    /* "taglib.pyx":134
  *             else:
  *                 cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)
  *             if isinstance(values, bytes) or isinstance(values, unicode):             # <<<<<<<<<<<<<<
@@ -2179,31 +2151,31 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
     __pyx_t_13 = (__pyx_t_1 != 0);
     if (!__pyx_t_13) {
     } else {
-      __pyx_t_11 = __pyx_t_13;
+      __pyx_t_10 = __pyx_t_13;
       goto __pyx_L9_bool_binop_done;
     }
     __pyx_t_13 = PyUnicode_Check(__pyx_v_values); 
     __pyx_t_1 = (__pyx_t_13 != 0);
-    __pyx_t_11 = __pyx_t_1;
+    __pyx_t_10 = __pyx_t_1;
     __pyx_L9_bool_binop_done:;
-    if (__pyx_t_11) {
+    if (__pyx_t_10) {
 
-      /* "taglib.pyx":135
+      /* "taglib.pyx":136
  *             if isinstance(values, bytes) or isinstance(values, unicode):
  *                 # the user has accidentally used a single tag value instead a length-1 list
  *                 values = [ values ]             # <<<<<<<<<<<<<<
  *             for value in values:
  *                 if isinstance(value, bytes):
  */
-      __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 135, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_8 = PyList_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
       __Pyx_INCREF(__pyx_v_values);
       __Pyx_GIVEREF(__pyx_v_values);
-      PyList_SET_ITEM(__pyx_t_6, 0, __pyx_v_values);
-      __Pyx_DECREF_SET(__pyx_v_values, __pyx_t_6);
-      __pyx_t_6 = 0;
+      PyList_SET_ITEM(__pyx_t_8, 0, __pyx_v_values);
+      __Pyx_DECREF_SET(__pyx_v_values, __pyx_t_8);
+      __pyx_t_8 = 0;
 
-      /* "taglib.pyx":133
+      /* "taglib.pyx":134
  *             else:
  *                 cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)
  *             if isinstance(values, bytes) or isinstance(values, unicode):             # <<<<<<<<<<<<<<
@@ -2212,7 +2184,7 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  */
     }
 
-    /* "taglib.pyx":136
+    /* "taglib.pyx":137
  *                 # the user has accidentally used a single tag value instead a length-1 list
  *                 values = [ values ]
  *             for value in values:             # <<<<<<<<<<<<<<
@@ -2220,69 +2192,69 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  *                     cValue = ctypes.String(value, ctypes.UTF8)
  */
     if (likely(PyList_CheckExact(__pyx_v_values)) || PyTuple_CheckExact(__pyx_v_values)) {
-      __pyx_t_6 = __pyx_v_values; __Pyx_INCREF(__pyx_t_6); __pyx_t_14 = 0;
+      __pyx_t_8 = __pyx_v_values; __Pyx_INCREF(__pyx_t_8); __pyx_t_14 = 0;
       __pyx_t_15 = NULL;
     } else {
-      __pyx_t_14 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_v_values); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 136, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_15 = Py_TYPE(__pyx_t_6)->tp_iternext; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_14 = -1; __pyx_t_8 = PyObject_GetIter(__pyx_v_values); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 137, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_15 = Py_TYPE(__pyx_t_8)->tp_iternext; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 137, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_15)) {
-        if (likely(PyList_CheckExact(__pyx_t_6))) {
-          if (__pyx_t_14 >= PyList_GET_SIZE(__pyx_t_6)) break;
+        if (likely(PyList_CheckExact(__pyx_t_8))) {
+          if (__pyx_t_14 >= PyList_GET_SIZE(__pyx_t_8)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_3 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_14); __Pyx_INCREF(__pyx_t_3); __pyx_t_14++; if (unlikely(0 < 0)) __PYX_ERR(0, 136, __pyx_L1_error)
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_8, __pyx_t_14); __Pyx_INCREF(__pyx_t_2); __pyx_t_14++; if (unlikely(0 < 0)) __PYX_ERR(0, 137, __pyx_L1_error)
           #else
-          __pyx_t_3 = PySequence_ITEM(__pyx_t_6, __pyx_t_14); __pyx_t_14++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 136, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_8, __pyx_t_14); __pyx_t_14++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
           #endif
         } else {
-          if (__pyx_t_14 >= PyTuple_GET_SIZE(__pyx_t_6)) break;
+          if (__pyx_t_14 >= PyTuple_GET_SIZE(__pyx_t_8)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_14); __Pyx_INCREF(__pyx_t_3); __pyx_t_14++; if (unlikely(0 < 0)) __PYX_ERR(0, 136, __pyx_L1_error)
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_8, __pyx_t_14); __Pyx_INCREF(__pyx_t_2); __pyx_t_14++; if (unlikely(0 < 0)) __PYX_ERR(0, 137, __pyx_L1_error)
           #else
-          __pyx_t_3 = PySequence_ITEM(__pyx_t_6, __pyx_t_14); __pyx_t_14++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 136, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_8, __pyx_t_14); __pyx_t_14++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
           #endif
         }
       } else {
-        __pyx_t_3 = __pyx_t_15(__pyx_t_6);
-        if (unlikely(!__pyx_t_3)) {
+        __pyx_t_2 = __pyx_t_15(__pyx_t_8);
+        if (unlikely(!__pyx_t_2)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 136, __pyx_L1_error)
+            else __PYX_ERR(0, 137, __pyx_L1_error)
           }
           break;
         }
-        __Pyx_GOTREF(__pyx_t_3);
+        __Pyx_GOTREF(__pyx_t_2);
       }
-      __Pyx_XDECREF_SET(__pyx_v_value, __pyx_t_3);
-      __pyx_t_3 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_value, __pyx_t_2);
+      __pyx_t_2 = 0;
 
-      /* "taglib.pyx":137
+      /* "taglib.pyx":138
  *                 values = [ values ]
  *             for value in values:
  *                 if isinstance(value, bytes):             # <<<<<<<<<<<<<<
  *                     cValue = ctypes.String(value, ctypes.UTF8)
  *                 else:
  */
-      __pyx_t_11 = PyBytes_Check(__pyx_v_value); 
-      __pyx_t_1 = (__pyx_t_11 != 0);
+      __pyx_t_10 = PyBytes_Check(__pyx_v_value); 
+      __pyx_t_1 = (__pyx_t_10 != 0);
       if (__pyx_t_1) {
 
-        /* "taglib.pyx":138
+        /* "taglib.pyx":139
  *             for value in values:
  *                 if isinstance(value, bytes):
  *                     cValue = ctypes.String(value, ctypes.UTF8)             # <<<<<<<<<<<<<<
  *                 else:
  *                     cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)
  */
-        __pyx_t_12 = __Pyx_PyObject_AsString(__pyx_v_value); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyObject_AsString(__pyx_v_value); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 139, __pyx_L1_error)
         __pyx_v_cValue = TagLib::String(__pyx_t_12, TagLib::String::UTF8);
 
-        /* "taglib.pyx":137
+        /* "taglib.pyx":138
  *                 values = [ values ]
  *             for value in values:
  *                 if isinstance(value, bytes):             # <<<<<<<<<<<<<<
@@ -2292,7 +2264,7 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
         goto __pyx_L13;
       }
 
-      /* "taglib.pyx":140
+      /* "taglib.pyx":141
  *                     cValue = ctypes.String(value, ctypes.UTF8)
  *                 else:
  *                     cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)             # <<<<<<<<<<<<<<
@@ -2300,18 +2272,18 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  * 
  */
       /*else*/ {
-        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_value, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 140, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 140, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_12 = __Pyx_PyObject_AsString(__pyx_t_4); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 140, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_value, __pyx_n_s_encode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 141, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_11);
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __pyx_t_12 = __Pyx_PyObject_AsString(__pyx_t_11); if (unlikely((!__pyx_t_12) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L1_error)
         __pyx_v_cValue = TagLib::String(__pyx_t_12, TagLib::String::UTF8);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       }
       __pyx_L13:;
 
-      /* "taglib.pyx":141
+      /* "taglib.pyx":142
  *                 else:
  *                     cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)
  *                 cTagdict[cKey].append(cValue)             # <<<<<<<<<<<<<<
@@ -2320,7 +2292,7 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  */
       (__pyx_v_cTagdict[__pyx_v_cKey]).append(__pyx_v_cValue);
 
-      /* "taglib.pyx":136
+      /* "taglib.pyx":137
  *                 # the user has accidentally used a single tag value instead a length-1 list
  *                 values = [ values ]
  *             for value in values:             # <<<<<<<<<<<<<<
@@ -2328,11 +2300,11 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  *                     cValue = ctypes.String(value, ctypes.UTF8)
  */
     }
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "taglib.pyx":143
+  /* "taglib.pyx":144
  *                 cTagdict[cKey].append(cValue)
  * 
  *         cRemaining = self.cFile.setProperties(cTagdict)             # <<<<<<<<<<<<<<
@@ -2341,7 +2313,7 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  */
   __pyx_v_cRemaining = __pyx_v_self->cFile->setProperties(__pyx_v_cTagdict);
 
-  /* "taglib.pyx":144
+  /* "taglib.pyx":145
  * 
  *         cRemaining = self.cFile.setProperties(cTagdict)
  *         success = self.cFile.save()             # <<<<<<<<<<<<<<
@@ -2352,11 +2324,11 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
     __pyx_t_1 = __pyx_v_self->cFile->save();
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 144, __pyx_L1_error)
+    __PYX_ERR(0, 145, __pyx_L1_error)
   }
   __pyx_v_success = __pyx_t_1;
 
-  /* "taglib.pyx":145
+  /* "taglib.pyx":146
  *         cRemaining = self.cFile.setProperties(cTagdict)
  *         success = self.cFile.save()
  *         if not success:             # <<<<<<<<<<<<<<
@@ -2366,20 +2338,20 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
   __pyx_t_1 = ((!(__pyx_v_success != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "taglib.pyx":146
+    /* "taglib.pyx":147
  *         success = self.cFile.save()
  *         if not success:
  *             raise OSError('Unable to save tags: Unknown OS error')             # <<<<<<<<<<<<<<
  *         return propertyMapToDict(cRemaining)
  * 
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_OSError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_Raise(__pyx_t_2, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 146, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_OSError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 147, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_Raise(__pyx_t_5, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __PYX_ERR(0, 147, __pyx_L1_error)
 
-    /* "taglib.pyx":145
+    /* "taglib.pyx":146
  *         cRemaining = self.cFile.setProperties(cTagdict)
  *         success = self.cFile.save()
  *         if not success:             # <<<<<<<<<<<<<<
@@ -2388,7 +2360,7 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  */
   }
 
-  /* "taglib.pyx":147
+  /* "taglib.pyx":148
  *         if not success:
  *             raise OSError('Unable to save tags: Unknown OS error')
  *         return propertyMapToDict(cRemaining)             # <<<<<<<<<<<<<<
@@ -2396,10 +2368,10 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
  *     def removeUnsupportedProperties(self, properties):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __pyx_f_6taglib_propertyMapToDict(__pyx_v_cRemaining); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 147, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
+  __pyx_t_5 = __pyx_f_6taglib_propertyMapToDict(__pyx_v_cRemaining); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_r = __pyx_t_5;
+  __pyx_t_5 = 0;
   goto __pyx_L0;
 
   /* "taglib.pyx":105
@@ -2413,13 +2385,13 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_11);
   __Pyx_AddTraceback("taglib.File.save", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_pathUni);
   __Pyx_XDECREF(__pyx_v_key);
   __Pyx_XDECREF(__pyx_v_values);
   __Pyx_XDECREF(__pyx_v_value);
@@ -2428,7 +2400,7 @@ static PyObject *__pyx_pf_6taglib_4File_4save(struct __pyx_obj_6taglib_File *__p
   return __pyx_r;
 }
 
-/* "taglib.pyx":149
+/* "taglib.pyx":150
  *         return propertyMapToDict(cRemaining)
  * 
  *     def removeUnsupportedProperties(self, properties):             # <<<<<<<<<<<<<<
@@ -2464,7 +2436,7 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
   char *__pyx_t_7;
   __Pyx_RefNannySetupContext("removeUnsupportedProperties", 0);
 
-  /* "taglib.pyx":151
+  /* "taglib.pyx":152
  *     def removeUnsupportedProperties(self, properties):
  *         """This is a direct binding for the corresponding TagLib method."""
  *         if not self.cFile:             # <<<<<<<<<<<<<<
@@ -2474,20 +2446,20 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
   __pyx_t_1 = ((!(__pyx_v_self->cFile != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "taglib.pyx":152
+    /* "taglib.pyx":153
  *         """This is a direct binding for the corresponding TagLib method."""
  *         if not self.cFile:
  *             raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *         cdef ctypes.StringList cProps
  *         for value in properties:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 152, __pyx_L1_error)
+    __PYX_ERR(0, 153, __pyx_L1_error)
 
-    /* "taglib.pyx":151
+    /* "taglib.pyx":152
  *     def removeUnsupportedProperties(self, properties):
  *         """This is a direct binding for the corresponding TagLib method."""
  *         if not self.cFile:             # <<<<<<<<<<<<<<
@@ -2496,7 +2468,7 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
  */
   }
 
-  /* "taglib.pyx":154
+  /* "taglib.pyx":155
  *             raise ValueError('I/O operation on closed file.')
  *         cdef ctypes.StringList cProps
  *         for value in properties:             # <<<<<<<<<<<<<<
@@ -2507,26 +2479,26 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
     __pyx_t_2 = __pyx_v_properties; __Pyx_INCREF(__pyx_t_2); __pyx_t_3 = 0;
     __pyx_t_4 = NULL;
   } else {
-    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_properties); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 154, __pyx_L1_error)
+    __pyx_t_3 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_properties); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 154, __pyx_L1_error)
+    __pyx_t_4 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 155, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_4)) {
       if (likely(PyList_CheckExact(__pyx_t_2))) {
         if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_5 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_5); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 154, __pyx_L1_error)
+        __pyx_t_5 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_5); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 155, __pyx_L1_error)
         #else
-        __pyx_t_5 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 154, __pyx_L1_error)
+        __pyx_t_5 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 155, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         #endif
       } else {
         if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_5); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 154, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_5); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 155, __pyx_L1_error)
         #else
-        __pyx_t_5 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 154, __pyx_L1_error)
+        __pyx_t_5 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 155, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         #endif
       }
@@ -2536,7 +2508,7 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 154, __pyx_L1_error)
+          else __PYX_ERR(0, 155, __pyx_L1_error)
         }
         break;
       }
@@ -2545,23 +2517,23 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
     __Pyx_XDECREF_SET(__pyx_v_value, __pyx_t_5);
     __pyx_t_5 = 0;
 
-    /* "taglib.pyx":155
+    /* "taglib.pyx":156
  *         cdef ctypes.StringList cProps
  *         for value in properties:
  *             cProps.append(ctypes.String(value.encode('UTF-8'), ctypes.UTF8))             # <<<<<<<<<<<<<<
  *         self.cFile.removeUnsupportedProperties(cProps)
  * 
  */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_value, __pyx_n_s_encode); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 155, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_value, __pyx_n_s_encode); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 155, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 156, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_t_6); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_AsString(__pyx_t_6); if (unlikely((!__pyx_t_7) && PyErr_Occurred())) __PYX_ERR(0, 156, __pyx_L1_error)
     __pyx_v_cProps.append(TagLib::String(__pyx_t_7, TagLib::String::UTF8));
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "taglib.pyx":154
+    /* "taglib.pyx":155
  *             raise ValueError('I/O operation on closed file.')
  *         cdef ctypes.StringList cProps
  *         for value in properties:             # <<<<<<<<<<<<<<
@@ -2571,7 +2543,7 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "taglib.pyx":156
+  /* "taglib.pyx":157
  *         for value in properties:
  *             cProps.append(ctypes.String(value.encode('UTF-8'), ctypes.UTF8))
  *         self.cFile.removeUnsupportedProperties(cProps)             # <<<<<<<<<<<<<<
@@ -2580,7 +2552,7 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
  */
   __pyx_v_self->cFile->removeUnsupportedProperties(__pyx_v_cProps);
 
-  /* "taglib.pyx":149
+  /* "taglib.pyx":150
  *         return propertyMapToDict(cRemaining)
  * 
  *     def removeUnsupportedProperties(self, properties):             # <<<<<<<<<<<<<<
@@ -2604,7 +2576,7 @@ static PyObject *__pyx_pf_6taglib_4File_6removeUnsupportedProperties(struct __py
   return __pyx_r;
 }
 
-/* "taglib.pyx":158
+/* "taglib.pyx":159
  *         self.cFile.removeUnsupportedProperties(cProps)
  * 
  *     def close(self):             # <<<<<<<<<<<<<<
@@ -2631,7 +2603,7 @@ static PyObject *__pyx_pf_6taglib_4File_8close(struct __pyx_obj_6taglib_File *__
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("close", 0);
 
-  /* "taglib.pyx":162
+  /* "taglib.pyx":163
  *         streams. Calling methods like `save()` or the read-only properties after `close()` will
  *         raise an exception."""
  *         del self.cFile             # <<<<<<<<<<<<<<
@@ -2640,7 +2612,7 @@ static PyObject *__pyx_pf_6taglib_4File_8close(struct __pyx_obj_6taglib_File *__
  */
   delete __pyx_v_self->cFile;
 
-  /* "taglib.pyx":163
+  /* "taglib.pyx":164
  *         raise an exception."""
  *         del self.cFile
  *         self.cFile = NULL             # <<<<<<<<<<<<<<
@@ -2649,7 +2621,7 @@ static PyObject *__pyx_pf_6taglib_4File_8close(struct __pyx_obj_6taglib_File *__
  */
   __pyx_v_self->cFile = NULL;
 
-  /* "taglib.pyx":158
+  /* "taglib.pyx":159
  *         self.cFile.removeUnsupportedProperties(cProps)
  * 
  *     def close(self):             # <<<<<<<<<<<<<<
@@ -2664,7 +2636,7 @@ static PyObject *__pyx_pf_6taglib_4File_8close(struct __pyx_obj_6taglib_File *__
   return __pyx_r;
 }
 
-/* "taglib.pyx":165
+/* "taglib.pyx":166
  *         self.cFile = NULL
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -2688,7 +2660,7 @@ static void __pyx_pf_6taglib_4File_10__dealloc__(struct __pyx_obj_6taglib_File *
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "taglib.pyx":166
+  /* "taglib.pyx":167
  * 
  *     def __dealloc__(self):
  *         if self.cFile:             # <<<<<<<<<<<<<<
@@ -2698,7 +2670,7 @@ static void __pyx_pf_6taglib_4File_10__dealloc__(struct __pyx_obj_6taglib_File *
   __pyx_t_1 = (__pyx_v_self->cFile != 0);
   if (__pyx_t_1) {
 
-    /* "taglib.pyx":167
+    /* "taglib.pyx":168
  *     def __dealloc__(self):
  *         if self.cFile:
  *             del self.cFile             # <<<<<<<<<<<<<<
@@ -2707,7 +2679,7 @@ static void __pyx_pf_6taglib_4File_10__dealloc__(struct __pyx_obj_6taglib_File *
  */
     delete __pyx_v_self->cFile;
 
-    /* "taglib.pyx":166
+    /* "taglib.pyx":167
  * 
  *     def __dealloc__(self):
  *         if self.cFile:             # <<<<<<<<<<<<<<
@@ -2716,7 +2688,7 @@ static void __pyx_pf_6taglib_4File_10__dealloc__(struct __pyx_obj_6taglib_File *
  */
   }
 
-  /* "taglib.pyx":165
+  /* "taglib.pyx":166
  *         self.cFile = NULL
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -2728,7 +2700,7 @@ static void __pyx_pf_6taglib_4File_10__dealloc__(struct __pyx_obj_6taglib_File *
   __Pyx_RefNannyFinishContext();
 }
 
-/* "taglib.pyx":170
+/* "taglib.pyx":171
  * 
  *     property length:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -2756,7 +2728,7 @@ static PyObject *__pyx_pf_6taglib_4File_6length___get__(struct __pyx_obj_6taglib
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "taglib.pyx":171
+  /* "taglib.pyx":172
  *     property length:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -2766,20 +2738,20 @@ static PyObject *__pyx_pf_6taglib_4File_6length___get__(struct __pyx_obj_6taglib
   __pyx_t_1 = ((!(__pyx_v_self->cFile != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "taglib.pyx":172
+    /* "taglib.pyx":173
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.audioProperties().length()
  * 
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 173, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 172, __pyx_L1_error)
+    __PYX_ERR(0, 173, __pyx_L1_error)
 
-    /* "taglib.pyx":171
+    /* "taglib.pyx":172
  *     property length:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -2788,7 +2760,7 @@ static PyObject *__pyx_pf_6taglib_4File_6length___get__(struct __pyx_obj_6taglib
  */
   }
 
-  /* "taglib.pyx":173
+  /* "taglib.pyx":174
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')
  *             return self.cFile.audioProperties().length()             # <<<<<<<<<<<<<<
@@ -2796,13 +2768,13 @@ static PyObject *__pyx_pf_6taglib_4File_6length___get__(struct __pyx_obj_6taglib
  *     property bitrate:
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->cFile->audioProperties()->length()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->cFile->audioProperties()->length()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 174, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "taglib.pyx":170
+  /* "taglib.pyx":171
  * 
  *     property length:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -2821,7 +2793,7 @@ static PyObject *__pyx_pf_6taglib_4File_6length___get__(struct __pyx_obj_6taglib
   return __pyx_r;
 }
 
-/* "taglib.pyx":176
+/* "taglib.pyx":177
  * 
  *     property bitrate:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -2849,7 +2821,7 @@ static PyObject *__pyx_pf_6taglib_4File_7bitrate___get__(struct __pyx_obj_6tagli
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "taglib.pyx":177
+  /* "taglib.pyx":178
  *     property bitrate:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -2859,20 +2831,20 @@ static PyObject *__pyx_pf_6taglib_4File_7bitrate___get__(struct __pyx_obj_6tagli
   __pyx_t_1 = ((!(__pyx_v_self->cFile != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "taglib.pyx":178
+    /* "taglib.pyx":179
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.audioProperties().bitrate()
  * 
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 178, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 179, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 178, __pyx_L1_error)
+    __PYX_ERR(0, 179, __pyx_L1_error)
 
-    /* "taglib.pyx":177
+    /* "taglib.pyx":178
  *     property bitrate:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -2881,7 +2853,7 @@ static PyObject *__pyx_pf_6taglib_4File_7bitrate___get__(struct __pyx_obj_6tagli
  */
   }
 
-  /* "taglib.pyx":179
+  /* "taglib.pyx":180
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')
  *             return self.cFile.audioProperties().bitrate()             # <<<<<<<<<<<<<<
@@ -2889,13 +2861,13 @@ static PyObject *__pyx_pf_6taglib_4File_7bitrate___get__(struct __pyx_obj_6tagli
  *     property sampleRate:
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->cFile->audioProperties()->bitrate()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->cFile->audioProperties()->bitrate()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 180, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "taglib.pyx":176
+  /* "taglib.pyx":177
  * 
  *     property bitrate:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -2914,7 +2886,7 @@ static PyObject *__pyx_pf_6taglib_4File_7bitrate___get__(struct __pyx_obj_6tagli
   return __pyx_r;
 }
 
-/* "taglib.pyx":182
+/* "taglib.pyx":183
  * 
  *     property sampleRate:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -2942,7 +2914,7 @@ static PyObject *__pyx_pf_6taglib_4File_10sampleRate___get__(struct __pyx_obj_6t
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "taglib.pyx":183
+  /* "taglib.pyx":184
  *     property sampleRate:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -2952,20 +2924,20 @@ static PyObject *__pyx_pf_6taglib_4File_10sampleRate___get__(struct __pyx_obj_6t
   __pyx_t_1 = ((!(__pyx_v_self->cFile != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "taglib.pyx":184
+    /* "taglib.pyx":185
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.audioProperties().sampleRate()
  * 
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 184, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 185, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 184, __pyx_L1_error)
+    __PYX_ERR(0, 185, __pyx_L1_error)
 
-    /* "taglib.pyx":183
+    /* "taglib.pyx":184
  *     property sampleRate:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -2974,7 +2946,7 @@ static PyObject *__pyx_pf_6taglib_4File_10sampleRate___get__(struct __pyx_obj_6t
  */
   }
 
-  /* "taglib.pyx":185
+  /* "taglib.pyx":186
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')
  *             return self.cFile.audioProperties().sampleRate()             # <<<<<<<<<<<<<<
@@ -2982,13 +2954,13 @@ static PyObject *__pyx_pf_6taglib_4File_10sampleRate___get__(struct __pyx_obj_6t
  *     property channels:
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->cFile->audioProperties()->sampleRate()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 185, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->cFile->audioProperties()->sampleRate()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "taglib.pyx":182
+  /* "taglib.pyx":183
  * 
  *     property sampleRate:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -3007,7 +2979,7 @@ static PyObject *__pyx_pf_6taglib_4File_10sampleRate___get__(struct __pyx_obj_6t
   return __pyx_r;
 }
 
-/* "taglib.pyx":188
+/* "taglib.pyx":189
  * 
  *     property channels:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -3035,7 +3007,7 @@ static PyObject *__pyx_pf_6taglib_4File_8channels___get__(struct __pyx_obj_6tagl
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "taglib.pyx":189
+  /* "taglib.pyx":190
  *     property channels:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -3045,20 +3017,20 @@ static PyObject *__pyx_pf_6taglib_4File_8channels___get__(struct __pyx_obj_6tagl
   __pyx_t_1 = ((!(__pyx_v_self->cFile != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "taglib.pyx":190
+    /* "taglib.pyx":191
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.audioProperties().channels()
  * 
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 190, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 190, __pyx_L1_error)
+    __PYX_ERR(0, 191, __pyx_L1_error)
 
-    /* "taglib.pyx":189
+    /* "taglib.pyx":190
  *     property channels:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -3067,7 +3039,7 @@ static PyObject *__pyx_pf_6taglib_4File_8channels___get__(struct __pyx_obj_6tagl
  */
   }
 
-  /* "taglib.pyx":191
+  /* "taglib.pyx":192
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')
  *             return self.cFile.audioProperties().channels()             # <<<<<<<<<<<<<<
@@ -3075,13 +3047,13 @@ static PyObject *__pyx_pf_6taglib_4File_8channels___get__(struct __pyx_obj_6tagl
  *     property readOnly:
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->cFile->audioProperties()->channels()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->cFile->audioProperties()->channels()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "taglib.pyx":188
+  /* "taglib.pyx":189
  * 
  *     property channels:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -3100,7 +3072,7 @@ static PyObject *__pyx_pf_6taglib_4File_8channels___get__(struct __pyx_obj_6tagl
   return __pyx_r;
 }
 
-/* "taglib.pyx":194
+/* "taglib.pyx":195
  * 
  *     property readOnly:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -3128,7 +3100,7 @@ static PyObject *__pyx_pf_6taglib_4File_8readOnly___get__(struct __pyx_obj_6tagl
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "taglib.pyx":195
+  /* "taglib.pyx":196
  *     property readOnly:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -3138,20 +3110,20 @@ static PyObject *__pyx_pf_6taglib_4File_8readOnly___get__(struct __pyx_obj_6tagl
   __pyx_t_1 = ((!(__pyx_v_self->cFile != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "taglib.pyx":196
+    /* "taglib.pyx":197
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.readOnly()
  * 
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 196, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 197, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 196, __pyx_L1_error)
+    __PYX_ERR(0, 197, __pyx_L1_error)
 
-    /* "taglib.pyx":195
+    /* "taglib.pyx":196
  *     property readOnly:
  *         def __get__(self):
  *             if not self.cFile:             # <<<<<<<<<<<<<<
@@ -3160,7 +3132,7 @@ static PyObject *__pyx_pf_6taglib_4File_8readOnly___get__(struct __pyx_obj_6tagl
  */
   }
 
-  /* "taglib.pyx":197
+  /* "taglib.pyx":198
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')
  *             return self.cFile.readOnly()             # <<<<<<<<<<<<<<
@@ -3168,13 +3140,13 @@ static PyObject *__pyx_pf_6taglib_4File_8readOnly___get__(struct __pyx_obj_6tagl
  *     def __repr__(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_self->cFile->readOnly()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_self->cFile->readOnly()); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 198, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "taglib.pyx":194
+  /* "taglib.pyx":195
  * 
  *     property readOnly:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -3193,11 +3165,11 @@ static PyObject *__pyx_pf_6taglib_4File_8readOnly___get__(struct __pyx_obj_6tagl
   return __pyx_r;
 }
 
-/* "taglib.pyx":199
+/* "taglib.pyx":200
  *             return self.cFile.readOnly()
  * 
  *     def __repr__(self):             # <<<<<<<<<<<<<<
- *         return "File('{}')".format(self.path)
+ *         return f"File('{self.path}')"
  */
 
 /* Python wrapper */
@@ -3217,78 +3189,53 @@ static PyObject *__pyx_pf_6taglib_4File_12__repr__(struct __pyx_obj_6taglib_File
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
+  Py_ssize_t __pyx_t_2;
+  Py_UCS4 __pyx_t_3;
   PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("__repr__", 0);
 
-  /* "taglib.pyx":200
+  /* "taglib.pyx":201
  * 
  *     def __repr__(self):
- *         return "File('{}')".format(self.path)             # <<<<<<<<<<<<<<
+ *         return f"File('{self.path}')"             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_kp_u_File, __pyx_n_s_format); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 200, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
-    }
-  }
-  if (!__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_self->path); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-  } else {
-    #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(__pyx_t_2)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_3, __pyx_v_self->path};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_GOTREF(__pyx_t_1);
-    } else
-    #endif
-    #if CYTHON_FAST_PYCCALL
-    if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_3, __pyx_v_self->path};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_GOTREF(__pyx_t_1);
-    } else
-    #endif
-    {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 200, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3); __pyx_t_3 = NULL;
-      __Pyx_INCREF(__pyx_v_self->path);
-      __Pyx_GIVEREF(__pyx_v_self->path);
-      PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_self->path);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    }
-  }
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = 0;
+  __pyx_t_3 = 127;
+  __Pyx_INCREF(__pyx_kp_u_File);
+  __pyx_t_2 += 6;
+  __Pyx_GIVEREF(__pyx_kp_u_File);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_kp_u_File);
+  __pyx_t_4 = __Pyx_PyObject_FormatSimple(__pyx_v_self->path, __pyx_empty_unicode); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 201, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_3 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_4) > __pyx_t_3) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_4) : __pyx_t_3;
+  __pyx_t_2 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_4);
+  __Pyx_GIVEREF(__pyx_t_4);
+  PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_4);
+  __pyx_t_4 = 0;
+  __Pyx_INCREF(__pyx_kp_u__14);
+  __pyx_t_2 += 2;
+  __Pyx_GIVEREF(__pyx_kp_u__14);
+  PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_kp_u__14);
+  __pyx_t_4 = __Pyx_PyUnicode_Join(__pyx_t_1, 3, __pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 201, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_r = __pyx_t_4;
+  __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "taglib.pyx":199
+  /* "taglib.pyx":200
  *             return self.cFile.readOnly()
  * 
  *     def __repr__(self):             # <<<<<<<<<<<<<<
- *         return "File('{}')".format(self.path)
+ *         return f"File('{self.path}')"
  */
 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_AddTraceback("taglib.File.__repr__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
@@ -3935,12 +3882,13 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_OSError, __pyx_k_OSError, sizeof(__pyx_k_OSError), 0, 0, 1, 1},
   {&__pyx_kp_u_UTF_8, __pyx_k_UTF_8, sizeof(__pyx_k_UTF_8), 0, 1, 0, 0},
   {&__pyx_kp_u_Unable_to_save_tags_Unknown_OS_e, __pyx_k_Unable_to_save_tags_Unknown_OS_e, sizeof(__pyx_k_Unable_to_save_tags_Unknown_OS_e), 0, 1, 0, 0},
-  {&__pyx_kp_u_Unable_to_save_tags_file_is_read, __pyx_k_Unable_to_save_tags_file_is_read, sizeof(__pyx_k_Unable_to_save_tags_file_is_read), 0, 1, 0, 0},
+  {&__pyx_kp_u_Unable_to_save_tags_file, __pyx_k_Unable_to_save_tags_file, sizeof(__pyx_k_Unable_to_save_tags_file), 0, 1, 0, 0},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
+  {&__pyx_kp_u__14, __pyx_k__14, sizeof(__pyx_k__14), 0, 1, 0, 0},
   {&__pyx_n_s_append, __pyx_k_append, sizeof(__pyx_k_append), 0, 0, 1, 1},
   {&__pyx_n_s_decode, __pyx_k_decode, sizeof(__pyx_k_decode), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
-  {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
+  {&__pyx_kp_u_is_read_only, __pyx_k_is_read_only, sizeof(__pyx_k_is_read_only), 0, 1, 0, 0},
   {&__pyx_n_s_items, __pyx_k_items, sizeof(__pyx_k_items), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_path, __pyx_k_path, sizeof(__pyx_k_path), 0, 0, 1, 1},
@@ -3991,119 +3939,119 @@ static int __Pyx_InitCachedConstants(void) {
  *         if not self.cFile:
  *             raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *         if self.readOnly:
- *             raise OSError('Unable to save tags: file "{}" is read-only'.format(self.bPath.decode('utf8', 'ignore')))
+ *             pathUni = self.bPath.decode('utf8', 'ignore')
  */
   __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "taglib.pyx":132
+  /* "taglib.pyx":133
  *                 cKey = ctypes.String(key.upper(), ctypes.UTF8)
  *             else:
  *                 cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)             # <<<<<<<<<<<<<<
  *             if isinstance(values, bytes) or isinstance(values, unicode):
  *                 # the user has accidentally used a single tag value instead a length-1 list
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_UTF_8); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_UTF_8); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "taglib.pyx":140
+  /* "taglib.pyx":141
  *                     cValue = ctypes.String(value, ctypes.UTF8)
  *                 else:
  *                     cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)             # <<<<<<<<<<<<<<
  *                 cTagdict[cKey].append(cValue)
  * 
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_u_UTF_8); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_u_UTF_8); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
-  /* "taglib.pyx":146
+  /* "taglib.pyx":147
  *         success = self.cFile.save()
  *         if not success:
  *             raise OSError('Unable to save tags: Unknown OS error')             # <<<<<<<<<<<<<<
  *         return propertyMapToDict(cRemaining)
  * 
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_Unable_to_save_tags_Unknown_OS_e); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_Unable_to_save_tags_Unknown_OS_e); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
-  /* "taglib.pyx":152
+  /* "taglib.pyx":153
  *         """This is a direct binding for the corresponding TagLib method."""
  *         if not self.cFile:
  *             raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *         cdef ctypes.StringList cProps
  *         for value in properties:
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 153, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__7);
   __Pyx_GIVEREF(__pyx_tuple__7);
 
-  /* "taglib.pyx":155
+  /* "taglib.pyx":156
  *         cdef ctypes.StringList cProps
  *         for value in properties:
  *             cProps.append(ctypes.String(value.encode('UTF-8'), ctypes.UTF8))             # <<<<<<<<<<<<<<
  *         self.cFile.removeUnsupportedProperties(cProps)
  * 
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_UTF_8); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 155, __pyx_L1_error)
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_UTF_8); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 156, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "taglib.pyx":172
+  /* "taglib.pyx":173
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.audioProperties().length()
  * 
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 173, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "taglib.pyx":178
+  /* "taglib.pyx":179
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.audioProperties().bitrate()
  * 
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 178, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
-  /* "taglib.pyx":184
+  /* "taglib.pyx":185
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.audioProperties().sampleRate()
  * 
  */
-  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 184, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 185, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__11);
   __Pyx_GIVEREF(__pyx_tuple__11);
 
-  /* "taglib.pyx":190
+  /* "taglib.pyx":191
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.audioProperties().channels()
  * 
  */
-  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 191, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
 
-  /* "taglib.pyx":196
+  /* "taglib.pyx":197
  *         def __get__(self):
  *             if not self.cFile:
  *                 raise ValueError('I/O operation on closed file.')             # <<<<<<<<<<<<<<
  *             return self.cFile.readOnly()
  * 
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 196, __pyx_L1_error)
+  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_u_I_O_operation_on_closed_file); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 197, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
   __Pyx_RefNannyFinishContext();
@@ -4976,6 +4924,68 @@ bad:
 #ifdef WITH_THREAD
     if (nogil)
         PyGILState_Release(state);
+#endif
+}
+
+/* JoinPyUnicode */
+    static PyObject* __Pyx_PyUnicode_Join(PyObject* value_tuple, Py_ssize_t value_count, Py_ssize_t result_ulength,
+                                      CYTHON_UNUSED Py_UCS4 max_char) {
+#if CYTHON_USE_UNICODE_INTERNALS && CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    PyObject *result_uval;
+    int result_ukind;
+    Py_ssize_t i, char_pos;
+    void *result_udata;
+#if CYTHON_PEP393_ENABLED
+    result_uval = PyUnicode_New(result_ulength, max_char);
+    if (unlikely(!result_uval)) return NULL;
+    result_ukind = (max_char <= 255) ? PyUnicode_1BYTE_KIND : (max_char <= 65535) ? PyUnicode_2BYTE_KIND : PyUnicode_4BYTE_KIND;
+    result_udata = PyUnicode_DATA(result_uval);
+#else
+    result_uval = PyUnicode_FromUnicode(NULL, result_ulength);
+    if (unlikely(!result_uval)) return NULL;
+    result_ukind = sizeof(Py_UNICODE);
+    result_udata = PyUnicode_AS_UNICODE(result_uval);
+#endif
+    char_pos = 0;
+    for (i=0; i < value_count; i++) {
+        int ukind;
+        Py_ssize_t ulength;
+        void *udata;
+        PyObject *uval = PyTuple_GET_ITEM(value_tuple, i);
+        if (unlikely(__Pyx_PyUnicode_READY(uval)))
+            goto bad;
+        ulength = __Pyx_PyUnicode_GET_LENGTH(uval);
+        if (unlikely(!ulength))
+            continue;
+        if (unlikely(char_pos + ulength < 0))
+            goto overflow;
+        ukind = __Pyx_PyUnicode_KIND(uval);
+        udata = __Pyx_PyUnicode_DATA(uval);
+        if (!CYTHON_PEP393_ENABLED || ukind == result_ukind) {
+            memcpy((char *)result_udata + char_pos * result_ukind, udata, ulength * result_ukind);
+        } else {
+            #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030300F0
+            _PyUnicode_FastCopyCharacters(result_uval, char_pos, uval, 0, ulength);
+            #else
+            Py_ssize_t j;
+            for (j=0; j < ulength; j++) {
+                Py_UCS4 uchar = __Pyx_PyUnicode_READ(ukind, udata, j);
+                __Pyx_PyUnicode_WRITE(result_ukind, result_udata, char_pos+j, uchar);
+            }
+            #endif
+        }
+        char_pos += ulength;
+    }
+    return result_uval;
+overflow:
+    PyErr_SetString(PyExc_OverflowError, "join() result is too long for a Python string");
+bad:
+    Py_DECREF(result_uval);
+    return NULL;
+#else
+    result_ulength++;
+    value_count++;
+    return PyUnicode_Join(__pyx_empty_unicode, value_tuple);
 #endif
 }
 
