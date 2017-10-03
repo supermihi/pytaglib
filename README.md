@@ -5,6 +5,8 @@
 
 Features include [support of more than a dozen file formats](http://taglib.github.io), [arbitrary tag names](#arbitag), and [multiple values per tag](#multival).
 
+**Known Issue**: *Various users have [reported](https://github.com/supermihi/pytaglib/issues/29) SIGSEGV errors on Mac OS X Sierra. Any help in debugging this is highly apprechiated (I do not have access to an OS X computer)!*
+
 ## Usage Example
 
 - Open a file and read its tags:
