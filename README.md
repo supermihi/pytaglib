@@ -1,4 +1,5 @@
 # **pytaglib** – TagLib bindings for Python
+[![Build Status](https://travis-ci.org/supermihi/pytaglib.svg?branch=master)](https://travis-ci.org/supermihi/pytaglib)
 
 ## Overview
 **pytaglib** is a full-featured, easy-to-use, cross-platform audio metadata ("tag") library for [Python](http://www.python.org) (all versions supported). It uses the popular, fast and rock-solid [TagLib](http://taglib.github.io) C++ library internally; **pytaglib** is a very thin wrapper about TagLib (<150 lines of code), meaning that you immediately profit from the underlying library's speed and stability.
