@@ -15,7 +15,7 @@ In most cases, you should install pytaglib with [pip](https://pip.pypa.io/en/sta
 
         pip install pytaglib
 
-See [installation notes](#Installation-Notes) below for requirements and manual compilation.
+See [installation notes](#installation-notes) below for requirements and manual compilation.
 
 ## Usage
 
