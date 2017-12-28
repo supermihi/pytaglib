@@ -83,7 +83,7 @@ The following procedure was tested for Python 3.5 and Python 3.6 on Windows 10. 
 
 
 
-## `Contact`
+## Contact
 For bug reports or feature requests, please use the
 [issue tracker](https://github.com/supermihi/pytaglib/issues) on GitHub. For anything else, contact
 me by [email](mailto:michaelhelmling@posteo.de).
