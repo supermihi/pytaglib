@@ -1,81 +1,62 @@
-**pytaglib** – TagLib bindings for Python
-=========================================
+**pytaglib**
+============
 
-Overview
---------
+|Build Status| |PyPI version|
 
-**pytaglib** is a full-featured, easy-to-use, cross-platform audio
-metadata ("tag") library for `Python <http://www.python.org>`__ (all
-versions supported). It uses the popular, fast and rock-solid
-`TagLib <http://taglib.github.io>`__ C++ library internally;
-**pytaglib** is a very thin wrapper about TagLib (<150 lines of code),
-meaning that you immediately profit from the underlying library's speed
-and stability.
+pytaglib is a `Python <http://www.python.org>`__ audio tagging library.
+It is cross-platform, works with all Python versions, and is very simple
+to use yet fully featured:
 
-Features include `support of more than a dozen file
-formats <http://taglib.github.io>`__, `arbitrary tag
-names <#arbitag>`__, and `multiple values per tag <#multival>`__.
+-  `supports more than a dozen file formats <http://taglib.github.io>`__
+   including mp3, flac, ogg, wma, and mp4,
+-  support arbitrary, non-standard tag names,
+-  support multiple values per tag.
 
-Usage Example
--------------
+pytaglib is a very thin wrapper (<150 lines of code) around the fast and
+rock-solid `TagLib <http://taglib.github.io>`__ C++ library.
 
--  Open a file and read its tags:
+Get it
+------
 
-   .. code:: python
+In most cases, you should install pytaglib with
+`pip <https://pip.pypa.io/en/stable/>`__:
 
-       >>> import taglib
-       >>> song = taglib.File("/path/to/my/file.mp3")
-       >>> song.tags
-       {'ARTIST': ['piman', 'jzig'], 'ALBUM': ['Quod Libet Test Data'], 'TITLE': ['Silence'], 'GENRE': ['Silence'], 'TRACKNUMBER': ['02/10'], 'DATE': ['2004']}
+::
 
--  Read some additional properties of the file:
+        pip install pytaglib
 
-   .. code:: python
+See `installation notes <#installnotes>`__ below for requirements and
+manual compilation.
 
-       >>> song.length
-       239
-       >>> song.channels
-       2
+Usage
+-----
 
--  Change the file's tags:
+.. code:: python
 
-   .. code:: python
+    >>> import taglib
+    >>> song = taglib.File("/path/to/my/file.mp3")
+    >>> song.tags
+    {'ARTIST': ['piman', 'jzig'], 'ALBUM': ['Quod Libet Test Data'], 'TITLE': ['Silence'], 'GENRE': ['Silence'], 'TRACKNUMBER': ['02/10'], 'DATE': ['2004']}
 
-       >>> song.tags["ALBUM"] = ["White Album"] # always use lists, even for single values
-       >>> del song.tags["DATE"]
+    >>> song.length
+    239
+    >>> song.tags["ALBUM"] = ["White Album"] # always use lists, even for single values
+    >>> del song.tags["DATE"]
+    >>> song.tags["GENRE"] = ["Vocal", "Classical"]
+    >>> song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
+    >>> song.save()
 
--  Multiple values per tag:
+For detailed API documentation, use the docstrings of the
+``taglib.File`` class or view the `source code <src/taglib.pyx>`__
+directly.
 
-   .. code:: python
+**Note:** pytaglib uses unicode strings (type ``str`` in Python 3 and
+``unicode`` in Python 2) for both tag names and values. The library
+converts byte-strings to unicode strings on assignment, but it is
+recommended to provide unicode strings only to avoid encoding problems.
 
-       >>> song.tags["GENRE"] = ["Vocal", "Classical"]
-
--  Non-standard tags:
-
-   .. code:: python
-
-       >>> song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
-
--  Save your changes:
-
-   .. code:: python
-
-       >>> returnvalue = song.save()
-       >>> returnvalue
-       {}
-
-   The dictionary returned by ``save`` contains all tags that could not
-   be saved (might happen if the specific format does not support e.g.
-   multi-values).
-
-| **Note:** All strings in the tag dictionary are unicode strings (type
-  ``str`` in Python 3 and ``unicode`` in Python 2). On the input side,
-  however, the library is rather permissive and supports both byte- and
-  unicode-strings. Internally, ``pytaglib`` converts
-| all strings to ``UTF-8`` before storing them in the files.
-
-Installation
-------------
+Installation Notes #installnotes
+--------------------------------
 
 The most recommended installation method is
 
@@ -102,7 +83,7 @@ subject to the following notes:
 
    ::
 
-       pip install --global-option=build_ext --global-option="-I/usr/local/include/" --global-option="-L/usr/local/lib" pytaglib
+         pip install --global-option=build_ext --global-option="-I/usr/local/include/" --global-option="-L/usr/local/lib" pytaglib
 
 If the above does not work, continue reading for alternative methods of
 installation.
@@ -122,16 +103,15 @@ Distribution-Specific Packages
    the user repository (AUR) which I try to keep up-to-date.
 
    .. rubric:: Manual Compilation
-      :name: manual-compilation
 
    Alternatively, you can download / checkout the sources and compile
    manually:
 
    ::
 
-       python setup.py build
-       python setup.py test  # optional
-       sudo python setup.py install
+         python setup.py build
+         python setup.py test  # optional
+         sudo python setup.py install
 
 You can manually specify ``taglib``'s include and library directories:
 
@@ -139,12 +119,11 @@ You can manually specify ``taglib``'s include and library directories:
 
     python setup.py build --include-dirs /usr/local/include --library-dirs /usr/local/lib
 
-| **Note**: The ``taglib`` Python extension is built from the file
-  ``taglib.cpp`` which in turn is
-| auto-generated by `Cython <http://www.cython.org>`__ from
-  ``taglib.pyx``. To re-cythonize this file
-| instead of using the shipped ``taglib.cpp``, invoke ``setup.py`` with
-  the ``--cython`` option.
+**Note**: The ``taglib`` Python extension is built from the file
+``taglib.cpp`` which in turn is auto-generated by
+`Cython <http://www.cython.org>`__ from ``taglib.pyx``. To re-cythonize
+this file instead of using the shipped ``taglib.cpp``, invoke
+``setup.py`` with the ``--cython`` option.
 
 Windows
 ~~~~~~~
@@ -185,18 +164,21 @@ page.
 ``pyprinttags``
 ---------------
 
-| This package also installs the small script ``pyprinttags``. It takes
-  one or more files as
-| command-line parameters and will display all known metadata of that
-  files on the terminal.
-| If unsupported tags (a.k.a. non-textual information) are found, they
-  can optionally be removed
-| from the file.
+This package also installs the small script ``pyprinttags``. It takes
+one or more files as command-line parameters and will display all known
+metadata of that files on the terminal. If unsupported tags (a.k.a.
+non-textual information) are found, they can optionally be removed from
+the file.
 
 ``Contact``
 -----------
 
-| For bug reports or feature requests, please use the
-| `issue tracker <https://github.com/supermihi/pytaglib/issues>`__ on
-  GitHub. For anything else, contact
-| me by `email <mailto:michaelhelmling@posteo.de>`__.
+For bug reports or feature requests, please use the `issue
+tracker <https://github.com/supermihi/pytaglib/issues>`__ on GitHub. For
+anything else, contact me by
+`email <mailto:michaelhelmling@posteo.de>`__.
+
+.. |Build Status| image:: https://travis-ci.org/supermihi/pytaglib.svg?branch=master
+   :target: https://travis-ci.org/supermihi/pytaglib
+.. |PyPI version| image:: https://badge.fury.io/py/pytaglib.svg
+   :target: https://badge.fury.io/py/pytaglib

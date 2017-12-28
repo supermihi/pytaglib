@@ -1,55 +1,43 @@
-# **pytaglib** – TagLib bindings for Python
+# **pytaglib**
 [![Build Status](https://travis-ci.org/supermihi/pytaglib.svg?branch=master)](https://travis-ci.org/supermihi/pytaglib)
+[![PyPI version](https://badge.fury.io/py/pytaglib.svg)](https://badge.fury.io/py/pytaglib)
 
-## Overview
-**pytaglib** is a full-featured, easy-to-use, cross-platform audio metadata ("tag") library for [Python](http://www.python.org) (all versions supported). It uses the popular, fast and rock-solid [TagLib](http://taglib.github.io) C++ library internally; **pytaglib** is a very thin wrapper about TagLib (<150 lines of code), meaning that you immediately profit from the underlying library's speed and stability.
+pytaglib is a [Python](http://www.python.org) audio tagging library. It is cross-platform, works with all Python versions, and is very simple to use yet fully featured:
+ - [supports more than a dozen file formats](http://taglib.github.io) including mp3, flac, ogg, wma, and mp4,
+ - support arbitrary, non-standard tag names,
+ - support multiple values per tag.
 
-Features include [support of more than a dozen file formats](http://taglib.github.io), [arbitrary tag names](#arbitag), and [multiple values per tag](#multival).
+pytaglib is a very thin wrapper (<150 lines of code) around the fast and rock-solid [TagLib](http://taglib.github.io) C++ library.
 
-**Known Issue**: *Various users have [reported](https://github.com/supermihi/pytaglib/issues/29) SIGSEGV errors on Mac OS X Sierra. Any help in debugging this is highly apprechiated (I do not have access to an OS X computer)!*
+## Get it
+In most cases, you should install pytaglib with [pip](https://pip.pypa.io/en/stable/):
 
-## Usage Example
+        pip install pytaglib
 
-- Open a file and read its tags:
+See [installation notes](#installnotes) below for requirements and manual compilation.
+
+## Usage
+
 ```python
 >>> import taglib
 >>> song = taglib.File("/path/to/my/file.mp3")
 >>> song.tags
 {'ARTIST': ['piman', 'jzig'], 'ALBUM': ['Quod Libet Test Data'], 'TITLE': ['Silence'], 'GENRE': ['Silence'], 'TRACKNUMBER': ['02/10'], 'DATE': ['2004']}
-```
-- Read some additional properties of the file:
-```python
+
 >>> song.length
 239
->>> song.channels
-2
-```
-- Change the file's tags:
-```python
 >>> song.tags["ALBUM"] = ["White Album"] # always use lists, even for single values
 >>> del song.tags["DATE"]
-```
-- Multiple values per tag:<a name="multival"></a>
-```python
 >>> song.tags["GENRE"] = ["Vocal", "Classical"]
-```
-- Non-standard tags:<a name="arbitag"></a>
-```python
 >>> song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
+>>> song.save()
 ```
-- Save your changes:
-```python
->>> returnvalue = song.save()
->>> returnvalue
-{}
-```
-The dictionary returned by `save` contains all tags that could not be saved (might happen if the specific format does not support e.g. multi-values).
+For detailed API documentation, use the docstrings of the `taglib.File` class or view the [source code](src/taglib.pyx) directly.
 
 
-**Note:** All strings in the tag dictionary are unicode strings (type `str` in Python 3 and `unicode` in Python 2). On the input side, however, the library is rather permissive and supports both byte- and unicode-strings. Internally, `pytaglib` converts
-all strings to `UTF-8` before storing them in the files.
+**Note:** pytaglib uses unicode strings (type `str` in Python 3 and `unicode` in Python 2) for both tag names and values. The library converts byte-strings to unicode strings on assignment, but it is recommended to provide unicode strings only to avoid encoding problems.
 
-## Installation
+## Installation Notes #installnotes
 The most recommended installation method is
 
         pip install pytaglib
