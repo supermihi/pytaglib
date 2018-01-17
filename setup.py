@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 2011-2017 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2018 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -27,16 +27,17 @@ CLASSIFIERS = [
 
 
 def readme():
-    readmeFile = os.path.join(os.path.dirname(__file__), 'README.txt')
+    readme_file = os.path.join(os.path.dirname(__file__), 'README.txt')
     if sys.version_info[0] >= 3:
-        return open(readmeFile, 'rt', encoding='utf-8').read()
+        return open(readme_file, 'rt', encoding='utf-8').read()
     else:
-        return open(readmeFile, 'rt').read()
+        return open(readme_file, 'rt').read()
 
 
-scriptName = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
+script_name = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
+is_windows = sys.platform.startswith('win')
 
-if sys.platform.startswith('win'):
+if is_windows:
     # on windows, we compile static taglib build into the python module
     TAGLIB_HOME = os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib')
     kwargs = dict(
@@ -48,11 +49,11 @@ else:
     # on unix systems, use the dynamic library and rely on headers at standard location
     kwargs = dict(libraries=['tag'])
 
-if '--cython' in sys.argv:
+if '--cython' in sys.argv or is_windows:
     from Cython.Build import cythonize
 
     extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **kwargs)])
-    sys.argv.remove('--cython')
+    sys.argv = [arg for arg in sys.argv if arg != '--cython']
 else:
     extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **kwargs)]
 
@@ -61,6 +62,7 @@ def version():
     with io.open(os.path.join('src', 'taglib.pyx'), 'rt', encoding='UTF-8') as pyx:
         version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", pyx.read(), re.M)
         return version_match.group(1)
+
 
 setup(
     name='pytaglib',
@@ -75,6 +77,7 @@ setup(
     ext_modules=extensions,
     package_dir={'': 'src', 'tests': ''},
     py_modules=['pyprinttags'],
-    entry_points={'console_scripts': ['{0} = pyprinttags:script'.format(scriptName)]},
-    test_suite='tests'
+    entry_points={'console_scripts': ['{0} = pyprinttags:script'.format(script_name)]},
+    test_suite='tests',
+    install_requires=['Cython']
 )
