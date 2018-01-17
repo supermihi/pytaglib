@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 1.4.2 (2018/01/17)
+---------------------------
+- Fix #31: Don't use precompiled `taglib.cpp` on Windows
+
 pytaglib 1.4.1 (2017/05/12)
 ---------------------------
 - Fix #33 (no longer uppercase bytestring tag values)
