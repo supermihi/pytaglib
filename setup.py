@@ -51,7 +51,7 @@ else:
 
 if '--cython' in sys.argv or is_windows:
     from Cython.Build import cythonize
-
+    print('cythonizing taglib.pyx ...')
     extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **kwargs)])
     sys.argv = [arg for arg in sys.argv if arg != '--cython']
 else:
