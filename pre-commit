@@ -3,4 +3,4 @@
 # run tests
 sh testboth.sh
 # create ReST README
-pandoc -s -t rst -f markdown_github -o README.txt README.md
+pandoc -s -t rst -f gfm -o README.txt README.md

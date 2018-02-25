@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 1.4.3 (2018/02/25)
+---------------------------
+- Fix accidental upload of the Windows version to PyPI. Hopefully fixes #42, #43.
+
 pytaglib 1.4.2 (2018/01/17)
 ---------------------------
 - Fix #31: Don't use precompiled `taglib.cpp` on Windows

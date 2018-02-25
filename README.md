@@ -47,9 +47,12 @@ from the file.
 
 ## Installation Notes
 
-* Ensure that `pip` points to the correct Python version; you might need to type, e.g., `pip3` to install pytaglib for Python 3 if your system's default is Python 2.7.
+* Ensure that `pip` is installed and points to the correct Python version
+  - on Windows, be sure to check *install pip* in the Python installer
+  - on Debian/Ubuntu/Mint, install `python3-pip` (and/or `python-pip`)
+  - you might need to type, e.g., `pip-3` to install pytaglib for Python 3 if your system's default is Python 2.7.
 * For Windows users, there are some precompiled binary packages (wheels). See the [PyPI page](https://pypi.python.org/pypi/pytaglib) for a list of supported Python versions.
-* If no binary packages exists, you need to have both Python and taglib installed with development headers (packages `python-dev` (or `python3-dev`) and `libtag1-dev` for debian / ubuntu and derivates, `python-devel` and `taglib-devel` for fedora and friends, `brew install taglib` on OS X).
+* If no binary packages exists, you need to have both Python and taglib installed with development headers (packages `python3-dev` (or `python-dev`) and `libtag1-dev` for debian / ubuntu and derivates, `python-devel` and `taglib-devel` for fedora and friends, `brew install taglib` on OS X).
 
 
 ### Linux: Distribution-Specific Packages
