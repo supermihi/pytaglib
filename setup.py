@@ -27,7 +27,7 @@ CLASSIFIERS = [
 
 
 def readme():
-    readme_file = os.path.join(os.path.dirname(__file__), 'README.txt')
+    readme_file = os.path.join(os.path.dirname(__file__), 'README.md')
     if sys.version_info[0] >= 3:
         return open(readme_file, 'rt', encoding='utf-8').read()
     else:
@@ -68,6 +68,7 @@ setup(
     name='pytaglib',
     description='cross-platform, Python 2.x/3.x audio metadata ("tagging") library based on TagLib',
     long_description=readme(),
+    long_description_content_type='text/markdown',
     classifiers=CLASSIFIERS,
     version=version(),
     license='GPLv3+',
