@@ -10,7 +10,7 @@
 from libcpp.utility cimport pair
 cimport ctypes
 
-version = '1.4.3'
+version = '1.4.4'
 
 cdef unicode toUnicode(ctypes.String s):
     """Converts TagLib::String to a unicode string (``str`` in Python 3, ``unicode`` else)."""

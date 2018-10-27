@@ -80,5 +80,4 @@ setup(
     py_modules=['pyprinttags'],
     entry_points={'console_scripts': ['{0} = pyprinttags:script'.format(script_name)]},
     test_suite='tests',
-    install_requires=['Cython']
 )

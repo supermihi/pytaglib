@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 1.4.4 (2018/10/27)
+---------------------------
+- Remove cython dependency from setup.py (thanks to Popkornium18 for reporting)
+
 pytaglib 1.4.3 (2018/02/25)
 ---------------------------
 - Fix accidental upload of the Windows version to PyPI. Hopefully fixes #42, #43.
