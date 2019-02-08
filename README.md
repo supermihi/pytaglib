@@ -7,7 +7,7 @@ pytaglib is a [Python](http://www.python.org) audio tagging library. It is cross
  - support arbitrary, non-standard tag names,
  - support multiple values per tag.
 
-pytaglib is a very thin wrapper (<150 lines of code) around the fast and rock-solid [TagLib](http://taglib.github.io) C++ library.
+pytaglib is a very thin wrapper (≈150 lines of [code](src/taglib.pyx)) around the fast and rock-solid [TagLib](http://taglib.github.io) C++ library.
 ## News
 See the [Changelog](CHANGELOG.md).
 ## Get it
