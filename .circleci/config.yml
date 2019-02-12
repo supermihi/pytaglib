@@ -33,7 +33,7 @@ jobs:
             sudo apt-get update && sudo apt-get -y install libtag1-dev
             python3 -m venv venv
             . venv/bin/activate
-            python3 setup.py install --user
+            python3 setup.py install
 
       - save_cache:
           paths:
