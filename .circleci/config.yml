@@ -30,7 +30,9 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            apt-get -qq update && apt-get -y -qq install libtag1-dev cython3
+            apt-get -qq update && apt-get -y -qq install libtag1-dev
+            . venv/bin/activate
+            pip install cython
 
       - run:
           name: build
