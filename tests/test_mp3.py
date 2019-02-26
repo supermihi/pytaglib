@@ -7,7 +7,7 @@
 #
 from __future__ import unicode_literals
 import unittest, taglib
-from . import copyTestFile
+from . import copy_test_file
 
 
 class ID3v2Test(unittest.TestCase):
@@ -15,7 +15,7 @@ class ID3v2Test(unittest.TestCase):
     def test_removeFrame1(self):
         """See https://bugs.kde.org/show_bug.cgi?id=298183
         """
-        with copyTestFile('rare_frames.mp3') as f:
+        with copy_test_file('rare_frames.mp3') as f:
             tfile = taglib.File(f)
             self.assertTrue('GENRE' in tfile.tags)
             self.assertEqual(len(tfile.tags['GENRE']), 1)
@@ -29,7 +29,7 @@ class ID3v2Test(unittest.TestCase):
             
     def test_removeFrame2(self):
         """See https://bugs.kde.org/show_bug.cgi?id=298183."""
-        with copyTestFile('r2.mp3') as f:
+        with copy_test_file('r2.mp3') as f:
             tfile = taglib.File(f)
             self.assertTrue('TITLE' in tfile.tags)
             self.assertEqual(len(tfile.tags['TITLE']), 1)
@@ -42,7 +42,7 @@ class ID3v2Test(unittest.TestCase):
             tfile.close()
 
     def test_id3v1Tov2(self):
-        with copyTestFile('onlyv1.mp3') as f:
+        with copy_test_file('onlyv1.mp3') as f:
             tfile = taglib.File(f)
             self.assertTrue('ARTIST' in tfile.tags)
             self.assertEqual(tfile.tags['ARTIST'][0], 'Bla')

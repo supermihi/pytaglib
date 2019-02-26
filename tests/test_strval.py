@@ -6,23 +6,20 @@
 # published by the Free Software Foundation
 #
 from __future__ import unicode_literals
-import unittest
 import taglib
-from . import copyTestFile
+from . import copy_test_file
 
 
-class TestStringValue(unittest.TestCase):
-
-    def test_strval(self):
-        """Ensure writing single tag values instead of lists is supported (using both bytes and
-        unicode)."""
-        with copyTestFile('testöü.flac') as f:
-            tf = taglib.File(f)
-            tf.tags['AAA'] = u'A TAG'
-            tf.tags['BBB'] = b'ANOTHER TAG'
-            tf.save()
-            del tf
-            tf = taglib.File(f)
-            self.assertEqual(tf.tags['AAA'], ['A TAG'])
-            self.assertEqual(tf.tags['BBB'], ['ANOTHER TAG'])
-            tf.close()
+def test_strval(tmpdir):
+    """Ensure writing single tag values instead of lists is supported (using both bytes and
+    unicode)."""
+    f = copy_test_file('testöü.flac', tmpdir)
+    tf = taglib.File(f)
+    tf.tags['AAA'] = u'A TAG'
+    tf.tags['BBB'] = b'ANOTHER TAG'
+    tf.save()
+    del tf
+    tf = taglib.File(f)
+    assert tf.tags['AAA'] == ['A TAG']
+    assert tf.tags['BBB'] == ['ANOTHER TAG']
+    tf.close()

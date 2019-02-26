@@ -11,14 +11,14 @@ from __future__ import absolute_import, unicode_literals
 import taglib
 import unittest
 
-from . import copyTestFile
+from . import copy_test_file
 
 
 class FLACUnicodeTest(unittest.TestCase):
     """A test for unicode tags in FLAC"""
     
     def test_unicode_value(self):
-        with copyTestFile('testöü.flac') as copy_file:
+        with copy_test_file('testöü.flac') as copy_file:
             tfile = taglib.File(copy_file)
             tfile.tags['ARTIST'] = ['artøst 1', 'artöst 2']
             tfile.save()
@@ -31,7 +31,7 @@ class FLACUnicodeTest(unittest.TestCase):
             tfile.close()
             
     def test_unicode_key(self):
-        with copyTestFile('testöü.flac') as copy_file:
+        with copy_test_file('testöü.flac') as copy_file:
             tfile = taglib.File(copy_file)
             tfile.tags['HÄÜ'] = ['omg']
             remaining = tfile.save()

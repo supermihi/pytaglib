@@ -10,7 +10,7 @@ from __future__ import absolute_import, unicode_literals
 import taglib
 import unittest
 
-from tests import copyTestFile
+from tests import copy_test_file
 
 
 class TestM4aAlbumArtist(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestM4aAlbumArtist(unittest.TestCase):
     """
 
     def test_issue46(self):
-        with copyTestFile('issue46.m4a') as copy_file:
+        with copy_test_file('issue46.m4a') as copy_file:
             tfile = taglib.File(copy_file)
             self.assertIn('ALBUMARTIST', tfile.tags)
             self.assertEquals(['Higginbottom, Edward'], tfile.tags['ALBUMARTIST'])

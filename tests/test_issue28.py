@@ -12,7 +12,7 @@ import unittest
 import os
 import stat
 
-from tests import copyTestFile
+from tests import copy_test_file
 
 
 class TestCyrillicFileName(unittest.TestCase):
@@ -20,7 +20,7 @@ class TestCyrillicFileName(unittest.TestCase):
     """
 
     def test_issue28(self):
-        with copyTestFile('Жбж.mp3') as copy_file:
+        with copy_test_file('Жбж.mp3') as copy_file:
             tfile = taglib.File(copy_file)
             tfile.tags['COMMENT'] = ['test']
             tfile.save()

@@ -11,7 +11,7 @@ from __future__ import absolute_import, unicode_literals
 import taglib
 import unittest
 
-from tests import copyTestFile
+from tests import copy_test_file
 
 
 class FLACRemoveTagsTest(unittest.TestCase):
@@ -21,7 +21,7 @@ class FLACRemoveTagsTest(unittest.TestCase):
     """
 
     def test_set_to_empty_string(self):
-        with copyTestFile('issue19.flac') as copy_file:
+        with copy_test_file('issue19.flac') as copy_file:
             tfile = taglib.File(copy_file)
             tfile.tags['COMMENT'] = ['']
             tfile.save()
@@ -32,7 +32,7 @@ class FLACRemoveTagsTest(unittest.TestCase):
             tfile.close()
 
     def test_set_to_empty_list(self):
-        with copyTestFile('issue19.flac') as copy_file:
+        with copy_test_file('issue19.flac') as copy_file:
             tfile = taglib.File(copy_file)
             tfile.tags['COMMENT'] = []
             tfile.save()
@@ -43,7 +43,7 @@ class FLACRemoveTagsTest(unittest.TestCase):
             tfile.close()
 
     def test_delete_key(self):
-        with copyTestFile('issue19.flac') as copy_file:
+        with copy_test_file('issue19.flac') as copy_file:
             tfile = taglib.File(copy_file)
             del tfile.tags['COMMENT']
             tfile.save()
@@ -54,7 +54,7 @@ class FLACRemoveTagsTest(unittest.TestCase):
             tfile.close()
 
     def test_set_to_space(self):
-        with copyTestFile('issue19.flac') as copy_file:
+        with copy_test_file('issue19.flac') as copy_file:
             tfile = taglib.File(copy_file)
             tfile.tags['COMMENT'] = [' ']
             tfile.save()

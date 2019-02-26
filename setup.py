@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 2018 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2019 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -10,7 +10,7 @@
 
 import io, os, os.path, sys
 import re
-from setuptools import setup
+from setuptools import setup, find_packages
 from distutils.extension import Extension
 
 CLASSIFIERS = [
@@ -76,7 +76,7 @@ setup(
     author_email='michaelhelmling@posteo.de',
     url='http://github.com/supermihi/pytaglib',
     ext_modules=extensions,
-    package_dir={'': 'src', 'tests': ''},
+    packages=find_packages(exclude=['tests']),
     py_modules=['pyprinttags'],
     entry_points={'console_scripts': ['{0} = pyprinttags:script'.format(script_name)]},
     setup_requires=['pytest-runner'],

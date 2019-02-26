@@ -9,20 +9,20 @@ from __future__ import unicode_literals
 import unittest
 import sys
 import taglib
-from . import copyTestFile
+from . import copy_test_file
 
 
 class TestBytesUnicode(unittest.TestCase):
 
     def test_bytes_filename(self):
         """Ensure file can be opened if filename is provided as bytes object."""
-        with copyTestFile('testöü.flac') as f:
+        with copy_test_file('testöü.flac') as f:
             tf = taglib.File(f.encode('utf8'))
             tf.close()
 
     def test_unicode_filename(self):
         """Ensure file can be opened if filename is provided as bytes object."""
-        with copyTestFile('testöü.flac') as f:
+        with copy_test_file('testöü.flac') as f:
             if sys.version_info.major == 2:
                 f = unicode(f)
             tf = taglib.File(f)
@@ -33,7 +33,7 @@ class TestBytesUnicode(unittest.TestCase):
         
         Update 2017-05-12: Use mixed-case tag values as a regression test for issue #33.
         """
-        with copyTestFile('rare_frames.mp3') as f:
+        with copy_test_file('rare_frames.mp3') as f:
             tf = taglib.File(f)
             tf.tags[b'BYTES'] = [b'OnE', b'twO']
             tf.save()
@@ -45,7 +45,7 @@ class TestBytesUnicode(unittest.TestCase):
 
     def test_unicode_tags(self):
         """Ensure unicode keys and values are accepted."""
-        with copyTestFile('rare_frames.mp3') as f:
+        with copy_test_file('rare_frames.mp3') as f:
             tf = taglib.File(f)
             tf.tags[u'UNICODE'] = [u'OnE', u'twO']
             tf.save()

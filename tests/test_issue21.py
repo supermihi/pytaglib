@@ -12,7 +12,7 @@ import unittest
 import os
 import stat
 
-from tests import copyTestFile
+from tests import copy_test_file
 
 
 class TestReadOnlyErrorNonAscii(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestReadOnlyErrorNonAscii(unittest.TestCase):
 
     @unittest.skipIf(os.getuid() == 0, 'taglib allows writing read-only files as root')
     def test_issue21(self):
-        with copyTestFile('readönly.mp3') as copy_file:
+        with copy_test_file('readönly.mp3') as copy_file:
             os.chmod(copy_file, stat.S_IREAD)
             tfile = taglib.File(copy_file.encode('utf8'))
             tfile.tags['COMMENT'] = ['']
