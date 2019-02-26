@@ -6,6 +6,7 @@
 # published by the Free Software Foundation
 #
 from __future__ import unicode_literals
+
 import unittest, os, stat
 import taglib
 from . import copyTestFile
@@ -27,6 +28,8 @@ class TestProblems(unittest.TestCase):
             os.chmod(f, stat.S_IREAD)
             tf = taglib.File(f)
             self.assertTrue(tf.readOnly)
-            self.assertRaises(OSError, tf.save)
+            if os.getuid() != 0 or os.name != 'positx':
+                # taglib allows to save read-only files as root on unix!
+                self.assertRaises(OSError, tf.save)
             os.chmod(f, stat.S_IREAD & stat.S_IWRITE)
             tf.close()

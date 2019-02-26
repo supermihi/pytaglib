@@ -24,5 +24,7 @@ class TestReadOnlyErrorNonAscii(unittest.TestCase):
             os.chmod(copy_file, stat.S_IREAD)
             tfile = taglib.File(copy_file.encode('utf8'))
             tfile.tags['COMMENT'] = ['']
-            self.assertRaises(OSError, tfile.save)
+            if os.getuid() != 0 or os.name != 'posix':
+                # taglib allows to save read-only files as root on unix!
+                self.assertRaises(OSError, tfile.save)
             tfile.close()
