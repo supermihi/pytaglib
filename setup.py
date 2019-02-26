@@ -79,5 +79,7 @@ setup(
     package_dir={'': 'src', 'tests': ''},
     py_modules=['pyprinttags'],
     entry_points={'console_scripts': ['{0} = pyprinttags:script'.format(script_name)]},
+    setup_requires=['pytest-runner'],
     test_suite='tests',
+    tests_require=['pytest']
 )
