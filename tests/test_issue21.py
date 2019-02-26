@@ -19,6 +19,7 @@ class TestReadOnlyErrorNonAscii(unittest.TestCase):
     """Motivated by https://github.com/supermihi/pytaglib/issues/21.
     """
 
+    @unittest.skipIf(os.getuid() == 0, 'taglib allows writing read-only files as root')
     def test_issue21(self):
         with copyTestFile('readönly.mp3') as copy_file:
             os.chmod(copy_file, stat.S_IREAD)
