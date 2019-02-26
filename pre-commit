@@ -1,4 +1,0 @@
-#!/bin/sh
-# use this as git pre-commit hook
-# run tests
-sh testboth.sh
