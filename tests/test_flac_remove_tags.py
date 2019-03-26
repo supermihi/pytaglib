@@ -18,7 +18,7 @@ Motivated by https://github.com/supermihi/pytaglib/issues/19.
 """
 
 
-def test_set_to_empty_string(tmpdir):
+def test_set_value_to_empty_string_removes_tag(tmpdir):
     copy_file = copy_test_file('issue19.flac', tmpdir)
     tfile = taglib.File(copy_file)
     tfile.tags['COMMENT'] = ['']
@@ -30,7 +30,7 @@ def test_set_to_empty_string(tmpdir):
     tfile.close()
 
 
-def test_set_to_empty_list(tmpdir):
+def test_set_value_to_empty_list_removes_tag(tmpdir):
     copy_file = copy_test_file('issue19.flac', tmpdir)
     tfile = taglib.File(copy_file)
     tfile.tags['COMMENT'] = []
@@ -42,7 +42,7 @@ def test_set_to_empty_list(tmpdir):
     tfile.close()
 
 
-def test_delete_key(tmpdir):
+def test_delete_key_removes_tag(tmpdir):
     copy_file = copy_test_file('issue19.flac', tmpdir)
     tfile = taglib.File(copy_file)
     del tfile.tags['COMMENT']
@@ -54,7 +54,7 @@ def test_delete_key(tmpdir):
     tfile.close()
 
 
-def test_set_to_space(tmpdir):
+def test_set_value_to_space_does_not_remove_tag(tmpdir):
     copy_file = copy_test_file('issue19.flac', tmpdir)
     tfile = taglib.File(copy_file)
     tfile.tags['COMMENT'] = [' ']

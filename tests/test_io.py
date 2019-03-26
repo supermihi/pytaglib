@@ -7,7 +7,7 @@
 #
 from __future__ import unicode_literals
 
-import os, stat
+import os, stat, sys
 import taglib
 
 import pytest
@@ -37,4 +37,31 @@ def test_os_error_on_save_read_only_file(tmpdir):
     with pytest.raises(OSError):
         tf.save()
     os.chmod(f, stat.S_IREAD & stat.S_IWRITE)
+    tf.close()
+
+
+@pytest.mark.skipIf(os.getuid() == 0, 'taglib allows writing read-only files as root')
+def test_file_with_non_ascii_name_throws_on_readonly_save(tmpdir):
+    """Motivated by https://github.com/supermihi/pytaglib/issues/21.
+    """
+    copy_file = copy_test_file('readönly.mp3', tmpdir)
+    os.chmod(copy_file, stat.S_IREAD)
+    tfile = taglib.File(copy_file.encode('utf8'))
+    tfile.tags['COMMENT'] = ['']
+    with pytest.raises(OSError):
+        tfile.save()
+    tfile.close()
+
+
+def test_can_read_bytes_filename_non_ascii(tmpdir):
+    f = copy_test_file('testöü.flac', tmpdir)
+    tf = taglib.File(f.encode('utf8'))
+    tf.close()
+
+
+def test_can_read_unicode_filename_non_ascii(tmpdir):
+    f = copy_test_file('testöü.flac', tmpdir)
+    if sys.version_info.major == 2:
+        f = unicode(f)
+    tf = taglib.File(f)
     tf.close()

@@ -13,7 +13,7 @@ import taglib
 from . import copy_test_file
 
 
-def test_flac_unicode_value(tmpdir):
+def test_flac_supports_unicode_value(tmpdir):
     copy_file = copy_test_file('testöü.flac', tmpdir)
     tfile = taglib.File(copy_file)
     tfile.tags['ARTIST'] = ['artøst 1', 'artöst 2']
@@ -25,7 +25,7 @@ def test_flac_unicode_value(tmpdir):
     tfile.close()
 
 
-def test_flac_unicode_key(tmpdir):
+def test_flac_supports_unicode_key(tmpdir):
     copy_file = copy_test_file('testöü.flac', tmpdir)
     tfile = taglib.File(copy_file)
     tfile.tags['HÄÜ'] = ['omg']

@@ -10,9 +10,7 @@ import taglib
 from . import copy_test_file
 
 
-def test_strval(tmpdir):
-    """Ensure writing single tag values instead of lists is supported (using both bytes and
-    unicode)."""
+def test_string_value_is_converted_to_list(tmpdir):
     f = copy_test_file('testöü.flac', tmpdir)
     tf = taglib.File(f)
     tf.tags['AAA'] = u'A TAG'

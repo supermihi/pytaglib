@@ -12,11 +12,11 @@ import taglib
 from tests import copy_test_file
 
 
-def test_cyrillic_file_name(tmpdir):
-    """Motivated by https://github.com/supermihi/pytaglib/issues/28.
-    """
-    copy_file = copy_test_file('Жбж.mp3', tmpdir)
+def test_m4a_supports_albumartist(tmpdir):
+    """Motivated by https://github.com/supermihi/pytaglib/issues/46.
+        """
+    copy_file = copy_test_file('issue46.m4a', tmpdir)
     tfile = taglib.File(copy_file)
-    tfile.tags['COMMENT'] = ['test']
-    tfile.save()
+    assert 'ALBUMARTIST' in tfile.tags
+    assert ['Higginbottom, Edward'] == tfile.tags['ALBUMARTIST']
     tfile.close()

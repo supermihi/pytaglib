@@ -10,7 +10,7 @@ import taglib
 from . import copy_test_file
 
 
-def test_remove_frame_1(tmpdir):
+def test_remove_genre_frame_from_mp3(tmpdir):
     """See https://bugs.kde.org/show_bug.cgi?id=298183
     """
     f = copy_test_file('rare_frames.mp3', tmpdir)
@@ -27,7 +27,7 @@ def test_remove_frame_1(tmpdir):
     tfile.close()
 
 
-def test_remove_frame_2(tmpdir):
+def test_remove_title_frame_from_mp3(tmpdir):
     """See https://bugs.kde.org/show_bug.cgi?id=298183."""
     f = copy_test_file('r2.mp3', tmpdir)
     tfile = taglib.File(f)
@@ -43,7 +43,7 @@ def test_remove_frame_2(tmpdir):
     tfile.close()
 
 
-def test_id3v1_to_v2(tmpdir):
+def test_id3v1_is_converted_to_v2_on_save(tmpdir):
     f = copy_test_file('onlyv1.mp3', tmpdir)
     tfile = taglib.File(f)
     assert 'ARTIST' in tfile.tags
