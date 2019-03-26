@@ -6,51 +6,53 @@
 # published by the Free Software Foundation
 #
 from __future__ import unicode_literals
-import unittest, taglib
+import taglib
 from . import copy_test_file
 
 
-class ID3v2Test(unittest.TestCase):
-    
-    def test_removeFrame1(self):
-        """See https://bugs.kde.org/show_bug.cgi?id=298183
-        """
-        with copy_test_file('rare_frames.mp3') as f:
-            tfile = taglib.File(f)
-            self.assertTrue('GENRE' in tfile.tags)
-            self.assertEqual(len(tfile.tags['GENRE']), 1)
-            del tfile.tags['GENRE']
-            tfile.save()
-            tfile.close()
-            
-            tfile = taglib.File(f)
-            self.assertTrue('GENRE' not in tfile.tags)
-            tfile.close()
-            
-    def test_removeFrame2(self):
-        """See https://bugs.kde.org/show_bug.cgi?id=298183."""
-        with copy_test_file('r2.mp3') as f:
-            tfile = taglib.File(f)
-            self.assertTrue('TITLE' in tfile.tags)
-            self.assertEqual(len(tfile.tags['TITLE']), 1)
-            del tfile.tags['TITLE']
-            tfile.save()
-            tfile.close()
-            
-            tfile = taglib.File(f)
-            self.assertTrue('TITLE' not in tfile.tags)
-            tfile.close()
+def test_remove_frame_1(tmpdir):
+    """See https://bugs.kde.org/show_bug.cgi?id=298183
+    """
+    f = copy_test_file('rare_frames.mp3', tmpdir)
+    tfile = taglib.File(f)
+    assert 'GENRE' in tfile.tags
+    assert len(tfile.tags['GENRE']) == 1
 
-    def test_id3v1Tov2(self):
-        with copy_test_file('onlyv1.mp3') as f:
-            tfile = taglib.File(f)
-            self.assertTrue('ARTIST' in tfile.tags)
-            self.assertEqual(tfile.tags['ARTIST'][0], 'Bla')
-            tfile.tags['NONID3V1'] = ['omg', 'wtf']
-            ret = tfile.save()
-            self.assertEqual(len(ret), 0)
-            tfile.close()
-            
-            tfile = taglib.File(f)
-            self.assertTrue('NONID3V1' in tfile.tags)
-            tfile.close()
+    del tfile.tags['GENRE']
+    tfile.save()
+    tfile.close()
+
+    tfile = taglib.File(f)
+    assert 'GENRE' not in tfile.tags
+    tfile.close()
+
+
+def test_remove_frame_2(tmpdir):
+    """See https://bugs.kde.org/show_bug.cgi?id=298183."""
+    f = copy_test_file('r2.mp3', tmpdir)
+    tfile = taglib.File(f)
+    assert 'TITLE' in tfile.tags
+    assert len(tfile.tags['TITLE']) == 1
+
+    del tfile.tags['TITLE']
+    tfile.save()
+    tfile.close()
+
+    tfile = taglib.File(f)
+    assert 'TITLE' not in tfile.tags
+    tfile.close()
+
+
+def test_id3v1_to_v2(tmpdir):
+    f = copy_test_file('onlyv1.mp3', tmpdir)
+    tfile = taglib.File(f)
+    assert 'ARTIST' in tfile.tags
+    assert tfile.tags['ARTIST'][0] == 'Bla'
+    tfile.tags['NONID3V1'] = ['omg', 'wtf']
+    ret = tfile.save()
+    assert len(ret) == 0
+    tfile.close()
+
+    tfile = taglib.File(f)
+    assert 'NONID3V1' in tfile.tags
+    tfile.close()

@@ -8,18 +8,15 @@
 from __future__ import absolute_import, unicode_literals
 
 import taglib
-import unittest
 
 from tests import copy_test_file
 
 
-class TestM4aAlbumArtist(unittest.TestCase):
+def test_read_m4a_album_artist(tmpdir):
     """Motivated by https://github.com/supermihi/pytaglib/issues/46.
-    """
-
-    def test_issue46(self):
-        with copy_test_file('issue46.m4a') as copy_file:
-            tfile = taglib.File(copy_file)
-            self.assertIn('ALBUMARTIST', tfile.tags)
-            self.assertEquals(['Higginbottom, Edward'], tfile.tags['ALBUMARTIST'])
-            tfile.close()
+        """
+    copy_file = copy_test_file('issue46.m4a', tmpdir)
+    tfile = taglib.File(copy_file)
+    assert 'ALBUMARTIST' in tfile.tags
+    assert ['Higginbottom, Edward'] == tfile.tags['ALBUMARTIST']
+    tfile.close()
