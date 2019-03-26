@@ -1,6 +1,6 @@
 # **pytaglib**
 [![CircleCI](https://img.shields.io/circleci/project/github/supermihi/pytaglib/master.svg)](https://circleci.com/gh/supermihi/pytaglib)
-![PyPI](https://img.shields.io/pypi/v/pytaglib.svg)
+[![PyPI](https://img.shields.io/pypi/v/pytaglib.svg)](https://pypi.org/project/pytaglib/)
 
 pytaglib is a [Python](http://www.python.org) audio tagging library. It is cross-platform, works with all Python versions, and is very simple to use yet fully featured:
  - [supports more than a dozen file formats](http://taglib.github.io) including mp3, flac, ogg, wma, and mp4,
