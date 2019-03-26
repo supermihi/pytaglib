@@ -20,7 +20,7 @@ jobs:
             apt-get -qq update && apt-get -y -qq install libtag1-dev
             python3 -m venv venv
             . venv/bin/activate
-            pip install cython
+            pip install cython pytest
 
       - run:
           name: build cython module
@@ -38,4 +38,4 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python setup.py test
+            pytest tests

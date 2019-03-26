@@ -27,9 +27,10 @@ def test_not_existing_file_raises():
         taglib.File("/nonexistent.ogg")
 
 
-@pytest.mark.skipif(os.getuid() == 0, reason='taglib allows writing read-only files as root')
 def test_os_error_on_save_read_only_file(tmpdir):
     """Ensure OSError is raised when save() is called on read-only files."""
+    if os.getuid() == 0:
+        pytest.skip('taglib allows writing read-only files as root')
     f = copy_test_file('rare_frames.mp3', tmpdir)
     os.chmod(f, stat.S_IREAD)
     tf = taglib.File(f)
@@ -40,10 +41,11 @@ def test_os_error_on_save_read_only_file(tmpdir):
     tf.close()
 
 
-@pytest.mark.skipIf(os.getuid() == 0, 'taglib allows writing read-only files as root')
 def test_file_with_non_ascii_name_throws_on_readonly_save(tmpdir):
     """Motivated by https://github.com/supermihi/pytaglib/issues/21.
     """
+    if os.getuid() == 0:
+        pytest.skip('taglib allows writing read-only files as root')
     copy_file = copy_test_file('readönly.mp3', tmpdir)
     os.chmod(copy_file, stat.S_IREAD)
     tfile = taglib.File(copy_file.encode('utf8'))
