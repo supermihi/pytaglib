@@ -1381,7 +1381,7 @@ static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_path[] = "path";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_utf8[] = "utf8";
-static const char __pyx_k_1_4_4[] = "1.4.4";
+static const char __pyx_k_1_4_5[] = "1.4.5";
 static const char __pyx_k_UTF_8[] = "UTF-8";
 static const char __pyx_k_items[] = "items";
 static const char __pyx_k_upper[] = "upper";
@@ -1407,7 +1407,7 @@ static const char __pyx_k_I_O_operation_on_closed_file[] = "I/O operation on clo
 static const char __pyx_k_Unable_to_save_tags_Unknown_OS_e[] = "Unable to save tags: Unknown OS error";
 static const char __pyx_k_Unable_to_save_tags_file_is_read[] = "Unable to save tags: file is read-only";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
-static PyObject *__pyx_kp_u_1_4_4;
+static PyObject *__pyx_kp_u_1_4_5;
 static PyObject *__pyx_kp_u_Could_not_read_file;
 static PyObject *__pyx_kp_u_File;
 static PyObject *__pyx_n_s_File_2;
@@ -1468,7 +1468,7 @@ static PyObject *__pyx_tuple__6;
 /* Late includes */
 
 /* "taglib.pyx":15
- * version = '1.4.4'
+ * version = '1.4.5'
  * 
  * cdef unicode toUnicode(ctypes.String s):             # <<<<<<<<<<<<<<
  *     """Converts TagLib::String to a unicode string (``str`` in Python 3, ``unicode`` else)."""
@@ -1496,7 +1496,7 @@ static PyObject *__pyx_f_6taglib_toUnicode(TagLib::String __pyx_v_s) {
   goto __pyx_L0;
 
   /* "taglib.pyx":15
- * version = '1.4.4'
+ * version = '1.4.5'
  * 
  * cdef unicode toUnicode(ctypes.String s):             # <<<<<<<<<<<<<<
  *     """Converts TagLib::String to a unicode string (``str`` in Python 3, ``unicode`` else)."""
@@ -4299,7 +4299,7 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
-  {&__pyx_kp_u_1_4_4, __pyx_k_1_4_4, sizeof(__pyx_k_1_4_4), 0, 1, 0, 0},
+  {&__pyx_kp_u_1_4_5, __pyx_k_1_4_5, sizeof(__pyx_k_1_4_5), 0, 1, 0, 0},
   {&__pyx_kp_u_Could_not_read_file, __pyx_k_Could_not_read_file, sizeof(__pyx_k_Could_not_read_file), 0, 1, 0, 0},
   {&__pyx_kp_u_File, __pyx_k_File, sizeof(__pyx_k_File), 0, 1, 0, 0},
   {&__pyx_n_s_File_2, __pyx_k_File_2, sizeof(__pyx_k_File_2), 0, 0, 1, 1},
@@ -4691,11 +4691,11 @@ if (!__Pyx_RefNanny) {
   /* "taglib.pyx":13
  * cimport ctypes
  * 
- * version = '1.4.4'             # <<<<<<<<<<<<<<
+ * version = '1.4.5'             # <<<<<<<<<<<<<<
  * 
  * cdef unicode toUnicode(ctypes.String s):
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_version, __pyx_kp_u_1_4_4) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_version, __pyx_kp_u_1_4_5) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
 
   /* "taglib.pyx":1
  * # -*- coding: utf-8 -*-             # <<<<<<<<<<<<<<

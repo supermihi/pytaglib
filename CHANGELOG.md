@@ -1,6 +1,10 @@
 Changelog
 =========
 
+pytaglib 1.4.5 (2019/03/26)
+---------------------------
+- Fix published taglib.cpp
+
 pytaglib 1.4.4 (2018/10/27)
 ---------------------------
 - Remove cython dependency from setup.py (thanks to Popkornium18 for reporting)
