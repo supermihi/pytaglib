@@ -25,22 +25,22 @@ jobs:
           command: |
             apt-get -qq update && apt-get -y -qq install libtag1-dev
             test $(python2 -c 'import sys; print(sys.version_info.major)') -eq 2 && apt-get -y -qq install python-virtualenv
-            python -m venv venv
+            python -m virtualenv venv
             . venv/bin/activate
             python -V
             pip install cython pytest
-
-      - run:
-          name: build cython module
-          command: |
-            python -m venv venv
-            . venv/bin/activate
-            python setup.py build --cython
 
       - save_cache:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: build cython module
+          command: |
+            python -m virtualenv venv
+            . venv/bin/activate
+            python setup.py build --cython
 
       - run:
           name: run tests
