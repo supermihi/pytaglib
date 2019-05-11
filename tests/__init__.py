@@ -12,6 +12,6 @@ import os.path, shutil
 def copy_test_file(filename, tmpdir):
     """Make a temporary copy of test data file *name* (without dir) and return its full path."""
     source = os.path.join(os.path.dirname(__file__), 'data', filename)
-    target = os.path.join(tmpdir, filename)
+    target = os.path.join(tmpdir.strpath, filename)
     shutil.copyfile(source, target)
     return target
