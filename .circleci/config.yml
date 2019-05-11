@@ -15,11 +15,6 @@ jobs:
 
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
-            - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
@@ -29,11 +24,6 @@ jobs:
             virtualenv venv
             . venv/bin/activate
             pip install cython pytest
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       - run:
           name: build cython module
