@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test-3.7: &test-template
     docker:
       - image: python:3.7-stretch
 
@@ -11,23 +11,23 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
       - run:
           name: install dependencies
           command: |
             apt-get -qq update && apt-get -y -qq install libtag1-dev
-            python3 -m venv venv
+            python -m venv venv
             . venv/bin/activate
-            pip3 install cython pytest
+            python -V
+            pip install cython pytest
 
       - run:
           name: build cython module
           command: |
-            python3 -m venv venv
+            python -m venv venv
             . venv/bin/activate
-            python3 setup.py build --cython
+            python setup.py build --cython
 
       - save_cache:
           paths:
@@ -38,4 +38,8 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python3 setup.py test
+            python setup.py test
+  test-2.7:
+    <<: *test-template
+    docker:
+      image: python:2.7-stretch
