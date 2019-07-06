@@ -1,6 +1,11 @@
 Changelog
 =========
 
+NEXT (????/??/??)
+-----------------
+- fix #63: python2 tests did not pass
+- fix #62: pyprinttags module did not work
+
 pytaglib 1.4.5 (2019/03/26)
 ---------------------------
 - Fix published taglib.cpp
