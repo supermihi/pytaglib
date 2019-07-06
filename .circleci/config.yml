@@ -22,9 +22,8 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            apt-get -qq update && apt-get -y -qq install libtag1-dev
+            apt-get -qq update && apt-get -y -qq install libtag1-dev python3-dev
             python -V
-            test $(python2 -c 'import sys; print(sys.version_info.major)') -eq 2 && apt-get -y -qq install python-virtualenv
             virtualenv venv
             . venv/bin/activate
             pip install cython pytest
