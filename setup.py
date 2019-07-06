@@ -10,7 +10,7 @@
 
 import io, os, os.path, sys
 import re
-from setuptools import setup, find_packages
+from setuptools import setup
 from distutils.extension import Extension
 
 CLASSIFIERS = [
@@ -51,6 +51,7 @@ else:
 
 if '--cython' in sys.argv or is_windows:
     from Cython.Build import cythonize
+
     print('cythonizing taglib.pyx ...')
     extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **kwargs)])
     sys.argv = [arg for arg in sys.argv if arg != '--cython']
@@ -76,9 +77,10 @@ setup(
     author_email='michaelhelmling@posteo.de',
     url='http://github.com/supermihi/pytaglib',
     ext_modules=extensions,
-    packages=find_packages(exclude=['tests']),
-    entry_points={'console_scripts': ['{0} = pyprinttags:script'.format(script_name)]},
-    setup_requires=['pytest-runner'],
-    test_suite='tests',
-    tests_require=['pytest']
+    package_dir={'': 'src'},
+    py_modules=['pytaglib', 'pyprinttags'],
+    entry_points={'console_scripts': ['{0}=pyprinttags:script'.format(script_name)]},
+    extras_require={
+        'test': ['pytest-runner', 'pytest']
+    }
 )
