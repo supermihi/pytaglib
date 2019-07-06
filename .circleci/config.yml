@@ -1,6 +1,13 @@
 version: 2
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-3.7
+      - test-2.7
+
 jobs:
-  build:
+  test-3.7:
     docker:
       - image: python:3.7-stretch
 
@@ -10,32 +17,60 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-py3-{{ checksum "requirements.txt" }}
             - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
-            apt-get -qq update && apt-get -y -qq install libtag1-dev
-            python3 -m venv venv
+            apt-get -qq update && apt-get -y -qq install libtag1-dev python3-dev virtualenv python3-virtualenv
+            python -V
+            virtualenv --python=python3 venv
             . venv/bin/activate
-            pip3 install cython pytest
-
-      - run:
-          name: build cython module
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            python3 setup.py build --cython
-
+            pip install cython pytest
       - save_cache:
           paths:
             - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+          key: v1-dependencies-py3-{{ checksum "requirements.txt" }}
+      - run:
+          name: build cython module
+          command: |
+            . venv/bin/activate
+            python setup.py build --cython
 
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            python3 setup.py test
+            python setup.py test
+  test-2.7:
+    docker:
+      - image: python:2.7-stretch
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-py3-{{ checksum "requirements.txt" }}
+            - v1-dependencies-
+      - run:
+          name: install dependencies
+          command: |
+            apt-get -qq update && apt-get -y -qq install libtag1-dev virtualenv python-virtualenv python-dev
+            python -V
+            virtualenv venv
+            . venv/bin/activate
+            pip install cython pytest
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-py3-{{ checksum "requirements.txt" }}
+      - run:
+          name: build cython module
+          command: |
+            . venv/bin/activate
+            python setup.py build --cython
+
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            python setup.py test
