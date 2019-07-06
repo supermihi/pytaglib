@@ -24,7 +24,7 @@ jobs:
           command: |
             apt-get -qq update && apt-get -y -qq install libtag1-dev python3-dev virtualenv python3-virtualenv
             python -V
-            virtualenv venv
+            virtualenv --python=python3 venv
             . venv/bin/activate
             pip install cython pytest
       - save_cache:
