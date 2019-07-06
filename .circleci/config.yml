@@ -22,7 +22,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            apt-get -qq update && apt-get -y -qq install libtag1-dev python3-dev python3-virtualenv
+            apt-get -qq update && apt-get -y -qq install libtag1-dev python3-dev virtualenv python3-virtualenv
             python -V
             virtualenv venv
             . venv/bin/activate
@@ -55,7 +55,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            apt-get -qq update && apt-get -y -qq install libtag1-dev python-virtualenv python-dev
+            apt-get -qq update && apt-get -y -qq install libtag1-dev virtualenv python-virtualenv python-dev
             python -V
             virtualenv venv
             . venv/bin/activate
