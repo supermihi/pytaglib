@@ -16,7 +16,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-
+            - v2-dependencies-
       - run:
           name: install dependencies
           command: |
@@ -26,9 +26,8 @@ jobs:
             pip install tox
       - save_cache:
           paths:
-            - ./venv
             - ./.tox
-          key: v1-dependencies-
+          key: v2-dependencies-
       - run:
           name: run tests
           command: |
