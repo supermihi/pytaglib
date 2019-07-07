@@ -37,26 +37,35 @@ def readme():
 script_name = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
 is_windows = sys.platform.startswith('win')
 
-if is_windows:
-    # on windows, we compile static taglib build into the python module
-    TAGLIB_HOME = os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib')
-    kwargs = dict(
-        define_macros=[('TAGLIB_STATIC', None)],
-        extra_objects=[os.path.join(TAGLIB_HOME, 'lib', 'tag.lib')],
-        include_dirs=[os.path.join(TAGLIB_HOME, 'include')],
-    )
-else:
-    # on unix systems, use the dynamic library and rely on headers at standard location
-    kwargs = dict(libraries=['tag'])
 
-if '--cython' in sys.argv or is_windows:
+def extension_kwargs():
+    if is_windows:
+        # on windows, we compile static taglib build into the python module
+        TAGLIB_HOME = os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib')
+        return dict(
+            define_macros=[('TAGLIB_STATIC', None)],
+            extra_objects=[os.path.join(TAGLIB_HOME, 'lib', 'tag.lib')],
+            include_dirs=[os.path.join(TAGLIB_HOME, 'include')],
+        )
+    else:
+        # on unix systems, use the dynamic library and rely on headers at standard location
+        return dict(libraries=['tag'])
+
+
+def is_cython_requested():
+    return is_windows or '--cython' in sys.argv
+
+
+install_requires = []
+if is_cython_requested():
     from Cython.Build import cythonize
 
     print('cythonizing taglib.pyx ...')
-    extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **kwargs)])
+    extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **extension_kwargs())])
     sys.argv = [arg for arg in sys.argv if arg != '--cython']
+    install_requires.append('cython')
 else:
-    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **kwargs)]
+    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **extension_kwargs())]
 
 
 def version():
@@ -80,6 +89,8 @@ setup(
     package_dir={'': 'src'},
     py_modules=['pytaglib', 'pyprinttags'],
     entry_points={'console_scripts': ['{0}=pyprinttags:script'.format(script_name)]},
+    python_requires='>=2.7',
+    install_requires=install_requires,
     extras_require={
         'test': ['pytest-runner', 'pytest']
     }
