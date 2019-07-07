@@ -82,6 +82,7 @@ setup(
     author_email='michaelhelmling@posteo.de',
     url='http://github.com/supermihi/pytaglib',
     ext_modules=extensions,
+    package_dir={'': 'src'},
     py_modules=['pytaglib', 'pyprinttags'],
     entry_points={'console_scripts': ['{0}=pyprinttags:script'.format(script_name)]},
     python_requires='>=2.7'
