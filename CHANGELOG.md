@@ -3,6 +3,7 @@ Changelog
 
 NEXT (????/??/??)
 -----------------
+- fix #65: use tox for testing. Request re-cythonizing module with environment variable `PYTAGLIB_CYTHONIZE` instead of argument to `setup.py` now.
 - fix #63: python2 tests did not pass
 - fix #62: pyprinttags module did not work
 
