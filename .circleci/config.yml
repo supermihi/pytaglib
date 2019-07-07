@@ -3,11 +3,10 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-3.7
-      - test-2.7
+      - tox
 
 jobs:
-  test-3.7:
+  tox:
     docker:
       - image: python:3.7-stretch
 
@@ -17,60 +16,20 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-py3-{{ checksum "requirements.txt" }}
-            - v1-dependencies-
+            - v2-dependencies-
       - run:
           name: install dependencies
           command: |
-            apt-get -qq update && apt-get -y -qq install libtag1-dev python3-dev virtualenv python3-virtualenv
-            python -V
+            apt-get -qq update && apt-get -y -qq install libtag1-dev python-dev python3-dev virtualenv python3-virtualenv
             virtualenv --python=python3 venv
             . venv/bin/activate
-            pip install cython pytest pytest-runner
+            pip install tox
       - save_cache:
           paths:
-            - ./venv
-          key: v1-dependencies-py3-{{ checksum "requirements.txt" }}
-      - run:
-          name: build cython module
-          command: |
-            . venv/bin/activate
-            python setup.py build --cython
-
+            - ./.tox
+          key: v2-dependencies-
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            python setup.py test
-  test-2.7:
-    docker:
-      - image: python:2.7-stretch
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-py3-{{ checksum "requirements.txt" }}
-            - v1-dependencies-
-      - run:
-          name: install dependencies
-          command: |
-            apt-get -qq update && apt-get -y -qq install libtag1-dev virtualenv python-virtualenv python-dev
-            python -V
-            virtualenv venv
-            . venv/bin/activate
-            pip install cython pytest pytest-runner
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-py3-{{ checksum "requirements.txt" }}
-      - run:
-          name: build cython module
-          command: |
-            . venv/bin/activate
-            python setup.py build --cython
-
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            python setup.py test
+            tox
