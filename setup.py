@@ -53,17 +53,13 @@ def extension_kwargs():
 
 
 def is_cython_requested():
-    return is_windows or '--cython' in sys.argv
+    return is_windows or 'PYTAGLIB_CYTHONIZE' in os.environ
 
 
-install_requires = []
 if is_cython_requested():
     from Cython.Build import cythonize
-
     print('cythonizing taglib.pyx ...')
     extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **extension_kwargs())])
-    sys.argv = [arg for arg in sys.argv if arg != '--cython']
-    install_requires.append('cython')
 else:
     extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **extension_kwargs())]
 
@@ -86,12 +82,7 @@ setup(
     author_email='michaelhelmling@posteo.de',
     url='http://github.com/supermihi/pytaglib',
     ext_modules=extensions,
-    package_dir={'': 'src'},
     py_modules=['pytaglib', 'pyprinttags'],
     entry_points={'console_scripts': ['{0}=pyprinttags:script'.format(script_name)]},
-    python_requires='>=2.7',
-    install_requires=install_requires,
-    extras_require={
-        'test': ['pytest-runner', 'pytest']
-    }
+    python_requires='>=2.7'
 )
