@@ -4,6 +4,7 @@ dist
 .settings
 .project
 .pydevproject
+.tox
 .idea
 *.pyc
 *.so
