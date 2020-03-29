@@ -11,11 +11,17 @@ pytaglib is a very thin wrapper (≈150 lines of [code](src/taglib.pyx)) around 
 ## News
 See the [Changelog](CHANGELOG.md).
 ## Get it
-In most cases, you should install pytaglib with [pip](https://pip.pypa.io/en/stable/):
+At first, you might need to install taglib with development headers. Ubuntu, Mint and other Debian-Based distributions:
+        
+        sudo apt install libtag1-dev
+
+Then install pytaglib with [pip](https://pip.pypa.io/en/stable/):
 
         pip install pytaglib
 
-See [installation notes](#installation-notes) below for requirements and manual compilation.
+
+        
+For other operating systems and more details, see [installation notes](#installation-notes) below.
 
 ## Usage
 
