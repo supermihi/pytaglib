@@ -12,3 +12,6 @@ arch/*.tar.gz
 arch/*.tar.xz
 arch/src
 arch/pkg
+
+build_win*/
+.vscode
