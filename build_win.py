@@ -6,6 +6,7 @@ import tarfile
 import shutil
 from setuptools import sandbox
 import subprocess
+import time
 
 
 TAGLIB_VERSION = '1.11.1'
@@ -86,11 +87,14 @@ def pytaglib_build():
     print("*** building pytaglib ...")
     os.environ['TAGLIB_HOME'] = str(taglib_out)
     os.environ['PYTAGLIB_CYTHONIZE'] = '1'
-    sandbox.run_setup('setup.py', ['build_ext', '--inplace'])
-    
+    sandbox.run_setup('setup.py', ['install'])
+    time.sleep(2)
+    print("*** testing newly built pytaglib ...")
     import pytest
-    pytest.main()
-    sandbox.run_setup('setup.py', ['build', 'bdist_wheel'])
+    pytest.main(['tests'])
+    #subprocess.run([sys.executable, '-m', 'pytest'], env={'PYTHONPATH': 'src'}, check=True)
+    print("*** building wheel ...")
+    sandbox.run_setup('setup.py', ['bdist_wheel'])
     
 
 def script():

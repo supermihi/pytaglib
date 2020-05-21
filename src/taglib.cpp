@@ -9,12 +9,19 @@
                 null
             ]
         ],
-        "depends": [],
+        "depends": [
+            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\audioproperties.h",
+            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\fileref.h",
+            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\tfile.h",
+            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\tpropertymap.h",
+            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\tstring.h",
+            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\tstringlist.h"
+        ],
         "extra_objects": [
-            "C:\\Libraries\\taglib\\lib\\tag.lib"
+            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\lib\\tag.lib"
         ],
         "include_dirs": [
-            "C:\\Libraries\\taglib\\include"
+            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include"
         ],
         "language": "c++",
         "name": "taglib",
