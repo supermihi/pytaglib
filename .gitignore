@@ -13,5 +13,5 @@ arch/*.tar.xz
 arch/src
 arch/pkg
 
-build_win*/
+taglib-build-x[63][42]
 .vscode
