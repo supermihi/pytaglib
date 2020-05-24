@@ -8,7 +8,6 @@ dist
 .idea
 *.pyc
 *.so
-arch/*.tar.gz
-arch/*.tar.xz
-arch/src
-arch/pkg
+*.pyd
+
+.vscode

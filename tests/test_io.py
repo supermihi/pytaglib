@@ -27,6 +27,7 @@ def test_not_existing_file_raises():
         taglib.File("/nonexistent.ogg")
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="getuid() only on windows")
 def test_os_error_on_save_read_only_file(tmpdir):
     """Ensure OSError is raised when save() is called on read-only files."""
     if os.getuid() == 0:
@@ -40,7 +41,7 @@ def test_os_error_on_save_read_only_file(tmpdir):
     os.chmod(f, stat.S_IREAD & stat.S_IWRITE)
     tf.close()
 
-
+@pytest.mark.skipif(sys.platform == 'win32', reason="getuid() only on windows")
 def test_file_with_non_ascii_name_throws_on_readonly_save(tmpdir):
     """Motivated by https://github.com/supermihi/pytaglib/issues/21.
     """
