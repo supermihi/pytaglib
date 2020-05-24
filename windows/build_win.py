@@ -6,6 +6,7 @@ import tarfile
 import shutil
 from setuptools import sandbox
 import subprocess
+import importlib
 import time
 
 
@@ -16,13 +17,14 @@ build_config = 'Release'
 
 x64 = sys.maxsize > 2**32
 arch = "x64" if x64 else "x32"
-sys.path.append('src')
 
-repository_root = Path(__file__).resolve().parent
+
+repository_root = Path(__file__).resolve().parent.parent
+sys.path.append(str(repository_root / 'src'))
 
 def make_build_dir():    
     dirname = f'taglib-build-{arch}'
-    path = repository_root / dirname
+    path = repository_root / 'windows' / 'build' / dirname
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -87,8 +89,10 @@ def pytaglib_build():
     print("*** building pytaglib ...")
     os.environ['TAGLIB_HOME'] = str(taglib_out)
     os.environ['PYTAGLIB_CYTHONIZE'] = '1'
+    os.chdir(repository_root)
     sandbox.run_setup('setup.py', ['install'])
-    time.sleep(2)
+    time.sleep(1)
+    importlib.invalidate_caches()
     print("*** testing newly built pytaglib ...")
     import pytest
     pytest.main(['tests'])

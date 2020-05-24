@@ -59,7 +59,6 @@ def is_cython_requested():
 if is_cython_requested():
     from Cython.Build import cythonize
     print('cythonizing taglib.pyx ...')
-    os.remove(os.path.join('src', 'taglib.cpp'))
     extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **extension_kwargs())])
 else:
     extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **extension_kwargs())]

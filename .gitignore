@@ -9,11 +9,5 @@ dist
 *.pyc
 *.so
 *.pyd
-arch/*.tar.gz
-arch/*.tar.xz
-arch/src
-arch/pkg
 
-taglib-build-x[63][42]
-venv-*
 .vscode
