@@ -9,5 +9,5 @@ dist
 *.pyc
 *.so
 *.pyd
-
+.eggs
 .vscode

@@ -3,30 +3,14 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "define_macros": [
-            [
-                "TAGLIB_STATIC",
-                null
-            ]
-        ],
-        "depends": [
-            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\audioproperties.h",
-            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\fileref.h",
-            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\tfile.h",
-            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\tpropertymap.h",
-            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\tstring.h",
-            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include\\taglib\\tstringlist.h"
-        ],
-        "extra_objects": [
-            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\lib\\tag.lib"
-        ],
-        "include_dirs": [
-            "C:\\Users\\Michael\\pytaglib\\taglib-build-x64\\install-x64\\include"
-        ],
+        "depends": [],
         "language": "c++",
+        "libraries": [
+            "tag"
+        ],
         "name": "taglib",
         "sources": [
-            "src\\taglib.pyx"
+            "src/taglib.pyx"
         ]
     },
     "module_name": "taglib"
@@ -578,10 +562,10 @@ static CYTHON_INLINE void * PyThread_tss_get(Py_tss_t *key) {
 #if PY_VERSION_HEX < 0x030200A4
   typedef long Py_hash_t;
   #define __Pyx_PyInt_FromHash_t PyInt_FromLong
-  #define __Pyx_PyInt_AsHash_t   PyInt_AsLong
+  #define __Pyx_PyInt_AsHash_t   __Pyx_PyIndex_AsHash_t
 #else
   #define __Pyx_PyInt_FromHash_t PyInt_FromSsize_t
-  #define __Pyx_PyInt_AsHash_t   PyInt_AsSsize_t
+  #define __Pyx_PyInt_AsHash_t   __Pyx_PyIndex_AsSsize_t
 #endif
 #if PY_MAJOR_VERSION >= 3
   #define __Pyx_PyMethod_New(func, self, klass) ((self) ? PyMethod_New(func, self) : (Py_INCREF(func), func))
@@ -764,6 +748,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyNumber_IntOrLong(PyObject* x);
     (likely(PyTuple_CheckExact(obj)) ? __Pyx_NewRef(obj) : PySequence_Tuple(obj))
 static CYTHON_INLINE Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject*);
 static CYTHON_INLINE PyObject * __Pyx_PyInt_FromSize_t(size_t);
+static CYTHON_INLINE Py_hash_t __Pyx_PyIndex_AsHash_t(PyObject*);
 #if CYTHON_ASSUME_SAFE_MACROS
 #define __pyx_PyFloat_AsDouble(x) (PyFloat_CheckExact(x) ? PyFloat_AS_DOUBLE(x) : PyFloat_AsDouble(x))
 #else
@@ -876,7 +861,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "src\\taglib.pyx",
+  "src/taglib.pyx",
   "stringsource",
 };
 
@@ -1800,7 +1785,7 @@ static int __pyx_pf_6taglib_4File___cinit__(struct __pyx_obj_6taglib_File *__pyx
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  Py_UNICODE const *__pyx_t_6;
+  char const *__pyx_t_6;
   TagLib::File *__pyx_t_7;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -1899,19 +1884,23 @@ static int __pyx_pf_6taglib_4File___cinit__(struct __pyx_obj_6taglib_File *__pyx
   __pyx_v_self->bPath = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "taglib.pyx":78
- *             # create on windows takes wchar_t* which Cython automatically converts to
- *             # from unicode strings
- *             self.cFile = ctypes.create(self.path)             # <<<<<<<<<<<<<<
+  /* "taglib.pyx":80
+ *             self.cFile = ctypes.create(self.path)
  *         ELSE:
- *             self.cFile = ctypes.create(self.bPath)
+ *             self.cFile = ctypes.create(self.bPath)             # <<<<<<<<<<<<<<
+ *         if not self.cFile or not self.cFile.isValid():
+ *             raise OSError(f'Could not read file {path}')
  */
-  __pyx_t_6 = __Pyx_PyUnicode_AsUnicode(__pyx_v_self->path); if (unlikely((!__pyx_t_6) && PyErr_Occurred())) __PYX_ERR(0, 78, __pyx_L1_error)
+  if (unlikely(__pyx_v_self->bPath == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "expected bytes, NoneType found");
+    __PYX_ERR(0, 80, __pyx_L1_error)
+  }
+  __pyx_t_6 = __Pyx_PyBytes_AsString(__pyx_v_self->bPath); if (unlikely((!__pyx_t_6) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L1_error)
   try {
     __pyx_t_7 = TagLib::FileRef::create(__pyx_t_6);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 78, __pyx_L1_error)
+    __PYX_ERR(0, 80, __pyx_L1_error)
   }
   __pyx_v_self->cFile = __pyx_t_7;
 
@@ -7308,6 +7297,23 @@ static CYTHON_INLINE Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject* b) {
   ival = PyInt_AsSsize_t(x);
   Py_DECREF(x);
   return ival;
+}
+static CYTHON_INLINE Py_hash_t __Pyx_PyIndex_AsHash_t(PyObject* o) {
+  if (sizeof(Py_hash_t) == sizeof(Py_ssize_t)) {
+    return __Pyx_PyIndex_AsSsize_t(o);
+#if PY_MAJOR_VERSION < 3
+  } else if (likely(PyInt_CheckExact(o))) {
+    return PyInt_AS_LONG(o);
+#endif
+  } else {
+    Py_ssize_t ival;
+    PyObject *x;
+    x = PyNumber_Index(o);
+    if (!x) return -1;
+    ival = PyInt_AsLong(x);
+    Py_DECREF(x);
+    return ival;
+  }
 }
 static CYTHON_INLINE PyObject * __Pyx_PyBool_FromLong(long b) {
   return b ? __Pyx_NewRef(Py_True) : __Pyx_NewRef(Py_False);

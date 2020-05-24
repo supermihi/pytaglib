@@ -8,8 +8,9 @@
 #
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
 
-import io, os, os.path, sys
+import io, os, sys
 import re
+from os.path import join, dirname
 from setuptools import setup
 from distutils.extension import Extension
 
@@ -27,7 +28,7 @@ CLASSIFIERS = [
 
 
 def readme():
-    readme_file = os.path.join(os.path.dirname(__file__), 'README.md')
+    readme_file = join(dirname(__file__), 'README.md')
     if sys.version_info[0] >= 3:
         return open(readme_file, 'rt', encoding='utf-8').read()
     else:
@@ -44,8 +45,8 @@ def extension_kwargs():
         TAGLIB_HOME = os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib')
         return dict(
             define_macros=[('TAGLIB_STATIC', None)],
-            extra_objects=[os.path.join(TAGLIB_HOME, 'lib', 'tag.lib')],
-            include_dirs=[os.path.join(TAGLIB_HOME, 'include')],
+            extra_objects=[join(TAGLIB_HOME, 'lib', 'tag.lib')],
+            include_dirs=[join(TAGLIB_HOME, 'include')],
         )
     else:
         # on unix systems, use the dynamic library and rely on headers at standard location
@@ -59,13 +60,13 @@ def is_cython_requested():
 if is_cython_requested():
     from Cython.Build import cythonize
     print('cythonizing taglib.pyx ...')
-    extensions = cythonize([Extension('taglib', [os.path.join('src', 'taglib.pyx')], **extension_kwargs())])
+    extensions = cythonize([Extension('taglib', [join('src', 'taglib.pyx')], **extension_kwargs())], force=True)
 else:
-    extensions = [Extension('taglib', [os.path.join('src', 'taglib.cpp')], **extension_kwargs())]
+    extensions = [Extension('taglib', [join('src', 'taglib.cpp')], **extension_kwargs())]
 
 
 def version():
-    with io.open(os.path.join('src', 'taglib.pyx'), 'rt', encoding='UTF-8') as pyx:
+    with io.open(join('src', 'taglib.pyx'), 'rt', encoding='UTF-8') as pyx:
         version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", pyx.read(), re.M)
         return version_match.group(1)
 
