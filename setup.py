@@ -35,7 +35,7 @@ def readme():
         return open(readme_file, 'rt').read()
 
 
-script_name = 'pyprinttags3' if sys.version_info[0] >= 3 else 'pyprinttags'
+script_name = 'pyprinttags' if sys.version_info[0] >= 3 else 'pyprinttags2'
 is_windows = sys.platform.startswith('win')
 
 
