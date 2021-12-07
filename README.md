@@ -1,5 +1,4 @@
 # **pytaglib**
-[![CircleCI](https://img.shields.io/circleci/project/github/supermihi/pytaglib/master.svg)](https://circleci.com/gh/supermihi/pytaglib)
 [![PyPI](https://img.shields.io/pypi/v/pytaglib.svg)](https://pypi.org/project/pytaglib/)
 
 pytaglib is a [Python](http://www.python.org) audio tagging library. It is cross-platform and svery simple to use yet fully featured:
