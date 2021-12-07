@@ -10,7 +10,7 @@
 
 import io, os, sys
 import re
-from os.path import join, dirname
+from pathlib import Path
 from setuptools import setup
 from distutils.extension import Extension
 
@@ -26,27 +26,25 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
+here = Path('.').parent
+src = Path('src')
 
 def readme():
-    readme_file = join(dirname(__file__), 'README.md')
-    if sys.version_info[0] >= 3:
-        return open(readme_file, 'rt', encoding='utf-8').read()
-    else:
-        return open(readme_file, 'rt').read()
+    readme_file = here / 'README.md'
+    return readme_file.read_text('utf-8')
 
 
-script_name = 'pyprinttags' if sys.version_info[0] >= 3 else 'pyprinttags2'
 is_windows = sys.platform.startswith('win')
 
 
 def extension_kwargs():
     if is_windows:
         # on windows, we compile static taglib build into the python module
-        TAGLIB_HOME = os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib')
+        TAGLIB_HOME = Path(os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib'))
         return dict(
             define_macros=[('TAGLIB_STATIC', None)],
-            extra_objects=[join(TAGLIB_HOME, 'lib', 'tag.lib')],
-            include_dirs=[join(TAGLIB_HOME, 'include')],
+            extra_objects=[str(TAGLIB_HOME / 'lib' / 'tag.lib')],
+            include_dirs=[str(TAGLIB_HOME / 'include')],
         )
     else:
         # on unix systems, use the dynamic library and rely on headers at standard location
@@ -58,22 +56,23 @@ def is_cython_requested():
 
 
 if is_cython_requested():
+    
     from Cython.Build import cythonize
     print('cythonizing taglib.pyx ...')
-    extensions = cythonize([Extension('taglib', [join('src', 'taglib.pyx')], **extension_kwargs())], force=True)
+    extensions = cythonize([Extension('taglib', [str(src / 'taglib.pyx')], **extension_kwargs())], force=True)
 else:
-    extensions = [Extension('taglib', [join('src', 'taglib.cpp')], **extension_kwargs())]
+    extensions = [Extension('taglib', [str(src / 'taglib.cpp')], **extension_kwargs())]
 
 
 def version():
-    with io.open(join('src', 'taglib.pyx'), 'rt', encoding='UTF-8') as pyx:
-        version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", pyx.read(), re.M)
-        return version_match.group(1)
+    taglib_pyx = here / src / 'taglib.pyx'
+    version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", taglib_pyx.read_text(), re.M)
+    return version_match.group(1)
 
 
 setup(
     name='pytaglib',
-    description='cross-platform, Python 2.x/3.x audio metadata ("tagging") library based on TagLib',
+    description='cross-platform, Python audio metadata ("tagging") library based on TagLib',
     long_description=readme(),
     long_description_content_type='text/markdown',
     classifiers=CLASSIFIERS,
@@ -85,6 +84,6 @@ setup(
     ext_modules=extensions,
     package_dir={'': 'src'},
     py_modules=['pytaglib', 'pyprinttags'],
-    entry_points={'console_scripts': ['{0}=pyprinttags:script'.format(script_name)]},
-    python_requires='>=2.7'
+    entry_points={'console_scripts': ['pyprinttags=pyprinttags:script']},
+    python_requires='>=3.6'
 )

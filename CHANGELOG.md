@@ -2,6 +2,7 @@ Changelog
 =========
 unreleased
 ----------
+- fix #89: remove Python 2 support
 - fix #88: rename pyprinttags3 --> pyprinttags, ignore unsupported tags in the script
 
 pytaglib 1.4.6 (2020/02/26)

@@ -2,7 +2,7 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/supermihi/pytaglib/master.svg)](https://circleci.com/gh/supermihi/pytaglib)
 [![PyPI](https://img.shields.io/pypi/v/pytaglib.svg)](https://pypi.org/project/pytaglib/)
 
-pytaglib is a [Python](http://www.python.org) audio tagging library. It is cross-platform, works with all Python versions, and is very simple to use yet fully featured:
+pytaglib is a [Python](http://www.python.org) audio tagging library. It is cross-platform and svery simple to use yet fully featured:
  - [supports more than a dozen file formats](http://taglib.github.io) including mp3, flac, ogg, wma, and mp4,
  - support arbitrary, non-standard tag names,
  - support multiple values per tag.
@@ -46,9 +46,6 @@ For other operating systems and more details, see [installation notes](#installa
 For detailed API documentation, use the docstrings of the `taglib.File` class or view the [source code](src/taglib.pyx) directly.
 
 
-**Note:** pytaglib uses unicode strings (type `str` in Python 3 and `unicode` in Python 2) for both tag names and values. The library converts byte-strings to unicode strings on assignment, but it is recommended to provide unicode strings only to avoid encoding problems.
-
-
 ## `pyprinttags`
 This package also installs the `pyprinttags` script. It takes one or more files as
 command-line parameters and will display all known metadata of that files on the terminal.
@@ -59,8 +56,8 @@ from the file.
 
 * Ensure that `pip` is installed and points to the correct Python version
   - on Windows, be sure to check *install pip* in the Python installer
-  - on Debian/Ubuntu/Mint, install `python3-pip` (and/or `python-pip`)
-  - you might need to type, e.g., `pip-3` to install pytaglib for Python 3 if your system's default is Python 2.7.
+  - on Debian/Ubuntu/Mint, install `python3-pip`
+  - you might need to type, e.g., `pip-3` to install pytaglib for Python 3 if your system's default is Python 2.x.
 * For Windows users, there are some precompiled binary packages (wheels). See the [PyPI page](https://pypi.python.org/pypi/pytaglib) for a list of supported Python versions.
 * If no binary packages exists, you need to have both Python and taglib installed with development headers (packages `python3-dev` (or `python-dev`) and `libtag1-dev` for debian / ubuntu and derivates, `python-devel` and `taglib-devel` for fedora and friends, `brew install taglib` on OS X).
 
