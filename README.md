@@ -15,6 +15,10 @@ At first, you might need to install taglib with development headers. Ubuntu, Min
         
         sudo apt install libtag1-dev
 
+On a Mac, use HomeBrew:
+        
+        brew install taglib
+
 Then install pytaglib with [pip](https://pip.pypa.io/en/stable/):
 
         pip install pytaglib
