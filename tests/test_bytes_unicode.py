@@ -5,7 +5,6 @@
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
 #
-from __future__ import unicode_literals
 
 import taglib
 from . import copy_test_file
@@ -37,7 +36,7 @@ def test_accepts_bytes_keys_and_values(tmpdir):
 def test_accepts_unicode_keys_and_tags(tmpdir):
     f = copy_test_file('rare_frames.mp3', tmpdir)
     tf = taglib.File(f)
-    tf.tags[u'UNICODE'] = [u'OnE', u'twO']
+    tf.tags['UNICODE'] = ['OnE', 'twO']
     tf.save()
     tf.close()
 

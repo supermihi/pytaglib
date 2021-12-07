@@ -5,7 +5,6 @@
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
 #
-from __future__ import unicode_literals
 import taglib
 from . import copy_test_file
 
