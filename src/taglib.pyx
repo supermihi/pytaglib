@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
 # cython: language_level = 3
-# Copyright 2018 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2021 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -12,10 +12,15 @@ cimport ctypes
 
 version = '1.4.6'
 
-cdef unicode toUnicode(ctypes.String s):
-    """Converts TagLib::String to a unicode string (``str`` in Python 3, ``unicode`` else)."""
+cdef str toStr(ctypes.String s):
+    """Converts TagLib::String to a Python str."""
     return s.to8Bit(True).decode('UTF-8', 'replace')
 
+cdef ctypes.String toCStr(value):
+    """Convert a Python string or bytes to TagLib::String"""
+    if isinstance(value, str):
+        value = value.encode('UTF-8')
+    return ctypes.String(value, ctypes.UTF8)
 
 cdef dict propertyMapToDict(ctypes.PropertyMap map):
     """Convert a TagLib::PropertyMap to a dict mapping unicode string to list of unicode strings."""
@@ -25,11 +30,11 @@ cdef dict propertyMapToDict(ctypes.PropertyMap map):
         dict dct = {}
         str tag
     for mapIter in map:
-        tag = toUnicode(mapIter.first)
+        tag = toStr(mapIter.first)
         dct[tag] = []
         values = mapIter.second
         for value in values:
-            dct[tag].append(toUnicode(value))
+            dct[tag].append(toStr(value))
     return dct
 
 
@@ -100,7 +105,7 @@ cdef class File:
         self.tags = propertyMapToDict(cTags)
         unsupported = cTags.unsupportedData()
         for cString in unsupported:
-            self.unsupported.append(toUnicode(cString))
+            self.unsupported.append(toStr(cString))
 
     def save(self):
         """Store the tags currently hold in the `tags` attribute into the file.
@@ -126,19 +131,12 @@ cdef class File:
 
         # populate cTagdict with the contents of self.tags
         for key, values in self.tags.items():
-            if isinstance(key, bytes):
-                cKey = ctypes.String(key.upper(), ctypes.UTF8)
-            else:
-                cKey = ctypes.String(key.upper().encode('UTF-8'), ctypes.UTF8)
+            cKey = toCStr(key.upper())
             if isinstance(values, bytes) or isinstance(values, unicode):
                 # the user has accidentally used a single tag value instead a length-1 list
                 values = [ values ]
             for value in values:
-                if isinstance(value, bytes):
-                    cValue = ctypes.String(value, ctypes.UTF8)
-                else:
-                    cValue = ctypes.String(value.encode('UTF-8'), ctypes.UTF8)
-                cTagdict[cKey].append(cValue)
+                cTagdict[cKey].append(toCStr(value))
 
         cRemaining = self.cFile.setProperties(cTagdict)
         success = self.cFile.save()
@@ -152,7 +150,7 @@ cdef class File:
             raise ValueError('I/O operation on closed file.')
         cdef ctypes.StringList cProps
         for value in properties:
-            cProps.append(ctypes.String(value.encode('UTF-8'), ctypes.UTF8))
+            cProps.append(toCStr(value))
         self.cFile.removeUnsupportedProperties(cProps)
 
     def close(self):

@@ -12,14 +12,9 @@ The main purpose is to show how pytaglib is used, but it also serves as a tool
 showing *all* metadata of a given while, while most taggers only display a set
 of certain tags they know.
 """
-from __future__ import unicode_literals, print_function
-
 import argparse
 import sys
 import taglib
-
-def ensure_unicode(filename: str):
-    return filename.decode(sys.getfilesystemencoding()) if isinstance(filename, bytes) else filename
 
 def script():
     """Print tags of given files"""
@@ -27,15 +22,14 @@ def script():
     parser.add_argument("file", nargs="+", help="file(s) to print tags of")
     args = parser.parse_args()
     for i, filename in enumerate(args.file):
-        filename = ensure_unicode(filename)
-        print('{0}:'.format(filename))
+        print(f'{filename}:')
         file = taglib.File(filename)
         tags = file.tags
         if len(tags) > 0:
             max_key_len = max(len(key) for key in tags.keys())
             for key, values in tags.items():
                 for value in values:
-                    print(('  {0:' + str(max_key_len) + '} = {1}').format(key, value))
+                    print(f'  {key.ljust(max_key_len)} = {value}')
         if i < len(args.file) - 1:
             print()
 
