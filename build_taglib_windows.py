@@ -22,7 +22,7 @@ here = Path(__file__).resolve().parent
 
 @dataclass
 class Configuration:
-    tl_install_dir: Path = here / 'build' / 'taglib-install'
+    tl_install_dir: Path
     tl_download_dest: Path = here / 'build' / f'taglib-{taglib_version}.tar.gz'
     tl_extract_dir: Path = here / 'build' / f'taglib-{taglib_version}'
 
@@ -37,13 +37,12 @@ def download(config: Configuration):
     assert the_hash == taglib_sha256sum
  
 
-def extract_and_clean(config: Configuration):
+def extract(config: Configuration):
     if not config.tl_extract_dir.exists():
         tar = tarfile.open(config.tl_download_dest)
         tar.extractall(config.tl_extract_dir.parent)
-    taglib_clean_cmake(config)
 
-def taglib_clean_cmake(config: Configuration):
+def clean_cmake(config: Configuration):
     cache = config.tl_extract_dir / 'CMakeCache.txt'
     if cache.exists():
         cache.unlink()
@@ -59,7 +58,7 @@ def generate_vs_project(config: Configuration):
        cwd=config.tl_extract_dir, check=True
     )
 
-def build(config: Configuration, clean_first: bool = True):
+def build(config: Configuration, clean_first: bool = False):
     print("*** calling cmake build ...")
     subprocess.run(
         ['cmake', '--build', '.', '--config', build_config] + (['--clean-first'] if clean_first else []),
@@ -79,7 +78,7 @@ def make_path(str_path: str) -> Path:
 
 def parse_args() -> Configuration:
     parser = ArgumentParser()
-    parser.add_argument('--install-dest', help='destination directory for taglib', default=f'taglib-{arch}')
+    parser.add_argument('--install-dest', help='destination directory for taglib', default=here / 'build' / 'taglib-install')
     args = parser.parse_args()
     return Configuration(tl_install_dir=make_path(args.install_dest))
 
@@ -88,7 +87,8 @@ def run():
     config = parse_args()
     print(config)
     download(config)
-    extract_and_clean(config)
+    extract(config)
+    clean_cmake(config)
     generate_vs_project(config)
     build(config)
     

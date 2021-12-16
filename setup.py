@@ -40,7 +40,7 @@ is_windows = sys.platform.startswith('win')
 def extension_kwargs():
     if is_windows:
         # on windows, we compile static taglib build into the python module
-        taglib_install_dir = Path(os.environ.get('TAGLIB_HOME', 'build\\taglib-install-x64'))
+        taglib_install_dir = Path(os.environ.get('TAGLIB_HOME', 'build\\taglib-install'))
         taglib_lib = taglib_install_dir / 'lib' / 'tag.lib'
         if not taglib_lib.exists():
             raise FileNotFoundError(f"{taglib_lib} not found")
