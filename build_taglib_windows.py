@@ -55,7 +55,7 @@ def generate_vs_project(config: Configuration):
     install_prefix = f'-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}'
     config.tl_install_dir.mkdir(exist_ok=True, parents=True)
     subprocess.run(
-       ['cmake' ,'-G',  'Visual Studio 17 2022', '-A', cmake_arch, install_prefix, '.'],
+       ['cmake', '-A', cmake_arch, install_prefix, '.'],
        cwd=config.tl_extract_dir, check=True
     )
 
