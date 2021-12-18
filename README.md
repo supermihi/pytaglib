@@ -84,7 +84,7 @@ Install MS Visual Studio Build Tools (or the complete IE) and include the correc
 Then:
 - open the VS native tools command prompt
 - navigate to the *pytaglib* repository
-- run `python build_taglib.py`
+- run `python build_taglib_windows.py` which will download and build the latest official TagLib release
 - run `python setup.py install`
 
 
