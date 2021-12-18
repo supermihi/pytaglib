@@ -1,7 +1,9 @@
 Changelog
 =========
-unreleased
+pytaglib 1.5.0 (2021-12-18)
 ----------
+- fix #93: publish PyPI packages from GitLab workflow
+- fix #92: build windows binary wheels from CI
 - fix #89: remove Python 2 support
 - fix #88: rename pyprinttags3 --> pyprinttags, ignore unsupported tags in the script
 
