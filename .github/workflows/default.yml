@@ -22,15 +22,13 @@ jobs:
         uses: actions/cache@v2
         if: ${{ runner.os == 'Windows' }}
         with:
-          path: build/taglib-install
+          path: ${{ env.TAGLIB_HOME }}
           # renew the cache when how taglib is built changes (e.g. version update)
           key: taglib-install-windows-${{ hashFiles('build_taglib_windows.py') }}
       - uses: ilammy/msvc-dev-cmd@v1
       - name: build TagLib (Windows)
         if: ${{ runner.os == 'Windows' }}
-        run: |
-          Get-ChildItem -Recurse
-          python build_taglib_windows.py --install-dest=$Env:TAGLIB_HOME
+        run: python build_taglib_windows.py --install-dest=$Env:TAGLIB_HOME
       - name: Install TagLib (Unix)
         if: ${{ runner.os != 'Windows' }}
         run: if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get install -y libtag1-dev ; else brew install taglib ; fi
