@@ -106,6 +106,10 @@ def parse_args() -> Configuration:
 def run():
     print(f"building taglib on {arch}...")
     config = parse_args()
+    tag_lib = config.tl_install_dir / 'lib' / 'tag.lib'
+    if tag_lib.exists():
+        print('installed TagLib found, exiting')
+        return
     download(config)
     extract(config)
     clean_cmake(config)
