@@ -40,11 +40,14 @@ is_windows = sys.platform.startswith('win')
 def extension_kwargs():
     if is_windows:
         # on windows, we compile static taglib build into the python module
-        TAGLIB_HOME = Path(os.environ.get('TAGLIB_HOME', 'C:\\Libraries\\taglib'))
+        taglib_install_dir = Path(os.environ.get('TAGLIB_HOME', 'build\\taglib-install'))
+        taglib_lib = taglib_install_dir / 'lib' / 'tag.lib'
+        if not taglib_lib.exists():
+            raise FileNotFoundError(f"{taglib_lib} not found")
         return dict(
             define_macros=[('TAGLIB_STATIC', None)],
-            extra_objects=[str(TAGLIB_HOME / 'lib' / 'tag.lib')],
-            include_dirs=[str(TAGLIB_HOME / 'include')],
+            extra_objects=[str(taglib_lib)],
+            include_dirs=[str(taglib_install_dir / 'include')],
         )
     else:
         # on unix systems, use the dynamic library and rely on headers at standard location

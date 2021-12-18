@@ -81,7 +81,11 @@ To regenerate the `taglib.cpp` after making changes to `taglib.pyx`, set the env
 
 Install MS Visual Studio Build Tools (or the complete IE) and include the correct compiler version as detailed [here](https://wiki.python.org/moin/WindowsCompilers). Also enable *cmake* in the Visual Studio Installer.
 
-Then, open a powershell console in the *pytaglib* repository and run: `windows\build.ps1`. This will download and compile taglib and create a binary windows wheel in the `dist` folder.
+Then:
+- open the VS native tools command prompt
+- navigate to the *pytaglib* repository
+- run `python build_taglib_windows.py` which will download and build the latest official TagLib release
+- run `python setup.py install`
 
 
 ## Contact
