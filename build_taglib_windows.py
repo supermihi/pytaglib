@@ -17,18 +17,30 @@ build_config = 'Release'
 is_x64 = sys.maxsize > 2**32
 arch = "x64" if is_x64 else "x32"
 
-
 here = Path(__file__).resolve().parent
+
 
 @dataclass
 class Configuration:
-    tl_install_dir: Path
-    tl_download_dest: Path = here / 'build' / f'taglib-{taglib_version}.tar.gz'
-    tl_extract_dir: Path = here / 'build' / f'taglib-{taglib_version}'
+    tl_install_dir: Path = here / 'build' / 'taglib-install'
+    build_path: Path = here / 'build'
+    clean: bool = True
+
+    @property
+    def tl_download_dest(self):
+        return self.build_path / f'taglib-{taglib_version}.tar.gz'
+
+    @property
+    def tl_extract_dir(self):
+        return self.build_path / f'taglib-{taglib_version}'
+
 
 def download(config: Configuration):
     target = config.tl_download_dest
-    if not target.exists():
+    if target.exists():
+        print('skipping download, file exists')
+    else:
+        print(f'downloading taglib {taglib_version} ...')
         response = urllib.request.urlopen(taglib_release)
         data = response.read()
         target.parent.mkdir(exist_ok=True,parents=True)
@@ -38,37 +50,42 @@ def download(config: Configuration):
  
 
 def extract(config: Configuration):
-    if not config.tl_extract_dir.exists():
+    if config.tl_extract_dir.exists():
+        print('extracted taglib found. Skipping tar')
+    else:
+        print('extracting tarball')
         tar = tarfile.open(config.tl_download_dest)
         tar.extractall(config.tl_extract_dir.parent)
 
+
 def clean_cmake(config: Configuration):
+    if not config.clean:
+        return
+    print('removing previous cmake cache ...')
     cache = config.tl_extract_dir / 'CMakeCache.txt'
     if cache.exists():
         cache.unlink()
         shutil.rmtree(config.tl_extract_dir / 'CMakeFiles', ignore_errors=True)
  
+
+def call_cmake(config, *args):
+    return subprocess.run(['cmake', *[a for a in args if a is not None]], cwd=config.tl_extract_dir, check=True)
+
+
 def generate_vs_project(config: Configuration):
-    print("*** calling cmake generate ...")
+    print("generating VS projects with cmake ...")
     cmake_arch = 'x64' if is_x64 else "Win32"
     install_prefix = f'-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}'
     config.tl_install_dir.mkdir(exist_ok=True, parents=True)
-    subprocess.run(
-       ['cmake', '-A', cmake_arch, install_prefix, '.'],
-       cwd=config.tl_extract_dir, check=True
-    )
+    call_cmake(config, '-A', cmake_arch, install_prefix, '.')
 
-def build(config: Configuration, clean_first: bool = False):
-    print("*** calling cmake build ...")
-    subprocess.run(
-        ['cmake', '--build', '.', '--config', build_config] + (['--clean-first'] if clean_first else []),
-        cwd=config.tl_extract_dir, check=True
-    )
-    print("*** calling cmake install ...")
-    subprocess.run(
-        ['cmake', '--install', '.', '--config', build_config],
-        cwd=config.tl_extract_dir, check=True
-    )
+
+def build(config: Configuration):
+    print("building ...")
+    call_cmake(config, '--build', '.', '--config', build_config, '--clean-first' if config.clean else None)
+    print("installing ...")
+    call_cmake(config, '--install', '.', '--config', build_config)
+
 
 def make_path(str_path: str) -> Path:
     path = Path(str_path)
@@ -76,16 +93,19 @@ def make_path(str_path: str) -> Path:
         path = here / path
     return path
 
+
 def parse_args() -> Configuration:
     parser = ArgumentParser()
-    parser.add_argument('--install-dest', help='destination directory for taglib', default=here / 'build' / 'taglib-install')
+    config = Configuration()
+    parser.add_argument('--install-dest', help='destination directory for taglib', type=Path, default=config.tl_install_dir)
     args = parser.parse_args()
-    return Configuration(tl_install_dir=make_path(args.install_dest))
+    config.tl_install_dir = make_path(args.install_dest)
+    return config
+
 
 def run():
-    print(f"*** building taglib on {arch}...")
+    print(f"building taglib on {arch}...")
     config = parse_args()
-    print(config)
     download(config)
     extract(config)
     clean_cmake(config)
