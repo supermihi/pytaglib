@@ -60,3 +60,18 @@ jobs:
           name: dist
           path: dist
           retention-days: 5
+  publish-test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: download package artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: dist
+      - name: publish package to test.pypi.org
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
