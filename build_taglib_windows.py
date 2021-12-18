@@ -107,7 +107,6 @@ def run():
     print(f"building taglib on {arch}...")
     config = parse_args()
     tag_lib = config.tl_install_dir / 'lib' / 'tag.lib'
-    subprocess.run(['dir', '/b', '/s', '/a:-D'])
     if tag_lib.exists():
         print('installed TagLib found, exiting')
         return

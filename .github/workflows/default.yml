@@ -28,7 +28,9 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - name: build TagLib (Windows)
         if: ${{ runner.os == 'Windows' }}
-        run: python build_taglib_windows.py --install-dest=$Env:TAGLIB_HOME
+        run: |
+          Get-ChildItem -Recurse
+          python build_taglib_windows.py --install-dest=$Env:TAGLIB_HOME
       - name: Install TagLib (Unix)
         if: ${{ runner.os != 'Windows' }}
         run: if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get install -y libtag1-dev ; else brew install taglib ; fi
