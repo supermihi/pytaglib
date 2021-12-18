@@ -69,6 +69,8 @@ jobs:
         with:
           name: dist
           path: dist
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: publish package to test.pypi.org
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
