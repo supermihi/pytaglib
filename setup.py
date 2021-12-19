@@ -8,11 +8,14 @@
 #
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
 
-import io, os, sys
+import os
+import sys
 import re
 from pathlib import Path
 from setuptools import setup
 from distutils.extension import Extension
+from Cython.Build import cythonize
+
 
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
@@ -29,17 +32,15 @@ CLASSIFIERS = [
 here = Path('.').parent
 src = Path('src')
 
+
 def readme():
     readme_file = here / 'README.md'
     return readme_file.read_text('utf-8')
 
 
-is_windows = sys.platform.startswith('win')
-
-
 def extension_kwargs():
-    if is_windows:
-        # on windows, we compile static taglib build into the python module
+    if sys.platform.startswith('win'):
+        # on Windows, we compile static taglib build into the python module
         taglib_install_dir = Path(os.environ.get('TAGLIB_HOME', 'build\\taglib-install'))
         taglib_lib = taglib_install_dir / 'lib' / 'tag.lib'
         if not taglib_lib.exists():
@@ -52,19 +53,6 @@ def extension_kwargs():
     else:
         # on unix systems, use the dynamic library and rely on headers at standard location
         return dict(libraries=['tag'])
-
-
-def is_cython_requested():
-    return is_windows or 'PYTAGLIB_CYTHONIZE' in os.environ
-
-
-if is_cython_requested():
-    
-    from Cython.Build import cythonize
-    print('cythonizing taglib.pyx ...')
-    extensions = cythonize([Extension('taglib', [str(src / 'taglib.pyx')], **extension_kwargs())], force=True)
-else:
-    extensions = [Extension('taglib', [str(src / 'taglib.cpp')], **extension_kwargs())]
 
 
 def version():
@@ -84,9 +72,12 @@ setup(
     author='Michael Helmling',
     author_email='michaelhelmling@posteo.de',
     url='http://github.com/supermihi/pytaglib',
-    ext_modules=extensions,
+    ext_modules=cythonize([Extension('taglib', [str(src / 'taglib.pyx')], **extension_kwargs())], force=True),
     package_dir={'': 'src'},
     py_modules=['pytaglib', 'pyprinttags'],
     entry_points={'console_scripts': ['pyprinttags=pyprinttags:script']},
+    extras_require={
+        "tests": ["pytest"],
+    },
     python_requires='>=3.6'
 )
