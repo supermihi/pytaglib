@@ -69,7 +69,7 @@ from the file.
 You can download or checkout the sources and compile manually:
 
         pip install .
-        # if you want to run the unit tests, use these commands insteadd
+        # if you want to run the unit tests, use these commands instead
         # pip install .[tests]
         # python -m pytest
 
