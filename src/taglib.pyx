@@ -8,6 +8,8 @@
 # published by the Free Software Foundation
 
 from libcpp.utility cimport pair
+from os import PathLike
+from pathlib import Path
 cimport ctypes
 
 version = '1.5.0'
@@ -73,10 +75,12 @@ cdef class File:
     cdef readonly list unsupported
 
     def __cinit__(self, path):
-        if not isinstance(path, unicode):
-            path = path.decode('utf8')
+        if not isinstance(path, PathLike):
+            if not isinstance(path, unicode):
+                path = path.decode('utf8')
+            path = Path(path)
         self.path = path
-        self.bPath = path.encode('utf8')
+        self.bPath = str(path).encode('utf8')
         IF UNAME_SYSNAME == "Windows":
             # create on windows takes wchar_t* which Cython automatically converts to
             # from unicode strings
