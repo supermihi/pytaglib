@@ -9,6 +9,7 @@
 import os
 import stat
 import sys
+from pathlib import Path
 
 import pytest
 import taglib
@@ -58,19 +59,11 @@ def test_file_with_non_ascii_name_throws_on_readonly_save(test_data):
     tfile.close()
 
 
-def test_can_read_bytes_filename_non_ascii(test_data):
+@pytest.mark.parametrize('path_map', [lambda f: str(f).encode('utf8'), str, lambda f: f],
+                         ids=['bytes', 'unicode string', 'Path'])
+def test_can_read_bytes_filename_non_ascii(test_data, path_map):
     f = test_data('testöü.flac')
-    tf = taglib.File(str(f).encode('utf8'))
+    tf = taglib.File(path_map(f))
+    assert isinstance(tf.path, Path)
     tf.close()
 
-
-def test_can_read_unicode_filename_non_ascii(test_data):
-    f = test_data('testöü.flac')
-    tf = taglib.File(str(f))
-    tf.close()
-
-
-def test_can_read_path_filename_non_ascii(test_data):
-    f = test_data('testöü.flac')
-    tf = taglib.File(f)
-    tf.close()
