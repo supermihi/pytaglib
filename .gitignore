@@ -11,3 +11,4 @@ dist
 *.pyd
 .eggs
 .vscode
+/src/taglib.cpp
