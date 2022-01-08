@@ -72,8 +72,9 @@ cdef class File:
     cdef public dict tags
     cdef readonly object path
     cdef readonly list unsupported
+    cdef readonly object save_on_exit
 
-    def __cinit__(self, path):
+    def __cinit__(self, path, save_on_exit: bool = False):
         if not isinstance(path, os.PathLike):
             if not isinstance(path, unicode):
                 path = path.decode('utf8')
@@ -88,10 +89,11 @@ cdef class File:
         if not self.cFile or not self.cFile.isValid():
             raise OSError(f'Could not read file {path}')
 
-    def __init__(self, path):
+    def __init__(self, path, save_on_exit: bool = False):
         self.tags = dict()
         self.unsupported = list()
         self.readProperties()
+        self.save_on_exit = save_on_exit
 
     cdef void readProperties(self):
         """Convert the Taglib::PropertyMap of the wrapped Taglib::File object into a python dict.
@@ -200,6 +202,15 @@ cdef class File:
     cdef check_closed(self):
         if self.is_closed:
             raise ValueError('I/O operation on closed file.')
+        
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        print(self.save_on_exit)
+        if self.save_on_exit:
+            self.save()
+        self.close()
 
     def __repr__(self):
         return f"File('{self.path}')"
