@@ -6,9 +6,9 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
+import os
 
 from libcpp.utility cimport pair
-from os import PathLike
 from pathlib import Path
 cimport ctypes
 
@@ -70,23 +70,21 @@ cdef class File:
     """
     cdef ctypes.File *cFile
     cdef public dict tags
-    cdef bytes bPath
     cdef readonly object path
     cdef readonly list unsupported
 
     def __cinit__(self, path):
-        if not isinstance(path, PathLike):
+        if not isinstance(path, os.PathLike):
             if not isinstance(path, unicode):
                 path = path.decode('utf8')
             path = Path(path)
         self.path = path
-        self.bPath = str(path).encode('utf8')
         IF UNAME_SYSNAME == "Windows":
             # create on windows takes wchar_t* which Cython automatically converts to
             # from unicode strings
-            self.cFile = ctypes.create(self.path)
+            self.cFile = ctypes.create(str(self.path))
         ELSE:
-            self.cFile = ctypes.create(self.bPath)
+            self.cFile = ctypes.create(str(self.path).encode('utf8'))
         if not self.cFile or not self.cFile.isValid():
             raise OSError(f'Could not read file {path}')
 
