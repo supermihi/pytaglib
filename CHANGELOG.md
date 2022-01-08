@@ -2,6 +2,7 @@ Changelog
 =========
 NEXT
 ----
+- new property `File.is_closed`
 - fix #94: Accept `os.PathLike` in constructor
 
 ### Breaking Changes:
