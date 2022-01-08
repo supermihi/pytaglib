@@ -7,22 +7,19 @@
 #
 
 import taglib
-from . import copy_test_file
 
 
-
-def test_cyrillic_file_name(tmpdir):
+def test_cyrillic_file_name(test_file):
     """Motivated by https://github.com/supermihi/pytaglib/issues/28.
     """
-    copy_file = copy_test_file('Жбж.mp3', tmpdir)
-    tfile = taglib.File(copy_file)
+    tfile = test_file('Жбж.mp3')
     tfile.tags['COMMENT'] = ['test']
     tfile.save()
     tfile.close()
 
 
-def test_accepts_bytes_keys_and_values(tmpdir):
-    f = copy_test_file('rare_frames.mp3', tmpdir)
+def test_accepts_bytes_keys_and_values(test_data):
+    f = test_data('rare_frames.mp3')
     tf = taglib.File(f)
     tf.tags[b'BYTES'] = [b'OnE', b'twO']
     tf.save()
@@ -33,8 +30,8 @@ def test_accepts_bytes_keys_and_values(tmpdir):
     tf.close()
 
 
-def test_accepts_unicode_keys_and_tags(tmpdir):
-    f = copy_test_file('rare_frames.mp3', tmpdir)
+def test_accepts_unicode_keys_and_tags(test_data):
+    f = test_data('rare_frames.mp3')
     tf = taglib.File(f)
     tf.tags['UNICODE'] = ['OnE', 'twO']
     tf.save()
