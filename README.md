@@ -30,17 +30,17 @@ For other operating systems and more details, see [installation notes](#installa
 
 ```python
 >>> import taglib
->>> song = taglib.File("/path/to/my/file.mp3")
->>> song.tags
+>>> with taglib.File("/path/to/my/file.mp3", save_on_exit=True) as song:
+>>>     song.tags
 {'ARTIST': ['piman', 'jzig'], 'ALBUM': ['Quod Libet Test Data'], 'TITLE': ['Silence'], 'GENRE': ['Silence'], 'TRACKNUMBER': ['02/10'], 'DATE': ['2004']}
 
->>> song.length
+>>>     song.length
 239
->>> song.tags["ALBUM"] = ["White Album"] # always use lists, even for single values
->>> del song.tags["DATE"]
->>> song.tags["GENRE"] = ["Vocal", "Classical"]
->>> song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
->>> song.save()
+>>>     song.tags["ALBUM"] = ["White Album"] # always use lists, even for single values
+>>>     del song.tags["DATE"]
+>>>     song.tags["GENRE"] = ["Vocal", "Classical"]
+>>>     song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
+>>> # with save_on_exit=True, file will be saved at the end of the 'with' block
 ```
 For detailed API documentation, use the docstrings of the `taglib.File` class or view the [source code](src/taglib.pyx) directly.
 
