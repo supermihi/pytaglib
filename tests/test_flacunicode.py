@@ -7,24 +7,21 @@
 #
 import taglib
 
-from . import copy_test_file
 
-
-def test_flac_supports_unicode_value(tmpdir):
-    copy_file = copy_test_file('testöü.flac', tmpdir)
-    tfile = taglib.File(copy_file)
+def test_flac_supports_unicode_value(test_data):
+    file = test_data('testöü.flac')
+    tfile = taglib.File(file)
     tfile.tags['ARTIST'] = ['artøst 1', 'artöst 2']
     tfile.save()
     tfile.close()
 
-    tfile = taglib.File(copy_file)
+    tfile = taglib.File(file)
     assert tfile.tags['ARTIST'] == ['artøst 1', 'artöst 2']
     tfile.close()
 
 
-def test_flac_supports_unicode_key(tmpdir):
-    copy_file = copy_test_file('testöü.flac', tmpdir)
-    tfile = taglib.File(copy_file)
+def test_flac_supports_unicode_key(test_file):
+    tfile = test_file('testöü.flac')
     tfile.tags['HÄÜ'] = ['omg']
     remaining = tfile.save()
     assert 'HÄÜ' in remaining

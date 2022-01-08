@@ -6,11 +6,10 @@
 # published by the Free Software Foundation
 #
 import taglib
-from . import copy_test_file
 
 
-def test_string_value_is_converted_to_list(tmpdir):
-    f = copy_test_file('testöü.flac', tmpdir)
+def test_string_value_is_converted_to_list(test_data):
+    f = test_data('testöü.flac')
     tf = taglib.File(f)
     tf.tags['AAA'] = 'A TAG'
     tf.tags['BBB'] = b'ANOTHER TAG'

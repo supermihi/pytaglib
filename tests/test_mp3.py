@@ -6,14 +6,12 @@
 # published by the Free Software Foundation
 #
 import taglib
-from . import copy_test_file
 
 
-def test_remove_genre_frame_from_mp3(tmpdir):
+def test_remove_genre_frame_from_mp3(test_file):
     """See https://bugs.kde.org/show_bug.cgi?id=298183
     """
-    f = copy_test_file('rare_frames.mp3', tmpdir)
-    tfile = taglib.File(f)
+    tfile = test_file('rare_frames.mp3')
     assert 'GENRE' in tfile.tags
     assert len(tfile.tags['GENRE']) == 1
 
@@ -26,9 +24,9 @@ def test_remove_genre_frame_from_mp3(tmpdir):
     tfile.close()
 
 
-def test_remove_title_frame_from_mp3(tmpdir):
+def test_remove_title_frame_from_mp3(test_data):
     """See https://bugs.kde.org/show_bug.cgi?id=298183."""
-    f = copy_test_file('r2.mp3', tmpdir)
+    f = test_data('r2.mp3')
     tfile = taglib.File(f)
     assert 'TITLE' in tfile.tags
     assert len(tfile.tags['TITLE']) == 1
@@ -42,8 +40,8 @@ def test_remove_title_frame_from_mp3(tmpdir):
     tfile.close()
 
 
-def test_id3v1_is_converted_to_v2_on_save(tmpdir):
-    f = copy_test_file('onlyv1.mp3', tmpdir)
+def test_id3v1_is_converted_to_v2_on_save(test_data):
+    f = test_data('onlyv1.mp3')
     tfile = taglib.File(f)
     assert 'ARTIST' in tfile.tags
     assert tfile.tags['ARTIST'][0] == 'Bla'

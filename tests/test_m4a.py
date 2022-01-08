@@ -6,16 +6,11 @@
 # published by the Free Software Foundation
 #
 
-import taglib
 
-from tests import copy_test_file
-
-
-def test_m4a_supports_albumartist(tmpdir):
+def test_m4a_supports_albumartist(test_file):
     """Motivated by https://github.com/supermihi/pytaglib/issues/46.
         """
-    copy_file = copy_test_file('issue46.m4a', tmpdir)
-    tfile = taglib.File(copy_file)
+    tfile = test_file('issue46.m4a')
     assert 'ALBUMARTIST' in tfile.tags
     assert ['Higginbottom, Edward'] == tfile.tags['ALBUMARTIST']
     tfile.close()
