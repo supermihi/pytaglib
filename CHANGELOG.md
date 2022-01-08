@@ -1,5 +1,12 @@
 Changelog
 =========
+NEXT
+----
+- fix #94: Accept `os.PathLike` in constructor
+
+### Breaking Changes:
+- `File.path` is now a `Path` object
+
 pytaglib 1.5.0 (2021-12-18)
 ----------
 - fix #93: publish PyPI packages from GitLab workflow
