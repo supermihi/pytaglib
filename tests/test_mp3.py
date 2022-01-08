@@ -8,10 +8,11 @@
 import taglib
 
 
-def test_remove_genre_frame_from_mp3(test_file):
+def test_remove_genre_frame_from_mp3(test_data):
     """See https://bugs.kde.org/show_bug.cgi?id=298183
     """
-    tfile = test_file('rare_frames.mp3')
+    f = test_data('rare_frames.mp3')
+    tfile = taglib.File(f)
     assert 'GENRE' in tfile.tags
     assert len(tfile.tags['GENRE']) == 1
 
