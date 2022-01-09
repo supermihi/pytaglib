@@ -72,8 +72,9 @@ cdef class File:
     cdef public dict tags
     cdef readonly object path
     cdef readonly list unsupported
+    cdef readonly object save_on_exit
 
-    def __cinit__(self, path):
+    def __cinit__(self, path, save_on_exit: bool = False):
         if not isinstance(path, os.PathLike):
             if not isinstance(path, unicode):
                 path = path.decode('utf8')
@@ -88,10 +89,11 @@ cdef class File:
         if not self.cFile or not self.cFile.isValid():
             raise OSError(f'Could not read file {path}')
 
-    def __init__(self, path):
+    def __init__(self, path, save_on_exit: bool = False):
         self.tags = dict()
         self.unsupported = list()
         self.readProperties()
+        self.save_on_exit = save_on_exit
 
     cdef void readProperties(self):
         """Convert the Taglib::PropertyMap of the wrapped Taglib::File object into a python dict.
@@ -123,7 +125,7 @@ cdef class File:
         ValueError
             When attempting to save after the file was closed.
         """
-        if not self.cFile:
+        if self.is_closed:
             raise ValueError('I/O operation on closed file.')
         if self.readOnly:
             raise OSError(f'Unable to save tags: file is read-only')
@@ -159,42 +161,56 @@ cdef class File:
         """Closes the file by deleting the underlying Taglib::File object. This will close any open
         streams. Calling methods like `save()` or the read-only properties after `close()` will
         raise an exception."""
+        if self.is_closed:
+            raise ValueError("File already closed")
         del self.cFile
         self.cFile = NULL
 
     def __dealloc__(self):
         if self.cFile:
             del self.cFile
-        
+
+    @property
+    def is_closed(self):
+        return self.cFile is NULL
+
     property length:
         def __get__(self):
-            if not self.cFile:
-                raise ValueError('I/O operation on closed file.')
+            self.check_closed()
             return self.cFile.audioProperties().length()
             
     property bitrate:
         def __get__(self):
-            if not self.cFile:
-                raise ValueError('I/O operation on closed file.')
+            self.check_closed()
             return self.cFile.audioProperties().bitrate()
     
     property sampleRate:
         def __get__(self):
-            if not self.cFile:
-                raise ValueError('I/O operation on closed file.')
+            self.check_closed()
             return self.cFile.audioProperties().sampleRate()
             
     property channels:
         def __get__(self):
-            if not self.cFile:
-                raise ValueError('I/O operation on closed file.')
+            self.check_closed()
             return self.cFile.audioProperties().channels()
     
     property readOnly:
         def __get__(self):
-            if not self.cFile:
-                raise ValueError('I/O operation on closed file.')
+            self.check_closed()
             return self.cFile.readOnly()
+
+    cdef check_closed(self):
+        if self.is_closed:
+            raise ValueError('I/O operation on closed file.')
         
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        print(self.save_on_exit)
+        if self.save_on_exit:
+            self.save()
+        self.close()
+
     def __repr__(self):
         return f"File('{self.path}')"
