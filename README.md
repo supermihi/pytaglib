@@ -1,12 +1,12 @@
 # **pytaglib**
 [![PyPI](https://img.shields.io/pypi/v/pytaglib.svg)](https://pypi.org/project/pytaglib/)
 
-pytaglib is a [Python](http://www.python.org) audio tagging library. It is cross-platform and svery simple to use yet fully featured:
- - [supports more than a dozen file formats](http://taglib.github.io) including mp3, flac, ogg, wma, and mp4,
+pytaglib is a [Python](https://www.python.org) audio tagging library. It is cross-platform and very simple to use yet fully featured:
+ - [supports more than a dozen file formats](https://taglib.org/) including mp3, flac, ogg, wma, and mp4,
  - support arbitrary, non-standard tag names,
  - support multiple values per tag.
 
-pytaglib is a very thin wrapper (≈150 lines of [code](src/taglib.pyx)) around the fast and rock-solid [TagLib](http://taglib.github.io) C++ library.
+pytaglib is a very thin wrapper (≈150 lines of [code](src/taglib.pyx)) around the fast and rock-solid [TagLib](https://taglib.org/) C++ library.
 ## News
 See the [Changelog](CHANGELOG.md).
 ## Get it
