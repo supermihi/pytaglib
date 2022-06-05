@@ -207,7 +207,6 @@ cdef class File:
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        print(self.save_on_exit)
         if self.save_on_exit:
             self.save()
         self.close()
