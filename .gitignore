@@ -12,3 +12,4 @@ dist
 .eggs
 .vscode
 /src/taglib.cpp
+wheelhouse
