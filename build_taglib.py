@@ -9,9 +9,9 @@ from argparse import ArgumentParser
 import hashlib
 
 
-taglib_version = "1.12"
+taglib_version = "1.13"
 taglib_release = f"https://github.com/taglib/taglib/releases/download/v{taglib_version}/taglib-{taglib_version}.tar.gz"
-taglib_sha256sum = "7fccd07669a523b07a15bd24c8da1bbb92206cb19e9366c3692af3d79253b703"
+taglib_sha256sum = "58f08b4db3dc31ed152c04896ee9172d22052bc7ef12888028c01d8b1d60ade0"
 build_config = "Release"
 
 is_x64 = sys.maxsize > 2**32
