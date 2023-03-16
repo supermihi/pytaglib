@@ -17,7 +17,7 @@ import taglib
 def test_data(tmp_path):
     def result(filename):
         """Make a temporary copy of test data file *name* (without dir) and return its full path."""
-        source = Path(__file__).parent / 'data' / filename
+        source = Path(__file__).parent / "data" / filename
         target = tmp_path / filename
         shutil.copyfile(source, target)
         return target

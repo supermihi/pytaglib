@@ -8,9 +8,8 @@
 
 
 def test_m4a_supports_albumartist(test_file):
-    """Motivated by https://github.com/supermihi/pytaglib/issues/46.
-        """
-    tfile = test_file('issue46.m4a')
-    assert 'ALBUMARTIST' in tfile.tags
-    assert ['Higginbottom, Edward'] == tfile.tags['ALBUMARTIST']
+    """Motivated by https://github.com/supermihi/pytaglib/issues/46."""
+    tfile = test_file("issue46.m4a")
+    assert "ALBUMARTIST" in tfile.tags
+    assert ["Higginbottom, Edward"] == tfile.tags["ALBUMARTIST"]
     tfile.close()
