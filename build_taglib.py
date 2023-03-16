@@ -1,4 +1,5 @@
 from pathlib import Path
+import platform
 import sys
 import urllib.request
 import tarfile
@@ -58,7 +59,7 @@ def extract(config: Configuration):
         tar.extractall(config.tl_extract_dir.parent)
 
 
-def clean_cmake(config: Configuration):
+def cmake_clean(config: Configuration):
     if not config.clean:
         return
     print("removing previous cmake cache ...")
@@ -76,15 +77,22 @@ def call_cmake(config, *args):
     )
 
 
-def generate_vs_project(config: Configuration):
-    print("generating VS projects with cmake ...")
-    cmake_arch = "x64" if is_x64 else "Win32"
-    install_prefix = f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}"
+def cmake_config(config: Configuration):
+    print("running cmake ...")
+    args = []
+    args.append("-DWITH_ZLIB=OFF")
+    if platform.system() == "Windows":
+        cmake_arch = "x64" if is_x64 else "Win32"
+        args += ["-A", cmake_arch]
+    if platform.system() == "Linux":
+        args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+    args.append(f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}")
+    args.append(".")
     config.tl_install_dir.mkdir(exist_ok=True, parents=True)
-    call_cmake(config, "-A", cmake_arch, install_prefix, ".")
+    call_cmake(config, *args)
 
 
-def build(config: Configuration):
+def cmake_build(config: Configuration):
     print("building ...")
     call_cmake(
         config,
@@ -120,7 +128,7 @@ def parse_args() -> Configuration:
 
 
 def run():
-    print(f"building taglib on {arch}...")
+    print(f"building taglib on {platform.system()}, arch {arch}...")
     config = parse_args()
     tag_lib = config.tl_install_dir / "lib" / "tag.lib"
     if tag_lib.exists():
@@ -128,9 +136,9 @@ def run():
         return
     download(config)
     extract(config)
-    clean_cmake(config)
-    generate_vs_project(config)
-    build(config)
+    cmake_clean(config)
+    cmake_config(config)
+    cmake_build(config)
 
 
 if __name__ == "__main__":
