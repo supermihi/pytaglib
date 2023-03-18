@@ -65,7 +65,10 @@ def extension_kwargs():
         return dict(
             libraries=["tag"],
             include_dirs=[str(taglib_install_dir / "include")],
-            library_dirs=[str(taglib_install_dir / "lib")],
+            library_dirs=[
+                str(taglib_install_dir / "lib"),
+                str(taglib_install_dir / "lib64"),
+            ],
         )
 
 

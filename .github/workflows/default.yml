@@ -24,6 +24,7 @@ jobs:
         uses: actions/cache@v3
         if: ${{ runner.os == 'Linux' }}
         with:
+          key: cibuildwheel-v2.12.1
           path: /home/runner/.cache/cibuildwheel
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.12.1

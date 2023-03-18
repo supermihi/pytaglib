@@ -89,8 +89,8 @@ def cmake_config(config: Configuration):
     if system == "Windows":
         cmake_arch = "x64" if is_x64 else "Win32"
         args += ["-A", cmake_arch]
-    # elif system == "Linux":
-    #    args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+    elif system == "Linux":
+        args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
     args.append(f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}")
     args.append(".")
     config.tl_install_dir.mkdir(exist_ok=True, parents=True)
