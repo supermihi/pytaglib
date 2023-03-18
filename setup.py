@@ -64,8 +64,8 @@ def extension_kwargs():
         # on unix systems, use the dynamic library and rely on headers at standard location
         return dict(
             libraries=["tag"],
-            include_dirs=[taglib_install_dir / "include"],
-            library_dirs=[taglib_install_dir / "lib"],
+            include_dirs=[str(taglib_install_dir / "include")],
+            library_dirs=[str(taglib_install_dir / "lib")],
         )
 
 
