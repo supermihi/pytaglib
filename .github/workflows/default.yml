@@ -6,10 +6,9 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest] #ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
-      CIBW_BUILD: "cp311-*"
       CIBW_BEFORE_ALL_WINDOWS: ""
       CIBW_BEFORE_BUILD_WINDOWS: "python build_taglib.py"
     steps:
