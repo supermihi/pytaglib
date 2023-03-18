@@ -21,7 +21,7 @@ system = platform.system()
 python_version = platform.python_version()
 
 
-here = Path(__file__).resolve().parent
+here = Path(".").resolve().parent
 
 default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
 

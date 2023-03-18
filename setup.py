@@ -9,6 +9,7 @@
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
 
 import os
+import platform
 import sys
 import re
 from pathlib import Path
@@ -29,7 +30,16 @@ CLASSIFIERS = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-here = Path(".").parent
+is_x64 = sys.maxsize > 2**32
+arch = "x64" if is_x64 else "x32"
+system = platform.system()
+python_version = platform.python_version()
+
+
+here = Path(__file__).resolve().parent
+
+default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
+
 src = Path("src")
 
 
@@ -40,11 +50,9 @@ def readme():
 
 def extension_kwargs():
     if sys.platform.startswith("win"):
-        import build_taglib
-
         # on Windows, we compile static taglib build into the python module
         taglib_install_dir = Path(
-            os.environ.get("TAGLIB_HOME", str(build_taglib.default_taglib_path))
+            os.environ.get("TAGLIB_HOME", str(default_taglib_path))
         )
         taglib_lib = taglib_install_dir / "lib" / "tag.lib"
         if not taglib_lib.exists():
