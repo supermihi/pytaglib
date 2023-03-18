@@ -40,9 +40,11 @@ def readme():
 
 def extension_kwargs():
     if sys.platform.startswith("win"):
+        import build_taglib
+
         # on Windows, we compile static taglib build into the python module
         taglib_install_dir = Path(
-            os.environ.get("TAGLIB_HOME", "build\\taglib-install")
+            os.environ.get("TAGLIB_HOME", str(build_taglib.default_taglib_path))
         )
         taglib_lib = taglib_install_dir / "lib" / "tag.lib"
         if not taglib_lib.exists():

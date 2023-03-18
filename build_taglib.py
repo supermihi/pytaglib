@@ -17,13 +17,18 @@ build_config = "Release"
 
 is_x64 = sys.maxsize > 2**32
 arch = "x64" if is_x64 else "x32"
+system = platform.system()
+python_version = platform.python_version()
+
 
 here = Path(__file__).resolve().parent
+
+default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
 
 
 @dataclass
 class Configuration:
-    tl_install_dir: Path = here / "build" / "taglib-install"
+    tl_install_dir: Path = default_taglib_path
     build_path: Path = here / "build"
     clean: bool = True
 
@@ -81,10 +86,10 @@ def cmake_config(config: Configuration):
     print("running cmake ...")
     args = []
     args.append("-DWITH_ZLIB=OFF")
-    if platform.system() == "Windows":
+    if system == "Windows":
         cmake_arch = "x64" if is_x64 else "Win32"
         args += ["-A", cmake_arch]
-    if platform.system() == "Linux":
+    elif system == "Linux":
         args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
     args.append(f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}")
     args.append(".")
@@ -128,7 +133,7 @@ def parse_args() -> Configuration:
 
 
 def run():
-    print(f"building taglib on {platform.system()}, arch {arch}...")
+    print(f"building taglib on {system}, arch {arch}, for python {python_version} ...")
     config = parse_args()
     tag_lib = config.tl_install_dir / "lib" / "tag.lib"
     if tag_lib.exists():
