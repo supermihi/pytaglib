@@ -20,6 +20,11 @@ jobs:
         with:
           path: build/taglib
           key: taglib-windows-${{ hashFiles('build_taglib.py') }}
+      - name: cache cibuildwheel stuff
+        uses: actions/cache@v3
+        if: ${{ runner.os == 'Linux' }}
+        with:
+          path: /home/runner/.cache/cibuildwheel
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.12.1
       - uses: actions/upload-artifact@v3
