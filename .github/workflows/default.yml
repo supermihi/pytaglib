@@ -15,11 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.11
       - name: cache built taglib on Windows, where it's super slow
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         if: ${{ runner.os == 'Windows' }}
         with:
           path: build/taglib
