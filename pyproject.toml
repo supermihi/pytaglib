@@ -5,4 +5,4 @@ build-backend = "setuptools.build_meta"
 [tool.cibuildwheel]
 test-requires = "pytest"
 test-command = "pytest {project}/tests"
-before-all = "python build_taglib.py"
+before-build = "python build_taglib.py"

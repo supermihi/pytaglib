@@ -8,9 +8,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      CIBW_BEFORE_ALL_WINDOWS: ""
-      CIBW_BEFORE_BUILD_WINDOWS: "python build_taglib.py"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
