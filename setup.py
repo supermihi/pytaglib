@@ -49,11 +49,9 @@ def readme():
 
 
 def extension_kwargs():
+    taglib_install_dir = Path(os.environ.get("TAGLIB_HOME", str(default_taglib_path)))
     if sys.platform.startswith("win"):
         # on Windows, we compile static taglib build into the python module
-        taglib_install_dir = Path(
-            os.environ.get("TAGLIB_HOME", str(default_taglib_path))
-        )
         taglib_lib = taglib_install_dir / "lib" / "tag.lib"
         if not taglib_lib.exists():
             raise FileNotFoundError(f"{taglib_lib} not found")
@@ -64,7 +62,11 @@ def extension_kwargs():
         )
     else:
         # on unix systems, use the dynamic library and rely on headers at standard location
-        return dict(libraries=["tag"])
+        return dict(
+            libraries=["tag"],
+            include_dirs=[taglib_install_dir / "include"],
+            library_dirs=[taglib_install_dir / "lib"],
+        )
 
 
 def version():
