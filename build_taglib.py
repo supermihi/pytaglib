@@ -135,10 +135,16 @@ def parse_args() -> Configuration:
 def run():
     print(f"building taglib on {system}, arch {arch}, for python {python_version} ...")
     config = parse_args()
-    tag_lib = config.tl_install_dir / "lib" / "tag.lib"
+    tag_lib = (
+        config.tl_install_dir
+        / "lib"
+        / ("tag.lib" if system == "Windows" else "libtag.a")
+    )
     if tag_lib.exists():
         print("installed TagLib found, exiting")
         return
+    else:
+        print(f"{tag_lib} does not exist, building ...")
     download(config)
     extract(config)
     cmake_clean(config)
