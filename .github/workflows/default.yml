@@ -7,6 +7,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      CIBW_SKIP: "pp*-win*" # skip until https://github.com/supermihi/pytaglib/issues/110 is resolved
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
