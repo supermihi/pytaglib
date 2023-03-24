@@ -6,8 +6,8 @@
 # published by the Free Software Foundation
 #
 
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import pytest
 import taglib

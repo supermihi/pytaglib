@@ -9,13 +9,13 @@
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
 
 import os
-import sys
 import re
-from pathlib import Path
-from setuptools import setup
+import sys
 from distutils.extension import Extension
-from Cython.Build import cythonize
+from pathlib import Path
 
+from Cython.Build import cythonize
+from setuptools import setup
 
 CLASSIFIERS = [
     "Development Status :: 5 - Production/Stable",

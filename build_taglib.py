@@ -1,13 +1,12 @@
-from pathlib import Path
-import sys
-import urllib.request
-import tarfile
+import hashlib
 import shutil
 import subprocess
-from dataclasses import dataclass
+import sys
+import tarfile
+import urllib.request
 from argparse import ArgumentParser
-import hashlib
-
+from dataclasses import dataclass
+from pathlib import Path
 
 taglib_version = "1.13"
 taglib_release = f"https://github.com/taglib/taglib/releases/download/v{taglib_version}/taglib-{taglib_version}.tar.gz"
@@ -16,7 +15,6 @@ build_config = "Release"
 
 is_x64 = sys.maxsize > 2**32
 arch = "x64" if is_x64 else "x32"
-
 here = Path(__file__).resolve().parent
 
 

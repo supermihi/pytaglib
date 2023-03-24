@@ -7,7 +7,6 @@
 #
 import taglib
 
-
 """Tests for removing existing tags in FLAC.
 
 Motivated by https://github.com/supermihi/pytaglib/issues/19.
