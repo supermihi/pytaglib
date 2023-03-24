@@ -1,28 +1,30 @@
 import hashlib
+import platform
 import shutil
 import subprocess
 import sys
 import tarfile
 import urllib.request
 from argparse import ArgumentParser
-from dataclasses import dataclass
 from pathlib import Path
+
+is_x64 = sys.maxsize > 2**32
+arch = "x64" if is_x64 else "x32"
+system = platform.system()
+python_version = platform.python_version()
+here = Path(__file__).resolve().parent
+default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
 
 taglib_version = "1.13"
 taglib_release = f"https://github.com/taglib/taglib/releases/download/v{taglib_version}/taglib-{taglib_version}.tar.gz"
 taglib_sha256sum = "58f08b4db3dc31ed152c04896ee9172d22052bc7ef12888028c01d8b1d60ade0"
-build_config = "Release"
-
-is_x64 = sys.maxsize > 2**32
-arch = "x64" if is_x64 else "x32"
-here = Path(__file__).resolve().parent
 
 
-@dataclass
 class Configuration:
-    tl_install_dir: Path = here / "build" / "taglib-install"
-    build_path: Path = here / "build"
-    clean: bool = True
+    def __init__(self):
+        self.tl_install_dir = default_taglib_path
+        self.build_path = here / "build"
+        self.clean = False
 
     @property
     def tl_download_dest(self):
@@ -56,7 +58,7 @@ def extract(config: Configuration):
         tar.extractall(config.tl_extract_dir.parent)
 
 
-def clean_cmake(config: Configuration):
+def cmake_clean(config: Configuration):
     if not config.clean:
         return
     print("removing previous cmake cache ...")
@@ -74,29 +76,36 @@ def call_cmake(config, *args):
     )
 
 
-def generate_vs_project(config: Configuration):
-    print("generating VS projects with cmake ...")
-    cmake_arch = "x64" if is_x64 else "Win32"
-    install_prefix = f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}"
+def cmake_config(config: Configuration):
+    print("running cmake ...")
+    args = ["-DWITH_ZLIB=OFF"]  # todo fix building wheels with zlib support
+    if system == "Windows":
+        cmake_arch = "x64" if is_x64 else "Win32"
+        args += ["-A", cmake_arch]
+    elif system == "Linux":
+        args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+    args.append(f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}")
+    args.append(".")
     config.tl_install_dir.mkdir(exist_ok=True, parents=True)
-    call_cmake(config, "-A", cmake_arch, install_prefix, ".")
+    call_cmake(config, *args)
 
 
-def build(config: Configuration):
-    print("building ...")
+def cmake_build(config: Configuration):
+    print("building taglib ...")
+    build_configuration = "Release"
     call_cmake(
         config,
         "--build",
         ".",
         "--config",
-        build_config,
+        build_configuration,
         "--clean-first" if config.clean else None,
     )
-    print("installing ...")
-    call_cmake(config, "--install", ".", "--config", build_config)
+    print("installing cmake ...")
+    call_cmake(config, "--install", ".", "--config", build_configuration)
 
 
-def make_path(str_path: str) -> Path:
+def to_abs_path(str_path: str) -> Path:
     path = Path(str_path)
     if not path.is_absolute():
         path = here / path
@@ -112,23 +121,29 @@ def parse_args() -> Configuration:
         type=Path,
         default=config.tl_install_dir,
     )
+    parser.add_argument("--clean", action="store_true")
     args = parser.parse_args()
-    config.tl_install_dir = make_path(args.install_dest)
+    config.tl_install_dir = to_abs_path(args.install_dest)
+    config.clean = args.clean
     return config
 
 
 def run():
-    print(f"building taglib on {arch}...")
+    print(f"building taglib on {system}, arch {arch}, for python {python_version} ...")
     config = parse_args()
-    tag_lib = config.tl_install_dir / "lib" / "tag.lib"
-    if tag_lib.exists():
+    tag_lib = (
+        config.tl_install_dir
+        / "lib"
+        / ("tag.lib" if system == "Windows" else "libtag.a")
+    )
+    if tag_lib.exists() and not config.clean:
         print("installed TagLib found, exiting")
         return
     download(config)
     extract(config)
-    clean_cmake(config)
-    generate_vs_project(config)
-    build(config)
+    cmake_clean(config)
+    cmake_config(config)
+    cmake_build(config)
 
 
 if __name__ == "__main__":

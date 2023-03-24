@@ -9,6 +9,7 @@
 """Setup file for pytaglib. Type <python setup.py install> to install this package."""
 
 import os
+import platform
 import re
 import sys
 from distutils.extension import Extension
@@ -16,6 +17,13 @@ from pathlib import Path
 
 from Cython.Build import cythonize
 from setuptools import setup
+
+is_x64 = sys.maxsize > 2**32
+arch = "x64" if is_x64 else "x32"
+system = platform.system()
+python_version = platform.python_version()
+here = Path(__file__).resolve().parent
+default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
 
 CLASSIFIERS = [
     "Development Status :: 5 - Production/Stable",
@@ -29,7 +37,6 @@ CLASSIFIERS = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-here = Path(".").parent
 src = Path("src")
 
 
@@ -39,11 +46,9 @@ def readme():
 
 
 def extension_kwargs():
+    taglib_install_dir = Path(os.environ.get("TAGLIB_HOME", str(default_taglib_path)))
     if sys.platform.startswith("win"):
         # on Windows, we compile static taglib build into the python module
-        taglib_install_dir = Path(
-            os.environ.get("TAGLIB_HOME", "build\\taglib-install")
-        )
         taglib_lib = taglib_install_dir / "lib" / "tag.lib"
         if not taglib_lib.exists():
             raise FileNotFoundError(f"{taglib_lib} not found")
@@ -53,8 +58,16 @@ def extension_kwargs():
             include_dirs=[str(taglib_install_dir / "include")],
         )
     else:
-        # on unix systems, use the dynamic library and rely on headers at standard location
-        return dict(libraries=["tag"])
+        # On unix systems, use the dynamic library. Still, add the (default) TAGLIB_HOME
+        # to allow overriding system taglib with custom build.
+        return dict(
+            libraries=["tag"],
+            include_dirs=[str(taglib_install_dir / "include")],
+            library_dirs=[
+                str(taglib_install_dir / "lib"),
+                str(taglib_install_dir / "lib64"),
+            ],
+        )
 
 
 def version():
