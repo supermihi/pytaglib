@@ -12,11 +12,10 @@ import os
 import platform
 import re
 import sys
-from distutils.extension import Extension
 from pathlib import Path
 
 from Cython.Build import cythonize
-from setuptools import setup
+from setuptools import setup, Extension
 
 is_x64 = sys.maxsize > 2**32
 arch = "x64" if is_x64 else "x32"
