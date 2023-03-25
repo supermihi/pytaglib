@@ -65,3 +65,8 @@ cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
         cdef File* create(const Py_UNICODE*) except +
     ELSE:
         cdef File* create(const char*) except +
+
+
+cdef extern from 'taglib/taglib.h':
+    int TAGLIB_MAJOR_VERSION
+    int TAGLIB_MINOR_VERSION
