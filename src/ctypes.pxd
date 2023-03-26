@@ -7,10 +7,11 @@
 
 """This file contains the external C/C++ definitions used by taglib.pyx."""
 
-from libcpp.list cimport list
-from libcpp.string cimport string
-from libcpp.map cimport map
 from libc.stddef cimport wchar_t
+from libcpp.list cimport list
+from libcpp.map cimport map
+from libcpp.string cimport string
+
 
 cdef extern from 'taglib/tstring.h' namespace 'TagLib::String':
     cdef extern enum Type:
@@ -64,3 +65,8 @@ cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
         cdef File* create(const Py_UNICODE*) except +
     ELSE:
         cdef File* create(const char*) except +
+
+
+cdef extern from 'taglib/taglib.h':
+    int TAGLIB_MAJOR_VERSION
+    int TAGLIB_MINOR_VERSION

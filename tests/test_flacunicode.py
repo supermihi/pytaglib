@@ -9,20 +9,20 @@ import taglib
 
 
 def test_flac_supports_unicode_value(test_data):
-    file = test_data('testöü.flac')
+    file = test_data("testöü.flac")
     tfile = taglib.File(file)
-    tfile.tags['ARTIST'] = ['artøst 1', 'artöst 2']
+    tfile.tags["ARTIST"] = ["artøst 1", "artöst 2"]
     tfile.save()
     tfile.close()
 
     tfile = taglib.File(file)
-    assert tfile.tags['ARTIST'] == ['artøst 1', 'artöst 2']
+    assert tfile.tags["ARTIST"] == ["artøst 1", "artöst 2"]
     tfile.close()
 
 
 def test_flac_supports_unicode_key(test_file):
-    tfile = test_file('testöü.flac')
-    tfile.tags['HÄÜ'] = ['omg']
+    tfile = test_file("testöü.flac")
+    tfile.tags["HÄÜ"] = ["omg"]
     remaining = tfile.save()
-    assert 'HÄÜ' in remaining
+    assert "HÄÜ" in remaining
     tfile.close()

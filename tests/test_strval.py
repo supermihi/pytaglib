@@ -9,13 +9,13 @@ import taglib
 
 
 def test_string_value_is_converted_to_list(test_data):
-    f = test_data('testöü.flac')
+    f = test_data("testöü.flac")
     tf = taglib.File(f)
-    tf.tags['AAA'] = 'A TAG'
-    tf.tags['BBB'] = b'ANOTHER TAG'
+    tf.tags["AAA"] = "A TAG"
+    tf.tags["BBB"] = b"ANOTHER TAG"
     tf.save()
     del tf
     tf = taglib.File(f)
-    assert tf.tags['AAA'] == ['A TAG']
-    assert tf.tags['BBB'] == ['ANOTHER TAG']
+    assert tf.tags["AAA"] == ["A TAG"]
+    assert tf.tags["BBB"] == ["ANOTHER TAG"]
     tf.close()

@@ -10,33 +10,32 @@ import taglib
 
 
 def test_cyrillic_file_name(test_file):
-    """Motivated by https://github.com/supermihi/pytaglib/issues/28.
-    """
-    tfile = test_file('Жбж.mp3')
-    tfile.tags['COMMENT'] = ['test']
+    """Motivated by https://github.com/supermihi/pytaglib/issues/28."""
+    tfile = test_file("Жбж.mp3")
+    tfile.tags["COMMENT"] = ["test"]
     tfile.save()
     tfile.close()
 
 
 def test_accepts_bytes_keys_and_values(test_data):
-    f = test_data('rare_frames.mp3')
+    f = test_data("rare_frames.mp3")
     tf = taglib.File(f)
-    tf.tags[b'BYTES'] = [b'OnE', b'twO']
+    tf.tags[b"BYTES"] = [b"OnE", b"twO"]
     tf.save()
     tf.close()
 
     tf = taglib.File(f)
-    assert tf.tags['BYTES'] == ['OnE', 'twO']
+    assert tf.tags["BYTES"] == ["OnE", "twO"]
     tf.close()
 
 
 def test_accepts_unicode_keys_and_tags(test_data):
-    f = test_data('rare_frames.mp3')
+    f = test_data("rare_frames.mp3")
     tf = taglib.File(f)
-    tf.tags['UNICODE'] = ['OnE', 'twO']
+    tf.tags["UNICODE"] = ["OnE", "twO"]
     tf.save()
     tf.close()
 
     tf = taglib.File(f)
-    assert tf.tags['UNICODE'] == ['OnE', 'twO']
+    assert tf.tags["UNICODE"] == ["OnE", "twO"]
     tf.close()

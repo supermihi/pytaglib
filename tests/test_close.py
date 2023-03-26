@@ -2,7 +2,7 @@ import pytest
 
 
 def test_properties_fail_after_close(test_file):
-    tf = test_file('r2.mp3')
+    tf = test_file("r2.mp3")
     tf.close()
     with pytest.raises(ValueError):
         _ = tf.readOnly
@@ -17,7 +17,7 @@ def test_properties_fail_after_close(test_file):
 
 
 def test_close_fails_after_close(test_file):
-    tf = test_file('r2.mp3')
+    tf = test_file("r2.mp3")
     tf.close()
     with pytest.raises(ValueError):
         tf.close()

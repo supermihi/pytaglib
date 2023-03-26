@@ -12,7 +12,7 @@ from libcpp.utility cimport pair
 from pathlib import Path
 cimport ctypes
 
-version = '1.5.0'
+version = '2.0.0'
 
 cdef str toStr(ctypes.String s):
     """Converts TagLib::String to a Python str."""
@@ -213,3 +213,14 @@ cdef class File:
 
     def __repr__(self):
         return f"File('{self.path}')"
+
+
+
+def taglib_version() -> tuple[int, int]:
+    """Taglib major and minor version, as 2-tuple.
+
+    Note: this is the version used for compiling the Cython module. Under certain
+    circumstances (e.g. dynamic linking, or re-using the cythonized code after
+    upgrading Taglib) the actually running Taglib version might be different.
+    """
+    return ctypes.TAGLIB_MAJOR_VERSION, ctypes.TAGLIB_MINOR_VERSION

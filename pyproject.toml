@@ -1,3 +1,8 @@
 [build-system]
 requires = ["setuptools", "wheel", "cython"]
 build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+test-requires = "pytest"
+test-command = "pytest {project}/tests"
+before-build = "python build_taglib.py --clean"

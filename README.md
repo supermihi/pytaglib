@@ -1,30 +1,33 @@
 # **pytaglib**
+
 [![PyPI](https://img.shields.io/pypi/v/pytaglib.svg)](https://pypi.org/project/pytaglib/)
 
 pytaglib is a [Python](https://www.python.org) audio tagging library. It is cross-platform and very simple to use yet fully featured:
- - [supports more than a dozen file formats](https://taglib.org/) including mp3, flac, ogg, wma, and mp4,
- - support arbitrary, non-standard tag names,
- - support multiple values per tag.
+
+- [supports more than a dozen file formats](https://taglib.org/) including mp3, flac, ogg, wma, and mp4,
+- support arbitrary, non-standard tag names,
+- support multiple values per tag.
 
 pytaglib is a very thin wrapper (≈150 lines of [code](src/taglib.pyx)) around the fast and rock-solid [TagLib](https://taglib.org/) C++ library.
+
 ## News
-See the [Changelog](CHANGELOG.md).
-## Get it
-At first, you might need to install taglib with development headers. Ubuntu, Mint and other Debian-Based distributions:
-        
-        sudo apt install libtag1-dev
 
-On a Mac, use HomeBrew:
-        
-        brew install taglib
+_2023-03-26_ pytaglib-2.0.0 has been released. Major improvements:
 
-Then install pytaglib with [pip](https://pip.pypa.io/en/stable/):
+- **binary wheels** are shipped for all Python versions and platforms
+- _breaking change_: `File.path` is now a `Path` object
+- support using `File` as context manager
+
+For a full list of changes in this and previous releases, see the [Changelog](CHANGELOG.md).
+
+## Install
+
+Use [pip](https://pip.pypa.io/en/stable/):
 
         pip install pytaglib
 
-
-        
-For other operating systems and more details, see [installation notes](#installation-notes) below.
+In most cases, this should pick a provided binary wheel that bundles the native TagLib library suitable for your platform. If it doesn't, and the
+installation fails, see [below](#installation-notes).
 
 ## Usage
 
@@ -39,13 +42,14 @@ For other operating systems and more details, see [installation notes](#installa
 >>>     song.tags["ALBUM"] = ["White Album"] # always use lists, even for single values
 >>>     del song.tags["DATE"]
 >>>     song.tags["GENRE"] = ["Vocal", "Classical"]
->>>     song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"] 
+>>>     song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"]
 >>> # with save_on_exit=True, file will be saved at the end of the 'with' block
 ```
+
 For detailed API documentation, use the docstrings of the `taglib.File` class or view the [source code](src/taglib.pyx) directly.
 
-
 ## `pyprinttags`
+
 This package also installs the `pyprinttags` script. It takes one or more files as
 command-line parameters and will display all known metadata of that files on the terminal.
 If unsupported tags (a.k.a. non-textual information) are found, they can optionally be removed
@@ -53,19 +57,26 @@ from the file.
 
 ## Installation Notes
 
-* Ensure that `pip` is installed and points to the correct Python version
-  - on Windows, be sure to check *install pip* in the Python installer
-  - on Debian/Ubuntu/Mint, install `python3-pip`
-  - you might need to type, e.g., `pip-3` to install pytaglib for Python 3 if your system's default is Python 2.x.
-* For Windows users, there are some precompiled binary packages (wheels). See the [PyPI page](https://pypi.python.org/pypi/pytaglib) for a list of supported Python versions.
-* If no binary packages exists, you need to have both Python and taglib installed with development headers (packages `python3-dev` (or `python-dev`) and `libtag1-dev` for debian / ubuntu and derivates, `python-devel` and `taglib-devel` for fedora and friends, `brew install taglib` on OS X).
+Things are a bit more complicated than usual with Python because pytaglib requires the native (C++) TagLib library.
 
+If there are no binary wheels for your platform, or you want to manually
+compile pytaglib, you will need to have Taglib installed with development headers,and also development tools for Python.
+
+On Ubuntu, Mint and other Debian-Based distributions, install
+the `libtag1-dev` and `python-dev` packages. On Fedora and friends, these are called `taglib-devel` and `python-devel`, respectively. On a Mac, use HomeBrew to install the `taglib` package. For Windows, see below.
+
+As an alternative, run `python build_taglib.py` in this directory to
+automatically download and build the latest Taglib version into the `build` subdirectory (also works on Windows). This requires Python and a
+suitable compiler to be installed; specific instructions are beyond the
+scope of this README.
 
 ### Linux: Distribution-Specific Packages
-* Debian- and Ubuntu-based linux flavors have binary packages for the Python 3 version, called `python3-taglib`. Unfortunatelly, they are heavily outdated, so you should instally the recent version via `pip` whenever possible.
-* For Arch users, there is a [package](https://aur.archlinux.org/packages/python-pytaglib/) in the user repository (AUR).
+
+- Debian- and Ubuntu-based linux flavors have binary packages for the Python 3 version, called `python3-taglib`. Unfortunatelly, they are heavily outdated, so you should instally the recent version via `pip` whenever possible.
+- For Arch users, there is a [package](https://aur.archlinux.org/packages/python-pytaglib/) in the user repository (AUR).
 
 ### Manual Compilation: General
+
 You can download or checkout the sources and compile manually:
 
         pip install .
@@ -75,16 +86,17 @@ You can download or checkout the sources and compile manually:
 
 ### Compilation: Windows
 
-Install MS Visual Studio Build Tools (or the complete IE) and include the correct compiler version as detailed [here](https://wiki.python.org/moin/WindowsCompilers). Also enable *cmake* in the Visual Studio Installer.
+Install MS Visual Studio Build Tools (or the complete IE) and include the correct compiler version as detailed [here](https://wiki.python.org/moin/WindowsCompilers). Also enable _cmake_ in the Visual Studio Installer.
 
 Then:
+
 - open the VS native tools command prompt
-- navigate to the *pytaglib* repository
-- run `python build_taglib_windows.py` which will download and build the latest official TagLib release
+- navigate to the _pytaglib_ repository
+- run `python build_taglib.py` which will download and build the latest official TagLib release
 - run `python setup.py install`
 
-
 ## Contact
+
 For bug reports or feature requests, please use the
 [issue tracker](https://github.com/supermihi/pytaglib/issues) on GitHub. For anything else, contact
 me by [email](mailto:michaelhelmling@posteo.de).
