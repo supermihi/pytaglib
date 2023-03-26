@@ -12,7 +12,7 @@ from libcpp.utility cimport pair
 from pathlib import Path
 cimport ctypes
 
-version = '1.5.0'
+version = '2.0.0'
 
 cdef str toStr(ctypes.String s):
     """Converts TagLib::String to a Python str."""
