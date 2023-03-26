@@ -1,94 +1,103 @@
-Changelog
-=========
-NEXT
-----
+# Changelog
+
+## pytaglib 2.0.0 (2023-03-26)
+
+- update Taglib version for binary wheels to 1.13
+- improve `build_taglib.py` helper script (now supports all platforms)
+- add `taglib_version()` to the `taglib` module
+- bundle native Taglib whith binary wheels (even on Unix). This enables to use the latest Taglib version (distributions often ship outdated
+  versions) and removes native dependencies.
+- use [cibuildwheel](https://cibuildwheel.readthedocs.io) to provide binary wheels for a multitude of platform / Python version combinations
+  (fixes #101 #105)
 - allow using `File` as a context manager, optionally saving on exit
 - new property `File.is_closed`
 - fix #94: Accept `os.PathLike` in constructor
 
 ### Breaking Changes:
+
 - `File.path` is now a `Path` object
 
-pytaglib 1.5.0 (2021-12-18)
-----------
+## pytaglib 1.5.0 (2021-12-18)
+
 - fix #93: publish PyPI packages from GitLab workflow
 - fix #92: build windows binary wheels from CI
 - fix #89: remove Python 2 support
 - fix #88: rename pyprinttags3 --> pyprinttags, ignore unsupported tags in the script
 
-pytaglib 1.4.6 (2020/02/26)
------------------
+## pytaglib 1.4.6 (2020/02/26)
+
 - fix #65: use tox for testing. Request re-cythonizing module with environment variable `PYTAGLIB_CYTHONIZE` instead of argument to `setup.py` now.
 - fix #63: python2 tests did not pass
 - fix #62: pyprinttags module did not work
 
-pytaglib 1.4.5 (2019/03/26)
----------------------------
+## pytaglib 1.4.5 (2019/03/26)
+
 - Fix published taglib.cpp
 
-pytaglib 1.4.4 (2018/10/27)
----------------------------
+## pytaglib 1.4.4 (2018/10/27)
+
 - Remove cython dependency from setup.py (thanks to Popkornium18 for reporting)
 
-pytaglib 1.4.3 (2018/02/25)
----------------------------
+## pytaglib 1.4.3 (2018/02/25)
+
 - Fix accidental upload of the Windows version to PyPI. Hopefully fixes #42, #43.
 
-pytaglib 1.4.2 (2018/01/17)
----------------------------
+## pytaglib 1.4.2 (2018/01/17)
+
 - Fix #31: Don't use precompiled `taglib.cpp` on Windows
 
-pytaglib 1.4.1 (2017/05/12)
----------------------------
+## pytaglib 1.4.1 (2017/05/12)
+
 - Fix #33 (no longer uppercase bytestring tag values)
 
-pytaglib 1.4 (2016/11/26)
----------------------------
+## pytaglib 1.4 (2016/11/26)
+
 - Windows version: fix filenames with non-local codepage characters
 - update README (pip options for custom taglib install dir - thanks to qbuchanan)
 - build windows wheel against taglib-1.11.1
 - cython version used to create the shipped cpp-file updated to 0.25.1
 
-pytaglib 1.3.0 (2016/07/22)
----------------------------
+## pytaglib 1.3.0 (2016/07/22)
+
 - Remove workaround for pre-1.9 taglib versions in order to reduce codebase
 - code cleanup
 - move tests out of source folder
 
-pytaglib 1.2.1 (2016/07/17)
----------------------------
+## pytaglib 1.2.1 (2016/07/17)
+
 This is a non-feature release (no change to the code base)
+
 - update README
 - build windows wheel against taglib 1.11
 
-pytaglib 1.2.0 (2016/03/20)
----------------------------
+## pytaglib 1.2.0 (2016/03/20)
+
 - add Windows support (see README)
 - update copyright dates
 - update cython version used to build shipped taglib.cpp to 0.23.4
 
-pytaglib 1.1.0 (2015/09/06)
----------------------------
+## pytaglib 1.1.0 (2015/09/06)
+
 - add a `File.close()` method that ends all I/O operations.
 
-pytaglib 1.0.3 (2015/03/16)
----------------------------
+## pytaglib 1.0.3 (2015/03/16)
+
 - include ReST version of the README for pypi (converted using pandoc)
 
-pytaglib 1.0.2 (2015/03/15)
----------------------------
+## pytaglib 1.0.2 (2015/03/15)
+
 - ensure that pyprinttags removes unsupported properties only when user enters 'y' or 'yes'
   (thanks to lahwaacz)
 - fix a typo in the readme (thanks to panzl)
 
-pytaglib 1.0.1 (2015/03/09)
----------------------------
+## pytaglib 1.0.1 (2015/03/09)
+
 - cleaned up source code and made it more readable
 - update README to contain more information
 - no functional API changes
 
-pytaglib 1.0 (2015/01/03)
--------------------------
+## pytaglib 1.0 (2015/01/03)
+
 - as the library has been used for several years now without any known
   bugs, I declare it as stable.
 - cleaned up source. Especially simplified several statements due to improvements
@@ -97,66 +106,65 @@ pytaglib 1.0 (2015/01/03)
   is detected.
 - update copyright dates
 
-pytaglib 0.4 (2014/03/29)
--------------------------
+## pytaglib 0.4 (2014/03/29)
+
 - remove Cython dependency by shipping taglib.cpp
 
-pytaglib 0.3.7 (2014/01/21)
----------------------------
+## pytaglib 0.3.7 (2014/01/21)
+
 - remove a test file that looked a little non-free
 - update copyright dates
 
-pytaglib 0.3.6 (2013/08/13)
----------------------------
+## pytaglib 0.3.6 (2013/08/13)
+
 - fix Python 2.6 support in pyprinttags
 - update copyright dates
 
-pytaglib 0.3.5 (2013/04/03)
----------------------------
+## pytaglib 0.3.5 (2013/04/03)
+
 - add support for Python 2.6 by replacing some methods added in 2.7
 
-pytaglib 0.3.4 (2013/01/16)
----------------------------
+## pytaglib 0.3.4 (2013/01/16)
+
 - move cython from install_requires to setup_requires
 
-pytaglib 0.3.3 (2013/01/16)
----------------------------
-- ensure sources are included in sdist packages 
+## pytaglib 0.3.3 (2013/01/16)
+
+- ensure sources are included in sdist packages
 - fix call to pyprinttags
 - fix setup.py handling for non-utf8-locales
 - rename pyprinttags to pyprinttags3 for python3 installs
 
-pytaglib 0.3.2 (2013/01/12)
----------------------------
+## pytaglib 0.3.2 (2013/01/12)
+
 - add "batch mode" to pyprinttags and allow several files at once
 - add a man page for pyprinttags
 - remove .travis.yml since travis' build system is too old for building pytaglib
 
-pytaglib 0.3.1 (2013/01/07)
----------------------------
+## pytaglib 0.3.1 (2013/01/07)
+
 - updated packaging information in setup.py
 
-pytaglib 0.3.0 (2012/12/14)
----------------------------
+## pytaglib 0.3.0 (2012/12/14)
+
 - implement a hack that works around a bug in taglib, leading
   to several problems in connection with MP3 files with ID3v1
-  tags. Open files with ``f=taglib.File(path, applyID3v2Hack=True)``
+  tags. Open files with `f=taglib.File(path, applyID3v2Hack=True)`
   to ensure that MPEG files will always get updated to ID3v2 if
   necessary. Use at your own risk!
 - update documentation
 - declare development stadium as "beta" since no critical bugs
   seem to exist.
 
-pytaglib 0.2.5 (2012/12/05)
----------------------------
+## pytaglib 0.2.5 (2012/12/05)
+
 - fix integration into PyPI, clean up code & documentation
 
-pytaglib 0.2.4 (2012/09/09)
----------------------------
+## pytaglib 0.2.4 (2012/09/09)
+
 - add test script for python2.x/3.x
 
-pytaglib 0.2.3 (2012/07/30)
----------------------------
+## pytaglib 0.2.3 (2012/07/30)
 
 - save() now returns unsuccessful tags due to metadata format
 - add taglib.version attribute to get module version
@@ -165,8 +173,7 @@ pytaglib 0.2.3 (2012/07/30)
 - README now in ReSt format
 - code cleanup and documentation improvement
 
-pytaglib 0.2.2 (2012/07/25)
----------------------------
+## pytaglib 0.2.2 (2012/07/25)
 
 - Switch to setuptools/distribute, prepare publishing on PyPI
 - Add some basic unit tests (test files stolen from taglib)
