@@ -14,6 +14,7 @@ def test_string_value_is_converted_to_list(test_data):
     tf.tags["AAA"] = "A TAG"
     tf.tags["BBB"] = b"ANOTHER TAG"
     tf.save()
+    tf.close()
     del tf
     tf = taglib.File(f)
     assert tf.tags["AAA"] == ["A TAG"]
