@@ -11,6 +11,8 @@ from libc.stddef cimport wchar_t
 from libcpp.list cimport list
 from libcpp.map cimport map
 from libcpp.string cimport string
+from cpython.mem cimport PyMem_Free
+from cpython.object cimport PyObject
 
 
 cdef extern from 'taglib/tstring.h' namespace 'TagLib::String':
@@ -60,12 +62,21 @@ cdef extern from 'taglib/tfile.h' namespace 'TagLib':
         void removeUnsupportedProperties(StringList&)
 
 
-cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
-    IF UNAME_SYSNAME == "Windows":
-        cdef File* create(const Py_UNICODE*) except +
-    ELSE:
+IF UNAME_SYSNAME == "Windows":
+    cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
+        cdef File * create(const wchar_t *) except +
+    cdef extern from "Python.h":
+        cdef wchar_t *PyUnicode_AsWideCharString(PyObject *path, Py_ssize_t *size)
+    cdef inline File* create_wrapper(unicode path):
+        cdef wchar_t *wchar_path = PyUnicode_AsWideCharString(<PyObject*>path, NULL)
+        cdef File * file = create(wchar_path)
+        PyMem_Free(wchar_path)
+        return file
+ELSE:
+    cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
         cdef File* create(const char*) except +
-
+    cdef inline File* create_wrapper(unicode path):
+        return create(path.encode('utf-8'))
 
 cdef extern from 'taglib/taglib.h':
     int TAGLIB_MAJOR_VERSION

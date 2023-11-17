@@ -40,6 +40,7 @@ cdef dict propertyMapToDict(ctypes.PropertyMap map):
     return dct
 
 
+
 cdef class File:
     """Class representing an audio file with metadata ("tags").
     
@@ -80,12 +81,7 @@ cdef class File:
                 path = path.decode('utf8')
             path = Path(path)
         self.path = path
-        IF UNAME_SYSNAME == "Windows":
-            # create on windows takes wchar_t* which Cython automatically converts to
-            # from unicode strings
-            self.cFile = ctypes.create(str(self.path))
-        ELSE:
-            self.cFile = ctypes.create(str(self.path).encode('utf8'))
+        self.cFile = ctypes.create_wrapper(str(self.path))
         if not self.cFile or not self.cFile.isValid():
             raise OSError(f'Could not read file {path}')
 
