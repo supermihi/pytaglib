@@ -12,11 +12,10 @@ pytaglib is a very thin wrapper (≈150 lines of [code](src/taglib.pyx)) around 
 
 ## News
 
-_2023-03-26_ pytaglib-2.0.0 has been released. Major improvements:
+_2023-11-17_ pytaglib-2.1.0 has been released. Major improvements:
 
-- **binary wheels** are shipped for all Python versions and platforms
-- _breaking change_: `File.path` is now a `Path` object
-- support using `File` as context manager
+- [!118](https://github.com/supermihi/pytaglib/pull/118): update Taglib version for binary wheels to 1.13.1
+- [!116](https://github.com/supermihi/pytaglib/pull/116): fix Python 3.12 build
 
 For a full list of changes in this and previous releases, see the [Changelog](CHANGELOG.md).
 
