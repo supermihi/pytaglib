@@ -15,9 +15,9 @@ python_version = platform.python_version()
 here = Path(__file__).resolve().parent
 default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
 
-taglib_version = "1.13"
-taglib_release = f"https://github.com/taglib/taglib/releases/download/v{taglib_version}/taglib-{taglib_version}.tar.gz"
-taglib_sha256sum = "58f08b4db3dc31ed152c04896ee9172d22052bc7ef12888028c01d8b1d60ade0"
+taglib_version = "1.13.1"
+taglib_release = f"https://github.com/taglib/taglib/archive/refs/tags/v{taglib_version}.tar.gz"
+taglib_sha256sum = "c8da2b10f1bfec2cd7dbfcd33f4a2338db0765d851a50583d410bacf055cfd0b"
 
 
 class Configuration:
