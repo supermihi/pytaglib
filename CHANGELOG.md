@@ -1,5 +1,7 @@
 # Changelog
-
+## NEXT
+- [!117](https://github.com/supermihi/pytaglib/pull/117): modernize packaging / tooling
+- [!116](https://github.com/supermihi/pytaglib/pull/116): fix Python 3.12 build
 ## pytaglib 2.0.0 (2023-03-26)
 
 - update Taglib version for binary wheels to 1.13

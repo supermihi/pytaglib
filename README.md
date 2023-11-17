@@ -60,7 +60,8 @@ from the file.
 Things are a bit more complicated than usual with Python because pytaglib requires the native (C++) TagLib library.
 
 If there are no binary wheels for your platform, or you want to manually
-compile pytaglib, you will need to have Taglib installed with development headers,and also development tools for Python.
+compile pytaglib, you will need to have Taglib installed with development headers,
+and also development tools for Python.
 
 On Ubuntu, Mint and other Debian-Based distributions, install
 the `libtag1-dev` and `python-dev` packages. On Fedora and friends, these are called `taglib-devel` and `python-devel`, respectively. On a Mac, use HomeBrew to install the `taglib` package. For Windows, see below.
@@ -81,9 +82,14 @@ You can download or checkout the sources and compile manually:
 
         pip install .
         # if you want to run the unit tests, use these commands instead
-        # pip install .[tests]
+        # pip install '.[tests]'
         # python -m pytest
 
+If you just want to create a binary wheel for your platform, use [build](https://github.com/pypa/build):
+
+        pip install --upgrade build # ensure build is installed
+        python -m build
+which will place the wheel inside the `dist` directory.
 ### Compilation: Windows
 
 Install MS Visual Studio Build Tools (or the complete IE) and include the correct compiler version as detailed [here](https://wiki.python.org/moin/WindowsCompilers). Also enable _cmake_ in the Visual Studio Installer.
