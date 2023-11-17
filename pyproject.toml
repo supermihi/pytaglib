@@ -2,7 +2,10 @@
 requires = ["setuptools", "cython==3.0.*"]
 build-backend = "setuptools.build_meta"
 
+
+[project.optional-dependencies]
+tests = ["pytest~=7.4.3"]
 [tool.cibuildwheel]
-test-requires = "pytest"
+test-extras = ["tests"]
 test-command = "pytest {project}/tests"
 before-build = "python build_taglib.py --clean"
