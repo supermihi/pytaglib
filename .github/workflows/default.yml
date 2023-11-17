@@ -9,7 +9,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
-      CIBW_SKIP: "*p36-*"
+      CIBW_SKIP: "*p36-* *p37-*"
       CIBW_ARCHS: auto64
       CIBW_ARCHS_MACOS: "x86_64 arm64"
     steps:
