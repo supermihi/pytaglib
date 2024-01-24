@@ -43,12 +43,12 @@ cdef dict propertyMapToDict(ctypes.PropertyMap map):
 
 cdef class File:
     """Class representing an audio file with metadata ("tags").
-    
+
     To read tags from an audio file, create a *File* object, passing the file's path to the
     constructor (should be a unicode string):
-    
+
     >>> f = taglib.File('/path/to/file.ogg')
-    
+
     The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
     to lists of strings (tag values).
 
@@ -59,30 +59,30 @@ cdef class File:
     as strings (e.g. cover art, proprietary data written by some programs, ...), according
     identifiers will be placed into the *unsupported* attribute of the File object. Using the
     method *removeUnsupportedProperties*, some or all of those can be removed.
-    
+
     Additionally, the readonly attributes *length*, *bitrate*, *sampleRate*, and *channels* are
     available with their obvious meanings.
 
     >>> print('File length: {}'.format(f.length))
-    
+
     Changes to the *tags* attribute are stored using the *save* method.
 
     >>> f.save()
     """
-    cdef ctypes.File *cFile
+    cdef ctypes.FileRef *cFile
     cdef public dict tags
     cdef readonly object path
     cdef readonly list unsupported
     cdef readonly object save_on_exit
 
     def __cinit__(self, path, save_on_exit: bool = False):
-        if not isinstance(path, os.PathLike):
-            if not isinstance(path, unicode):
-                path = path.decode('utf8')
+        if not isinstance(path, Path):
+            if isinstance(path, bytes):
+                path = path.decode('utf-8')
             path = Path(path)
         self.path = path
-        self.cFile = ctypes.create_wrapper(str(self.path))
-        if not self.cFile or not self.cFile.isValid():
+        self.cFile = ctypes.create_wrapper(str(path))
+        if self.cFile is NULL or self.cFile.file() is NULL or not self.cFile.file().isValid():
             raise OSError(f'Could not read file {path}')
 
     def __init__(self, path, save_on_exit: bool = False):
@@ -97,7 +97,7 @@ cdef class File:
         This method is not accessible from Python, and is called only once, immediately after
         object creation.
         """
-        
+
         cdef:
             ctypes.PropertyMap cTags = self.cFile.properties()
             ctypes.String cString
@@ -109,7 +109,7 @@ cdef class File:
 
     def save(self):
         """Store the tags currently hold in the `tags` attribute into the file.
-        
+
         If some tags cannot be stored because the underlying metadata format does not support them,
         the unsuccesful tags are returned as a "sub-dictionary" of `self.tags` which will be empty
         if everything is ok.
@@ -143,7 +143,7 @@ cdef class File:
         if not success:
             raise OSError('Unable to save tags: Unknown OS error')
         return propertyMapToDict(cRemaining)
-    
+
     def removeUnsupportedProperties(self, properties):
         """This is a direct binding for the corresponding TagLib method."""
         if not self.cFile:
@@ -174,31 +174,31 @@ cdef class File:
         def __get__(self):
             self.check_closed()
             return self.cFile.audioProperties().length()
-            
+
     property bitrate:
         def __get__(self):
             self.check_closed()
             return self.cFile.audioProperties().bitrate()
-    
+
     property sampleRate:
         def __get__(self):
             self.check_closed()
             return self.cFile.audioProperties().sampleRate()
-            
+
     property channels:
         def __get__(self):
             self.check_closed()
             return self.cFile.audioProperties().channels()
-    
+
     property readOnly:
         def __get__(self):
             self.check_closed()
-            return self.cFile.readOnly()
+            return self.cFile.file().readOnly()
 
     cdef check_closed(self):
         if self.is_closed:
             raise ValueError('I/O operation on closed file.')
-        
+
     def __enter__(self):
         return self
 
