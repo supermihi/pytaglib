@@ -1,4 +1,5 @@
 import hashlib
+import os
 import platform
 import shutil
 import subprocess
@@ -8,22 +9,24 @@ import urllib.request
 from argparse import ArgumentParser
 from pathlib import Path
 
-is_x64 = sys.maxsize > 2**32
+is_x64 = sys.maxsize > 2 ** 32
 arch = "x64" if is_x64 else "x32"
 system = platform.system()
 python_version = platform.python_version()
 here = Path(__file__).resolve().parent
-default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
 
 taglib_version = "2.0"
 taglib_release = f"https://github.com/taglib/taglib/archive/refs/tags/v{taglib_version}.tar.gz"
 taglib_sha256sum = "e36ea877a6370810b97d84cf8f72b1e4ed205149ab3ac8232d44c850f38a2859"
 
+utfcpp_version = "4.0.5"
+utfcpp_release = f"https://github.com/nemtrif/utfcpp/archive/refs/tags/v{utfcpp_version}.tar.gz"
+
 
 class Configuration:
     def __init__(self):
-        self.tl_install_dir = default_taglib_path
         self.build_path = here / "build"
+        self.tl_install_dir = self.build_path / "taglib" / f"{system}-{arch}-py{python_version}"
         self.clean = False
 
     @property
@@ -31,33 +34,63 @@ class Configuration:
         return self.build_path / f"taglib-{taglib_version}.tar.gz"
 
     @property
+    def utfcpp_download_dest(self):
+        return self.build_path / f"utfcpp-{utfcpp_version}.tar.gz"
+
+    @property
     def tl_extract_dir(self):
         return self.build_path / f"taglib-{taglib_version}"
 
+    @property
+    def utfcpp_extract_dir(self):
+        return self.build_path / f"utfcpp-{utfcpp_version}"
 
-def download(config: Configuration):
-    target = config.tl_download_dest
+    @property
+    def utfcpp_include_dir(self):
+        return self.utfcpp_extract_dir / "source"
+
+
+def _download_file(url: str, target: Path, sha256sum: str = None):
     if target.exists():
         print("skipping download, file exists")
-    else:
-        print(f"downloading taglib {taglib_version} ...")
-        response = urllib.request.urlopen(taglib_release)
-        data = response.read()
-        target.parent.mkdir(exist_ok=True, parents=True)
-        target.write_bytes(data)
+        return
+    print(f"downloading {url} ...")
+    response = urllib.request.urlopen(url)
+    data = response.read()
+    target.parent.mkdir(exist_ok=True, parents=True)
+    target.write_bytes(data)
+    if sha256sum is None:
+        return
     the_hash = hashlib.sha256(target.read_bytes()).hexdigest()
     if the_hash != taglib_sha256sum:
         error = f'checksum of downloaded file ({the_hash}) does not match expected hash ({taglib_sha256sum})'
         raise RuntimeError(error)
 
 
+def download(config: Configuration):
+    _download_file(taglib_release, config.tl_download_dest, taglib_sha256sum)
+    _download_file(utfcpp_release, config.utfcpp_download_dest)
+
+
+def _extract_tar(archive: Path, target: Path):
+    if target.exists():
+        print(f"extracted directory {target} found; skipping tar")
+        return
+    print(f"extracting {archive} ...")
+    tar = tarfile.open(archive)
+    tar.extractall(target.parent)
+
+
 def extract(config: Configuration):
-    if config.tl_extract_dir.exists():
-        print("extracted taglib found. Skipping tar")
-    else:
-        print("extracting tarball")
-        tar = tarfile.open(config.tl_download_dest)
-        tar.extractall(config.tl_extract_dir.parent)
+    _extract_tar(config.tl_download_dest, config.tl_extract_dir)
+    _extract_tar(config.utfcpp_download_dest, config.utfcpp_extract_dir)
+
+
+def copy_utfcpp(config: Configuration):
+    target = config.tl_extract_dir / "3rdparty" / "utfcpp"
+    if target.exists():
+        shutil.rmtree(target)
+    shutil.copytree(config.utfcpp_extract_dir, target)
 
 
 def cmake_clean(config: Configuration):
@@ -87,6 +120,7 @@ def cmake_config(config: Configuration):
     elif system == "Linux":
         args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
     args.append(f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}")
+    args.append(f"-DCMAKE_CXX_FLAGS=-I{config.tl_extract_dir / '3rdparty' / 'utfcpp' / 'source'}")
     args.append(".")
     config.tl_install_dir.mkdir(exist_ok=True, parents=True)
     call_cmake(config, *args)
@@ -134,15 +168,16 @@ def run():
     print(f"building taglib on {system}, arch {arch}, for python {python_version} ...")
     config = parse_args()
     tag_lib = (
-        config.tl_install_dir
-        / "lib"
-        / ("tag.lib" if system == "Windows" else "libtag.a")
+            config.tl_install_dir
+            / "lib"
+            / ("tag.lib" if system == "Windows" else "libtag.a")
     )
     if tag_lib.exists() and not config.clean:
         print("installed TagLib found, exiting")
         return
     download(config)
     extract(config)
+    copy_utfcpp(config)
     cmake_clean(config)
     cmake_config(config)
     cmake_build(config)
