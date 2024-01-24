@@ -93,7 +93,7 @@ cdef class File:
 
     cdef void readProperties(self):
         """Convert the Taglib::PropertyMap of the wrapped Taglib::File object into a python dict.
-        
+
         This method is not accessible from Python, and is called only once, immediately after
         object creation.
         """
