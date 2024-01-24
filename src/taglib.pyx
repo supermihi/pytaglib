@@ -173,7 +173,7 @@ cdef class File:
     property length:
         def __get__(self):
             self.check_closed()
-            return self.cFile.audioProperties().length()
+            return self.cFile.audioProperties().lengthInMilliseconds() / 1_000
 
     property bitrate:
         def __get__(self):
