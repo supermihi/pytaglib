@@ -53,9 +53,6 @@ cdef extern from 'taglib/audioproperties.h' namespace 'TagLib::AudioProperties':
         Average = 1
         Accurate = 2
 
-cdef extern from 'taglib/tiostream.h' namespace 'TagLib':
-    ctypedef FileName
-
 cdef extern from 'taglib/tfile.h' namespace 'TagLib':
     cdef cppclass File:
         AudioProperties *audioProperties()
@@ -67,9 +64,16 @@ cdef extern from 'taglib/tfile.h' namespace 'TagLib':
         void removeUnsupportedProperties(StringList&)
 
 
+cdef extern from 'taglib/tiostream.h' namespace 'TagLib':
+    IF UNAME_SYSNAME != "Windows":
+        ctypedef char* FileName
+    ELSE:
+        cdef cppclass FileName:
+            FileName(const char*)
+
 cdef extern from 'taglib/fileref.h' namespace 'TagLib':
     cdef cppclass FileRef:
-        FileRef(const char*, boolean, ReadStyle) except +
+        FileRef(FileName, boolean, ReadStyle) except +
         File* file()
 
         AudioProperties *audioProperties()
@@ -77,9 +81,13 @@ cdef extern from 'taglib/fileref.h' namespace 'TagLib':
         PropertyMap properties()
         PropertyMap setProperties(PropertyMap&)
         void removeUnsupportedProperties(StringList&)
-cdef inline FileRef* create_wrapper(unicode path) except +:
-    cdef FileName fn = path.encode('utf-8')
-    return new FileRef(fn,  True, ReadStyle.Average)
+
+cdef inline FileRef* create_wrapper(char* path) except +:
+    IF UNAME_SYSNAME != "Windows":
+        return new FileRef(path,  True, ReadStyle.Average)
+    ELSE:
+        cdef FileName fn = FileName(path)
+        return new FileRef(fn, True, ReadStyle.Average)
 
 cdef extern from 'taglib/taglib.h':
     int TAGLIB_MAJOR_VERSION

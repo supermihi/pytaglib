@@ -81,7 +81,7 @@ cdef class File:
                 path = path.decode('utf-8')
             path = Path(path)
         self.path = path
-        self.cFile = ctypes.create_wrapper(str(path))
+        self.cFile = ctypes.create_wrapper(str(path).encode('utf-8'))
         if self.cFile is NULL or self.cFile.file() is NULL or not self.cFile.file().isValid():
             raise OSError(f'Could not read file {path}')
 
