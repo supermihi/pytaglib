@@ -15,9 +15,9 @@ python_version = platform.python_version()
 here = Path(__file__).resolve().parent
 default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
 
-taglib_version = "1.13.1"
+taglib_version = "2.0"
 taglib_release = f"https://github.com/taglib/taglib/archive/refs/tags/v{taglib_version}.tar.gz"
-taglib_sha256sum = "c8da2b10f1bfec2cd7dbfcd33f4a2338db0765d851a50583d410bacf055cfd0b"
+taglib_sha256sum = "e36ea877a6370810b97d84cf8f72b1e4ed205149ab3ac8232d44c850f38a2859"
 
 
 class Configuration:
@@ -46,7 +46,9 @@ def download(config: Configuration):
         target.parent.mkdir(exist_ok=True, parents=True)
         target.write_bytes(data)
     the_hash = hashlib.sha256(target.read_bytes()).hexdigest()
-    assert the_hash == taglib_sha256sum
+    if the_hash != taglib_sha256sum:
+        error = f'checksum of downloaded file ({the_hash}) does not match expected hash ({taglib_sha256sum})'
+        raise RuntimeError(error)
 
 
 def extract(config: Configuration):
