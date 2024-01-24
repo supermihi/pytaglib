@@ -26,7 +26,7 @@ jobs:
           key: taglib-windows-${{ hashFiles('build_taglib.py') }}
       - name: Install TagLib (Linux)
         if: ${{ runner.os == 'Linux' }}
-        run: sudo apt-get install -y libtag1-dev
+        run: sudo apt-get install -y libutfcpp-dev
       - name: install pip dependencies (Linux)
         if: ${{ runner.os == 'Linux' }}
         run: |
