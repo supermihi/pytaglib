@@ -42,7 +42,7 @@ cdef extern from 'taglib/tpropertymap.h' namespace 'TagLib':
 
 cdef extern from 'taglib/audioproperties.h' namespace 'TagLib':
     cdef cppclass AudioProperties:
-        int length()
+        int lengthInMilliseconds()
         int bitrate()
         int sampleRate()
         int channels()
