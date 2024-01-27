@@ -13,6 +13,7 @@ jobs:
       CIBW_BUILD: "cp311-*"
       CIBW_ARCHS: auto64
       CIBW_ARCHS_MACOS: "x86_64 arm64"
+      MACOSX_DEPLOYMENT_TARGET: "10.14"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
