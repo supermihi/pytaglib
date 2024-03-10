@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest] #, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
       #CIBW_SKIP: "*p36-* *p37-*"
@@ -41,7 +41,7 @@ jobs:
           path: dist
           retention-days: 5
       - name: build binary wheels
-        uses: pypa/cibuildwheel@v2.16.2
+        uses: pypa/cibuildwheel@v2.16.5
       - name: upload wheels
         uses: actions/upload-artifact@v3
         with:

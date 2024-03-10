@@ -81,7 +81,7 @@ cdef class File:
                 path = path.decode('utf-8')
             path = Path(path)
         self.path = path
-        self.cFile = ctypes.create_wrapper(str(path).encode('utf-8'))
+        self.cFile = ctypes.create_wrapper(str(path))
         if self.cFile is NULL or self.cFile.file() is NULL or not self.cFile.file().isValid():
             raise OSError(f'Could not read file {path}')
 
@@ -93,7 +93,7 @@ cdef class File:
 
     cdef void readProperties(self):
         """Convert the Taglib::PropertyMap of the wrapped Taglib::File object into a python dict.
-        
+
         This method is not accessible from Python, and is called only once, immediately after
         object creation.
         """

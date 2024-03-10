@@ -7,9 +7,16 @@
 
 """This file contains the external C/C++ definitions used by taglib.pyx."""
 
+from libc.stddef cimport wchar_t
 from libcpp.list cimport list
 from libcpp.map cimport map
 from libcpp.string cimport string
+from cpython.mem cimport PyMem_Free
+from cpython.object cimport PyObject
+
+
+cdef extern from "Python.h":
+    cdef wchar_t *PyUnicode_AsWideCharString(PyObject *path, Py_ssize_t *size)
 
 
 cdef extern from 'taglib/tstring.h' namespace 'TagLib::String':
@@ -69,7 +76,7 @@ cdef extern from 'taglib/tiostream.h' namespace 'TagLib':
         ctypedef char* FileName
     ELSE:
         cdef cppclass FileName:
-            FileName(const char*)
+            FileName(const wchar_t*)
 
 cdef extern from 'taglib/fileref.h' namespace 'TagLib':
     cdef cppclass FileRef:
@@ -82,12 +89,14 @@ cdef extern from 'taglib/fileref.h' namespace 'TagLib':
         PropertyMap setProperties(PropertyMap&)
         void removeUnsupportedProperties(StringList&)
 
-cdef inline FileRef* create_wrapper(char* path) except +:
+cdef inline FileRef* create_wrapper(unicode path) except +:
     IF UNAME_SYSNAME != "Windows":
-        return new FileRef(path,  True, ReadStyle.Average)
+        return new FileRef(path.encode('utf-8'), True, ReadStyle.Average)
     ELSE:
-        cdef FileName fn = FileName(path)
-        return new FileRef(fn, True, ReadStyle.Average)
+        cdef wchar_t *wchar_path = PyUnicode_AsWideCharString(<PyObject*>path, NULL)
+        cdef FileRef *file_ref = new FileRef(FileName(wchar_path), True, ReadStyle.Average)
+        PyMem_Free(wchar_path)
+        return file_ref
 
 cdef extern from 'taglib/taglib.h':
     int TAGLIB_MAJOR_VERSION
