@@ -17,10 +17,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - name: cache native taglib build artifacts
+      - name: cache native build artifacts
         uses: actions/cache@v4
         with:
-          path: build/taglib
+          path: build
           key: taglib-${{ matrix.os }}-${{ hashFiles('build_taglib.py') }}
       - name: install pip dependencies (Linux)
         if: ${{ runner.os == 'Linux' }}
