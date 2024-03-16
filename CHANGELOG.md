@@ -3,6 +3,9 @@
 # NEXT
 
 - [!125](https://github.com/supermihi/pytaglib/pull/125): stop building wheels for out-of-support Python versions 3.6 and 3.7
+- [!123](https://github.com/supermihi/pytaglib/pull/123): upgrade to Taglib 2.0
+
+  Thanks to [Urs Fleisch](https://github.com/ufleisch) for help
 
 ## pytaglib 2.1.0 (2023-11-17)
 
