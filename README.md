@@ -12,10 +12,9 @@ pytaglib is a very thin wrapper (≈150 lines of [code](src/taglib.pyx)) around 
 
 ## News
 
-_2023-11-17_ pytaglib-2.1.0 has been released. Major improvements:
+_2024-03-16_ pytaglib-3.0.0 has been released. Major improvements:
 
-- [!118](https://github.com/supermihi/pytaglib/pull/118): update Taglib version for binary wheels to 1.13.1
-- [!116](https://github.com/supermihi/pytaglib/pull/116): fix Python 3.12 build
+- [!123](https://github.com/supermihi/pytaglib/pull/123): upgrade to Taglib 2.0
 
 For a full list of changes in this and previous releases, see the [Changelog](CHANGELOG.md).
 
@@ -88,7 +87,9 @@ If you just want to create a binary wheel for your platform, use [build](https:/
 
         pip install --upgrade build # ensure build is installed
         python -m build
+
 which will place the wheel inside the `dist` directory.
+
 ### Compilation: Windows
 
 Install MS Visual Studio Build Tools (or the complete IE) and include the correct compiler version as detailed [here](https://wiki.python.org/moin/WindowsCompilers). Also enable _cmake_ in the Visual Studio Installer.
