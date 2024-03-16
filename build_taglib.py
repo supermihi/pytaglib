@@ -9,8 +9,6 @@ import urllib.request
 from argparse import ArgumentParser
 from pathlib import Path
 
-is_x64 = sys.maxsize > 2 ** 32
-arch = "x64" if is_x64 else "x32"
 system = platform.system()
 python_version = platform.python_version()
 python_implementation = sys.implementation.name
@@ -27,7 +25,7 @@ utfcpp_release = f"https://github.com/nemtrif/utfcpp/archive/refs/tags/v{utfcpp_
 class Configuration:
     def __init__(self):
         self.build_path = here / "build"
-        self.tl_install_dir = self.build_path / "taglib" / f"{system}-{arch}-{python_implementation}-{python_version}"
+        self.tl_install_dir = self.build_path / "taglib" / f"{system}-{python_implementation}-{python_version}"
         self.clean = False
 
     @property
@@ -116,8 +114,7 @@ def cmake_config(config: Configuration):
     print("running cmake ...")
     args = ["-DWITH_ZLIB=OFF"]  # todo fix building wheels with zlib support
     if system == "Windows":
-        cmake_arch = "x64" if is_x64 else "Win32"
-        args += ["-A", cmake_arch]
+        args += ["-A", "x64"]
     elif system == "Linux":
         args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
     args.append(f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}")
@@ -166,7 +163,7 @@ def parse_args() -> Configuration:
 
 
 def run():
-    print(f"building taglib on {system}, arch {arch}, for python {python_version} ...")
+    print(f"building taglib on {system}, for {python_implementation} {python_version} ...")
     config = parse_args()
     tag_lib = (
             config.tl_install_dir
