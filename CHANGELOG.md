@@ -1,6 +1,9 @@
 # Changelog
 
-# NEXT
+# pytaglib 3.0.0 (2024-03-16)
+
+This is the first release of pytaglib that targets [Taglib 2.0](https://github.com/taglib/taglib/releases/tag/v2.0),
+a major upgrade of the underlying C++ Taglib library.
 
 - [!125](https://github.com/supermihi/pytaglib/pull/125): stop building wheels for out-of-support Python versions 3.6 and 3.7
 - [!123](https://github.com/supermihi/pytaglib/pull/123): upgrade to Taglib 2.0
