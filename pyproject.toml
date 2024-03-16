@@ -10,7 +10,7 @@ description = "cross-platform, Python audio metadata (\"tagging\") library based
 authors = [
     { name = "Michael Helmling", email = "michaelhelmling@posteo.de" }
 ]
-readme = "Readme.md"
+readme = "README.md"
 license = { text = "GPLv3+" }
 classifiers = [
     "Development Status :: 5 - Production/Stable",
