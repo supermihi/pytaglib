@@ -24,9 +24,6 @@ jobs:
         with:
           path: build/taglib
           key: taglib-windows-${{ hashFiles('build_taglib.py') }}
-      - name: Install TagLib (Linux)
-        if: ${{ runner.os == 'Linux' }}
-        run: sudo apt-get install -y libtag1-dev
       - name: install pip dependencies (Linux)
         if: ${{ runner.os == 'Linux' }}
         run: |
@@ -42,7 +39,7 @@ jobs:
           path: dist
           retention-days: 5
       - name: build binary wheels
-        uses: pypa/cibuildwheel@v2.16.2
+        uses: pypa/cibuildwheel@v2.17.0
       - name: upload wheels
         uses: actions/upload-artifact@v3
         with:

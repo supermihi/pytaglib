@@ -1,5 +1,11 @@
 # Changelog
+
+# NEXT
+
+- [!125](https://github.com/supermihi/pytaglib/pull/125): stop building wheels for out-of-support Python versions 3.6 and 3.7
+
 ## pytaglib 2.1.0 (2023-11-17)
+
 - [!118](https://github.com/supermihi/pytaglib/pull/118): update Taglib version for binary wheels to 1.13.1
 - [!117](https://github.com/supermihi/pytaglib/pull/117): modernize packaging / tooling
 - [!116](https://github.com/supermihi/pytaglib/pull/116): fix Python 3.12 build
