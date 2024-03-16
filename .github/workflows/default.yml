@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.x"
       - name: cache built taglib on windows (very slow)
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ runner.os == 'Windows' }}
         with:
           path: build/taglib
