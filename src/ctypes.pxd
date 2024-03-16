@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2018 Michael Helmling, michaelhelmling@posteo.de
+# Copyright 2011-2024 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -13,6 +13,10 @@ from libcpp.map cimport map
 from libcpp.string cimport string
 from cpython.mem cimport PyMem_Free
 from cpython.object cimport PyObject
+
+
+cdef extern from "Python.h":
+    cdef wchar_t *PyUnicode_AsWideCharString(PyObject *path, Py_ssize_t *size)
 
 
 cdef extern from 'taglib/tstring.h' namespace 'TagLib::String':
@@ -42,14 +46,19 @@ cdef extern from 'taglib/tpropertymap.h' namespace 'TagLib':
         StringList& unsupportedData()
         int size()
 
-    
+
 cdef extern from 'taglib/audioproperties.h' namespace 'TagLib':
     cdef cppclass AudioProperties:
-        int length()
+        int lengthInMilliseconds()
         int bitrate()
         int sampleRate()
         int channels()
 
+cdef extern from 'taglib/audioproperties.h' namespace 'TagLib::AudioProperties':
+    cdef enum ReadStyle:
+        Fast = 0
+        Average = 1
+        Accurate = 2
 
 cdef extern from 'taglib/tfile.h' namespace 'TagLib':
     cdef cppclass File:
@@ -62,21 +71,32 @@ cdef extern from 'taglib/tfile.h' namespace 'TagLib':
         void removeUnsupportedProperties(StringList&)
 
 
-IF UNAME_SYSNAME == "Windows":
-    cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
-        cdef File * create(const wchar_t *) except +
-    cdef extern from "Python.h":
-        cdef wchar_t *PyUnicode_AsWideCharString(PyObject *path, Py_ssize_t *size)
-    cdef inline File* create_wrapper(unicode path):
+cdef extern from 'taglib/tiostream.h' namespace 'TagLib':
+    IF UNAME_SYSNAME != "Windows":
+        ctypedef char* FileName
+    ELSE:
+        cdef cppclass FileName:
+            FileName(const wchar_t*)
+
+cdef extern from 'taglib/fileref.h' namespace 'TagLib':
+    cdef cppclass FileRef:
+        FileRef(FileName, boolean, ReadStyle) except +
+        File* file()
+
+        AudioProperties *audioProperties()
+        bint save() except +
+        PropertyMap properties()
+        PropertyMap setProperties(PropertyMap&)
+        void removeUnsupportedProperties(StringList&)
+
+cdef inline FileRef* create_wrapper(unicode path) except +:
+    IF UNAME_SYSNAME != "Windows":
+        return new FileRef(path.encode('utf-8'), True, ReadStyle.Average)
+    ELSE:
         cdef wchar_t *wchar_path = PyUnicode_AsWideCharString(<PyObject*>path, NULL)
-        cdef File * file = create(wchar_path)
+        cdef FileRef *file_ref = new FileRef(FileName(wchar_path), True, ReadStyle.Average)
         PyMem_Free(wchar_path)
-        return file
-ELSE:
-    cdef extern from 'taglib/fileref.h' namespace 'TagLib::FileRef':
-        cdef File* create(const char*) except +
-    cdef inline File* create_wrapper(unicode path):
-        return create(path.encode('utf-8'))
+        return file_ref
 
 cdef extern from 'taglib/taglib.h':
     int TAGLIB_MAJOR_VERSION

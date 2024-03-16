@@ -47,6 +47,8 @@ def extension_kwargs():
                 str(taglib_install_dir / "lib"),
                 str(taglib_install_dir / "lib64"),
             ],
+            extra_compile_args=["-std=c++17"],
+            extra_link_args=["-std=c++17"],
         )
 
 
