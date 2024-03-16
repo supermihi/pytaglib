@@ -9,6 +9,7 @@ a major upgrade of the underlying C++ Taglib library.
 - [!123](https://github.com/supermihi/pytaglib/pull/123): upgrade to Taglib 2.0
 
   Thanks to [Urs Fleisch](https://github.com/ufleisch) for help
+- [#135](https://github.com/supermihi/pytaglib/pull/135): natively build arm64 wheels on macos-14 runner
 
 ## pytaglib 2.1.0 (2023-11-17)
 

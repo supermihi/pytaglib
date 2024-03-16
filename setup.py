@@ -15,12 +15,9 @@ from pathlib import Path
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 
-is_x64 = sys.maxsize > 2 ** 32
-arch = "x64" if is_x64 else "x32"
-system = platform.system()
-python_version = platform.python_version()
+sys_identifier = f"{platform.system()}-{platform.machine()}-{sys.implementation.name}-{platform.python_version()}"
 here = Path(__file__).resolve().parent
-default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
+default_taglib_path = here / "build" / sys_identifier / "taglib"
 
 src = Path("src")
 

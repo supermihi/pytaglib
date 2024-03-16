@@ -9,10 +9,7 @@ import urllib.request
 from argparse import ArgumentParser
 from pathlib import Path
 
-is_x64 = sys.maxsize > 2 ** 32
-arch = "x64" if is_x64 else "x32"
 system = platform.system()
-python_version = platform.python_version()
 here = Path(__file__).resolve().parent
 
 taglib_version = "2.0"
@@ -22,20 +19,22 @@ taglib_sha256sum = "e36ea877a6370810b97d84cf8f72b1e4ed205149ab3ac8232d44c850f38a
 utfcpp_version = "4.0.5"
 utfcpp_release = f"https://github.com/nemtrif/utfcpp/archive/refs/tags/v{utfcpp_version}.tar.gz"
 
+sys_identifier = f"{system}-{platform.machine()}-{sys.implementation.name}-{platform.python_version()}"
 
 class Configuration:
     def __init__(self):
-        self.build_path = here / "build"
-        self.tl_install_dir = self.build_path / "taglib" / f"{system}-{arch}-py{python_version}"
+        self.build_base = here / "build"
+        self.build_path = self.build_base / sys_identifier
+        self.tl_install_dir = self.build_path / "taglib"
         self.clean = False
 
     @property
     def tl_download_dest(self):
-        return self.build_path / f"taglib-{taglib_version}.tar.gz"
+        return self.build_base / f"taglib-{taglib_version}.tar.gz"
 
     @property
     def utfcpp_download_dest(self):
-        return self.build_path / f"utfcpp-{utfcpp_version}.tar.gz"
+        return self.build_base / f"utfcpp-{utfcpp_version}.tar.gz"
 
     @property
     def tl_extract_dir(self):
@@ -115,8 +114,7 @@ def cmake_config(config: Configuration):
     print("running cmake ...")
     args = ["-DWITH_ZLIB=OFF"]  # todo fix building wheels with zlib support
     if system == "Windows":
-        cmake_arch = "x64" if is_x64 else "Win32"
-        args += ["-A", cmake_arch]
+        args += ["-A", "x64"]
     elif system == "Linux":
         args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
     args.append(f"-DCMAKE_INSTALL_PREFIX={config.tl_install_dir}")
@@ -165,7 +163,7 @@ def parse_args() -> Configuration:
 
 
 def run():
-    print(f"building taglib on {system}, arch {arch}, for python {python_version} ...")
+    print(f"building taglib on {sys_identifier} ...")
     config = parse_args()
     tag_lib = (
             config.tl_install_dir
