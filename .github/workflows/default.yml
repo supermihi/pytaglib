@@ -19,12 +19,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - name: cache built taglib on windows (very slow)
+      - name: cache native taglib build artifacts
         uses: actions/cache@v4
-        if: ${{ runner.os == 'Windows' }}
         with:
           path: build/taglib
-          key: taglib-windows-${{ hashFiles('build_taglib.py') }}
+          key: taglib-${{ matrix.os }}-${{ hashFiles('build_taglib.py') }}
       - name: install pip dependencies (Linux)
         if: ${{ runner.os == 'Linux' }}
         run: |
