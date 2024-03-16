@@ -42,9 +42,9 @@ jobs:
       - name: build binary wheels
         uses: pypa/cibuildwheel@v2.17.0
       - name: upload wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: bdist
+          name: bdist-${{ matrix.os }}
           path: ./wheelhouse/*.whl
           retention-days: 5
   publish:
@@ -53,15 +53,16 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     steps:
       - name: download source wheel
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: sdist
           path: wheels
       - name: download binary wheels
         uses: actions/download-artifact@v3
         with:
-          name: bdist
+          pattern: bdist-*
           path: wheels
+          merge-multiple: true
       - name: publish package pypi.org
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
