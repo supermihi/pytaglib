@@ -19,8 +19,9 @@ is_x64 = sys.maxsize > 2 ** 32
 arch = "x64" if is_x64 else "x32"
 system = platform.system()
 python_version = platform.python_version()
+python_implementation = sys.implementation.name
 here = Path(__file__).resolve().parent
-default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-py{python_version}"
+default_taglib_path = here / "build" / "taglib" / f"{system}-{arch}-{python_implementation}-{python_version}"
 
 src = Path("src")
 
