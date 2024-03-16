@@ -33,7 +33,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: python -m build --sdist
       - name: upload sdist (Linux)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ runner.os == 'Linux' }}
         with:
           name: sdist
@@ -42,7 +42,7 @@ jobs:
       - name: build binary wheels
         uses: pypa/cibuildwheel@v2.17.0
       - name: upload wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bdist
           path: ./wheelhouse/*.whl
