@@ -36,7 +36,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: taglib-${{ matrix.os }}-${{ hashFiles('build_taglib.py') }}
+          key: taglib-${{ matrix.os }}-${{ hashFiles('build_native_taglib.py') }}
       - name: build binary wheels
         uses: pypa/cibuildwheel@v2.17.0
       - name: upload wheels
