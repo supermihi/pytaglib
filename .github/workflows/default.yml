@@ -56,7 +56,7 @@ jobs:
           name: sdist
           path: wheels
       - name: download binary wheels
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           pattern: bdist-*
           path: wheels
