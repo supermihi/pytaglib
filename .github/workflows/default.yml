@@ -30,7 +30,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: python -m build --sdist
       - name: upload sdist (Linux)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ runner.os == 'Linux' }}
         with:
           name: sdist
