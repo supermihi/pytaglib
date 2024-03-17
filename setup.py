@@ -8,21 +8,18 @@
 #
 
 import os
-import platform
 import sys
 from pathlib import Path
 
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 
-sys_identifier = f"{platform.system()}-{platform.machine()}-{sys.implementation.name}-{platform.python_version()}"
-here = Path(__file__).resolve().parent
-default_taglib_path = here / "build" / sys_identifier / "taglib"
-
 src = Path("src")
 
 
 def extension_kwargs():
+    here = Path(__file__).resolve().parent
+    default_taglib_path = here / "lib" / "taglib-cpp"
     taglib_install_dir = Path(os.environ.get("TAGLIB_HOME", str(default_taglib_path)))
     if sys.platform.startswith("win"):
         # on Windows, we compile static taglib build into the python module

@@ -40,5 +40,5 @@ package-dir = { "" = "src" }
 [tool.cibuildwheel]
 test-extras = ["tests"]
 test-command = "pytest {project}/tests"
-before-build = "python build_taglib.py"
+before-build = "python build_native_taglib.py"
 skip = "cp36-* cp37-*"

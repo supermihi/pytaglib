@@ -64,9 +64,11 @@ and also development tools for Python.
 On Ubuntu, Mint and other Debian-Based distributions, install
 the `libtag1-dev` and `python-dev` packages. On Fedora and friends, these are called `taglib-devel` and `python-devel`, respectively. On a Mac, use HomeBrew to install the `taglib` package. For Windows, see below.
 
-As an alternative, run `python build_taglib.py` in this directory to
-automatically download and build the latest Taglib version into the `build` subdirectory (also works on Windows). This requires Python and a
-suitable compiler to be installed; specific instructions are beyond the
+As an alternative, run `python build_native_taglib.py` in this directory to
+automatically download and build the latest Taglib version into the `lib/taglib-cpp` subdirectory (also works on
+Windows).
+
+This requires Python and a suitable compiler to be installed; specific instructions are beyond the
 scope of this README.
 
 ### Linux: Distribution-Specific Packages
@@ -98,7 +100,7 @@ Then:
 
 - open the VS native tools command prompt
 - navigate to the _pytaglib_ repository
-- run `python build_taglib.py` which will download and build the latest official TagLib release
+- run `python build_native_taglib.py` which will download and build the latest official TagLib release
 - run `python setup.py install`
 
 ## Contact
