@@ -38,7 +38,7 @@ jobs:
           path: build
           key: taglib-${{ matrix.os }}-${{ hashFiles('build_native_taglib.py') }}
       - name: build binary wheels
-        uses: pypa/cibuildwheel@v2.17.0
+        uses: pypa/cibuildwheel@v2.19.1
       - name: upload wheels
         uses: actions/upload-artifact@v4
         with:
