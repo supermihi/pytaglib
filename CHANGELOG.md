@@ -1,4 +1,6 @@
 # Changelog
+# pytaglib 3.0.1 (2025-03-21)
+- [!155](https://github.com/supermihi/pytaglib/pull/155): build wheels for Python 3.13 and MacOS 15
 
 # pytaglib 3.0.0 (2024-03-16)
 
