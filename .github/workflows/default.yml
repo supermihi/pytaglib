@@ -17,7 +17,7 @@ jobs:
       - name: sdist
         run: python -m build --sdist
       - name: upload sdist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: sdist
           path: dist
@@ -40,7 +40,7 @@ jobs:
       - name: build binary wheels
         uses: pypa/cibuildwheel@v2.23.2
       - name: upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: bdist-${{ matrix.os }}
           path: ./wheelhouse/*.whl
