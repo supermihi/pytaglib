@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools", "cython==3.0.11"]
+requires = ["setuptools>=77.0.3", "cython==3.0.11"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pytaglib"
 version = "3.0.1"
-requires-python = ">=3.6"
+requires-python = ">=3.9"
 description = "cross-platform, Python audio metadata (\"tagging\") library based on TagLib"
 authors = [
     { name = "Michael Helmling", email = "michaelhelmling@posteo.de" }
@@ -40,4 +40,4 @@ package-dir = { "" = "src" }
 test-extras = ["tests"]
 test-command = "pytest {project}/tests"
 before-build = "python build_native_taglib.py"
-skip = "cp36-* cp37-*"
+skip = "cp36-* cp37-* cp38-*"
