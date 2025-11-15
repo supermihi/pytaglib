@@ -6,9 +6,9 @@ jobs:
   sdist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.x"
       - name: install pip dependencies
@@ -17,7 +17,7 @@ jobs:
       - name: sdist
         run: python -m build --sdist
       - name: upload sdist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: sdist
           path: dist
@@ -31,16 +31,16 @@ jobs:
       CIBW_SKIP: "*p36-* *p37-* pp*"
       CIBW_ARCHS: auto64
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: cache native build artifacts
         uses: actions/cache@v4
         with:
           path: build
           key: taglib-${{ matrix.os }}-${{ hashFiles('build_native_taglib.py') }}
       - name: build binary wheels
-        uses: pypa/cibuildwheel@v2.23.1
+        uses: pypa/cibuildwheel@v2.23.2
       - name: upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: bdist-${{ matrix.os }}
           path: ./wheelhouse/*.whl
@@ -51,12 +51,12 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     steps:
       - name: download source wheel
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: sdist
           path: wheels
       - name: download binary wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           pattern: bdist-*
           path: wheels
