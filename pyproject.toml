@@ -41,3 +41,4 @@ test-extras = ["tests"]
 test-command = "pytest {project}/tests"
 before-build = "python build_native_taglib.py"
 skip = "cp36-* cp37-* cp38-*"
+enable = ["pypy"]
