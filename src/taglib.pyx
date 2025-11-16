@@ -6,7 +6,6 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
-import os
 
 from libcpp.utility cimport pair
 from pathlib import Path
@@ -81,7 +80,7 @@ cdef class File:
                 path = path.decode('utf-8')
             path = Path(path)
         self.path = path
-        self.cFile = ctypes.create_wrapper(str(path))
+        self.cFile = ctypes.make_fileref(str(path))
         if self.cFile is NULL or self.cFile.file() is NULL or not self.cFile.file().isValid():
             raise OSError(f'Could not read file {path}')
 
@@ -132,7 +131,7 @@ cdef class File:
         # populate cTagdict with the contents of self.tags
         for key, values in self.tags.items():
             cKey = toCStr(key.upper())
-            if isinstance(values, bytes) or isinstance(values, unicode):
+            if isinstance(values, (bytes, str)):
                 # the user has accidentally used a single tag value instead a length-1 list
                 values = [ values ]
             for value in values:
