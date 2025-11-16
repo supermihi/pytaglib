@@ -10,12 +10,15 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 from pathlib import Path
 
-taglib_version = "2.0"
-taglib_url = f"https://github.com/taglib/taglib/archive/refs/tags/v{taglib_version}.tar.gz"
-taglib_sha256sum = "e36ea877a6370810b97d84cf8f72b1e4ed205149ab3ac8232d44c850f38a2859"
+taglib_version = "2.1.1"
+taglib_url = f"https://github.com/taglib/taglib/releases/download/v{taglib_version}/taglib-{taglib_version}.tar.gz"
+taglib_sha256sum = "3716d31f7c83cbf17b67c8cf44dd82b2a2f17e6780472287a16823e70305ddba"
 
-utfcpp_version = "4.0.5"
-utfcpp_url = f"https://github.com/nemtrif/utfcpp/archive/refs/tags/v{utfcpp_version}.tar.gz"
+utfcpp_version = "4.0.8"
+utfcpp_url = (
+    f"https://github.com/nemtrif/utfcpp/archive/refs/tags/v{utfcpp_version}.tar.gz"
+)
+utfcpp_sha256sum = "f808b26d8c3a59def27fea207182ece77a8930bd121a69f80d328ecf3cfef925"
 
 root = Path(__file__).resolve().parent
 
@@ -26,15 +29,18 @@ def run_script():
     config = get_config()
 
     _download(taglib_url, config.taglib_tarball, taglib_sha256sum)
-    _download(utfcpp_url, config.utfcpp_tarball)
+    _download(utfcpp_url, config.utfcpp_tarball, utfcpp_sha256sum)
 
     if config.force or not config.taglib_extract_dir.exists():
         _del_if_exists(config.taglib_extract_dir)
         _del_if_exists(config.utfcpp_extract_dir)
         _extract(config.taglib_tarball, config.taglib_extract_dir)
         _extract(config.utfcpp_tarball, config.utfcpp_extract_dir)
-        shutil.copytree(config.utfcpp_extract_dir, config.taglib_extract_dir / "3rdparty" / "utfcpp",
-                        dirs_exist_ok=True)
+        shutil.copytree(
+            config.utfcpp_extract_dir,
+            config.taglib_extract_dir / "3rdparty" / "utfcpp",
+            dirs_exist_ok=True,
+        )
 
     if config.force or not config.taglib_install_dir.exists():
         _del_if_exists(config.taglib_install_dir)
@@ -91,10 +97,18 @@ def get_config() -> Configuration:
         type=Path,
         default=root / "build" / "cache",
     )
-    parser.add_argument("--force", action="store_true", help="fore clean build even if output already exists")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="fore clean build even if output already exists",
+    )
     args = parser.parse_args()
-    return Configuration(target_dir=args.target.resolve(), cache_dir=args.cache.resolve(), force=args.force,
-                         platform_id=get_platform_id())
+    return Configuration(
+        target_dir=args.target.resolve(),
+        cache_dir=args.cache.resolve(),
+        force=args.force,
+        platform_id=get_platform_id(),
+    )
 
 
 def _download(url: str, target: Path, sha256sum: str = None):
@@ -110,8 +124,8 @@ def _download(url: str, target: Path, sha256sum: str = None):
     if sha256sum is None:
         return
     the_hash = hashlib.sha256(target.read_bytes()).hexdigest()
-    if the_hash != taglib_sha256sum:
-        error = f'checksum of downloaded file ({the_hash}) does not match expected hash ({taglib_sha256sum})'
+    if the_hash != sha256sum:
+        error = f"checksum of downloaded file ({the_hash}) does not match expected hash ({sha256sum})"
         raise RuntimeError(error)
 
 
@@ -128,15 +142,18 @@ def get_platform_id():
 
     In cibuildwheel, the AUDITWHEEL_PLAT environment variable is used for all of these except
     Python version and implementation.
-    - """
-    platform_identifier = os.environ.get('AUDITWHEEL_PLAT', f"{system}-{platform.machine()}")
-    python_identifier = f"{sys.implementation.name}-{sys.version_info[0]}.{sys.version_info[1]}"
+    -"""
+    platform_identifier = os.environ.get(
+        "AUDITWHEEL_PLAT", f"{system}-{platform.machine()}"
+    )
+    python_identifier = (
+        f"{sys.implementation.name}-{sys.version_info[0]}.{sys.version_info[1]}"
+    )
     return f"{platform_identifier}-{python_identifier}"
 
 
 def _extract(archive: Path, target: Path):
-    """Extracts `archive` into `target`.
-    """
+    """Extracts `archive` into `target`."""
     print(f"extracting {archive} to {target} ...")
     tar = tarfile.open(archive)
     tar.extractall(target.parent)
@@ -170,13 +187,7 @@ def cmake_config(source_dir: Path, install_dir: Path):
 def cmake_build(source_dir: Path):
     print("building taglib ...")
     build_configuration = "Release"
-    _cmake(
-        source_dir,
-        "--build",
-        ".",
-        "--config",
-        build_configuration
-    )
+    _cmake(source_dir, "--build", ".", "--config", build_configuration)
     print("installing cmake ...")
     _cmake(source_dir, "--install", ".", "--config", build_configuration)
 
