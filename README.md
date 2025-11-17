@@ -8,7 +8,7 @@ pytaglib is a [Python](https://www.python.org) audio tagging library. It is cros
 - support arbitrary, non-standard tag names,
 - support multiple values per tag.
 
-pytaglib is a very thin wrapper (≈150 lines of [code](src/taglib.pyx)) around the fast and rock-solid [TagLib](https://taglib.org/) C++ library.
+pytaglib is a very thin wrapper around the fast and rock-solid [TagLib](https://taglib.org/) C++ library.
 
 ## News
 
@@ -20,7 +20,7 @@ For a full list of changes in this and previous releases, see the [Changelog](CH
 
 ## Install
 
-Use [pip](https://pip.pypa.io/en/stable/):
+Use your favorite Python package manager to install the `pytaglib` package. Example when using [pip](https://pip.pypa.io/en/stable/):
 
         pip install pytaglib
 
@@ -78,17 +78,13 @@ scope of this README.
 
 ### Manual Compilation: General
 
-You can download or checkout the sources and compile manually:
+To create a binary wheel for your platform, use any PEP-517 compatible build frontend. Example using [build](https://github.com/pypa/build):
 
-        pip install .
-        # if you want to run the unit tests, use these commands instead
-        # pip install '.[tests]'
-        # python -m pytest
-
-If you just want to create a binary wheel for your platform, use [build](https://github.com/pypa/build):
-
-        pip install --upgrade build # ensure build is installed
         python -m build
+
+or with uv:
+
+        uv build
 
 which will place the wheel inside the `dist` directory.
 
@@ -103,6 +99,15 @@ Then:
 - run `python build_native_taglib.py` which will download and build the latest official TagLib release
 - run `python setup.py install`
 
+## Development
+
+To start hacking (contributions welcome!), clone the repository and set up a project environment with your favorite tool. I use [uv](https://docs.astral.sh/uv/), where you should need only two commands for most workflows:
+
+    # set up virtual environment, run cythonize, compile
+    $ uv sync --reinstall
+
+    # run tests
+    $ uv run pytest
 ## Contact
 
 For bug reports or feature requests, please use the

@@ -1,5 +1,6 @@
 # Changelog
 # NEXT
+- [!183](https://github.com/supermihi/pytaglib/pull/183): re-enable binary wheels for PyPy
 - [!180](https://github.com/supermihi/pytaglib/pull/180): remove deprecated Cython IF by implementing custom C++ FileRef factory
 - [!181](https://github.com/supermihi/pytaglib/pull/181): no longer build for Mac OS 13
 - [!182](https://github.com/supermihi/pytaglib/pull/182): bump bundled taglib to v2.1.1 and bundled utfcpp to 4.0.8
