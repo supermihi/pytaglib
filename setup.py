@@ -20,26 +20,29 @@ src = Path("src")
 def extension_kwargs():
     here = Path(__file__).resolve().parent
     default_taglib_path = here / "lib" / "taglib-cpp"
-    taglib_install_dir = Path(os.environ.get("TAGLIB_HOME", str(default_taglib_path)))
-
+    taglib_dir = Path(os.environ.get("TAGLIB_HOME", str(default_taglib_path)))
     result = {
-        "include_dirs": [str(taglib_install_dir / "include"), str(src)],
+        "include_dirs": [str(taglib_dir / "include"), str(src)],
+        "libraries": [],
+        "library_dirs": [],
     }
-    if sys.platform.startswith("win"):
-        # on Windows, we compile static taglib build into the python module
-        taglib_lib = taglib_install_dir / "lib" / "tag.lib"
-        if not taglib_lib.exists():
-            raise FileNotFoundError(f"{taglib_lib} not found")
+    build_static = taglib_dir.exists()
+    if build_static:
+        lib_dir = taglib_dir / "lib"
         result["define_macros"] = [("TAGLIB_STATIC", None)]
-        result["extra_objects"] = [str(taglib_lib)]
+        if sys.platform.startswith("win"):
+            result["libraries"].append("tag")
+            result["library_dirs"].append(str(lib_dir))
+        else:
+            result["extra_objects"] = [str(lib_dir / "libtag.a")]
     else:
-        # On unix systems, use the dynamic library. Still, add the (default) TAGLIB_HOME
-        # to allow overriding system taglib with custom build.
+        # fall back to dynamic linking at standard locations
         result["libraries"] = ["tag"]
         result["library_dirs"] = [
-            str(taglib_install_dir / "lib"),
-            str(taglib_install_dir / "lib64"),
+            str(taglib_dir / "lib"),
+            str(taglib_dir / "lib64"),
         ]
+    if sys.platform.startswith("darwin"):
         result["extra_compile_args"] = ["-std=c++17"]
         result["extra_link_args"] = ["-std=c++17"]
     return result
