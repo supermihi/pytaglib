@@ -13,3 +13,6 @@ dist
 .vscode
 /src/taglib.cpp
 wheelhouse
+uv.lock
+# bundled taglib
+/lib
