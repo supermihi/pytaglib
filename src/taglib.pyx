@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
-# cython: language_level = 3
 # Copyright 2021 Michael Helmling, michaelhelmling@posteo.de
 #
 # This program is free software; you can redistribute it and/or modify
