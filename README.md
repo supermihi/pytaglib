@@ -12,9 +12,11 @@ pytaglib is a very thin wrapper around the fast and rock-solid [TagLib](https://
 
 ## News
 
-_2024-03-16_ pytaglib-3.0.0 has been released. Major improvements:
+_2025-11-17_ pytaglib-3.1.0 has been released.
 
-- [!123](https://github.com/supermihi/pytaglib/pull/123): upgrade to Taglib 2.0
+- build wheels for recent Python versions (up to 3.14)
+- build wheels for PyPy again
+- bump bundled taglib (in wheels) to v2.1.1
 
 For a full list of changes in this and previous releases, see the [Changelog](CHANGELOG.md).
 
