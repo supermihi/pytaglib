@@ -16,13 +16,13 @@ cdef str toStr(ctypes.String s):
     """Converts TagLib::String to a Python str."""
     return s.to8Bit(True).decode('UTF-8', 'replace')
 
-cdef ctypes.String toCStr(value):
+cdef ctypes.String toCStr(value: str | bytes):
     """Convert a Python string or bytes to TagLib::String"""
     if isinstance(value, str):
         value = value.encode('UTF-8')
     return ctypes.String(value, ctypes.UTF8)
 
-cdef dict propertyMapToDict(ctypes.PropertyMap map):
+cdef dict[str, str] propertyMapToDict(ctypes.PropertyMap map):
     """Convert a TagLib::PropertyMap to a dict mapping unicode string to list of unicode strings."""
     cdef:
         ctypes.StringList values
@@ -68,7 +68,7 @@ cdef class File:
     >>> f.save()
     """
     cdef ctypes.FileRef *cFile
-    cdef public dict tags
+    cdef public dict[str | bytes, str | bytes] tags
     cdef readonly object path
     cdef readonly list unsupported
     cdef readonly object save_on_exit
@@ -83,7 +83,7 @@ cdef class File:
         if self.cFile is NULL or self.cFile.file() is NULL or not self.cFile.file().isValid():
             raise OSError(f'Could not read file {path}')
 
-    def __init__(self, path, save_on_exit: bool = False):
+    def __init__(self, path: Path | str | bytes, save_on_exit: bool = False) -> None:
         self.tags = dict()
         self.unsupported = list()
         self.readProperties()
@@ -105,7 +105,7 @@ cdef class File:
         for cString in unsupported:
             self.unsupported.append(toStr(cString))
 
-    def save(self):
+    def save(self) -> dict[str, str]:
         """Store the tags currently hold in the `tags` attribute into the file.
 
         If some tags cannot be stored because the underlying metadata format does not support them,
@@ -165,47 +165,47 @@ cdef class File:
             del self.cFile
 
     @property
-    def is_closed(self):
+    def is_closed(self) -> bool:
         return self.cFile is NULL
 
-    property length:
-        def __get__(self):
-            self.check_closed()
-            return self.cFile.audioProperties().lengthInMilliseconds() / 1_000
+    @property
+    def length(self) -> float:
+        self.check_closed()
+        return self.cFile.audioProperties().lengthInMilliseconds() / 1_000.0
 
-    property bitrate:
-        def __get__(self):
-            self.check_closed()
-            return self.cFile.audioProperties().bitrate()
+    @property
+    def bitrate(self) -> int:
+        self.check_closed()
+        return self.cFile.audioProperties().bitrate()
 
-    property sampleRate:
-        def __get__(self):
-            self.check_closed()
-            return self.cFile.audioProperties().sampleRate()
+    @property
+    def sampleRate(self) -> int:
+        self.check_closed()
+        return self.cFile.audioProperties().sampleRate()
 
-    property channels:
-        def __get__(self):
-            self.check_closed()
-            return self.cFile.audioProperties().channels()
+    @property
+    def channels(self) -> int:
+        self.check_closed()
+        return self.cFile.audioProperties().channels()
 
-    property readOnly:
-        def __get__(self):
-            self.check_closed()
-            return self.cFile.file().readOnly()
+    @property
+    def readOnly(self) -> bool:
+        self.check_closed()
+        return self.cFile.file().readOnly()
 
-    cdef check_closed(self):
+    cdef void check_closed(self):
         if self.is_closed:
             raise ValueError('I/O operation on closed file.')
 
-    def __enter__(self):
+    def __enter__(self) -> File:
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
         if self.save_on_exit:
             self.save()
         self.close()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"File('{self.path}')"
 
 
