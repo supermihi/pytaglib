@@ -1,9 +1,18 @@
 # Changelog
-# NEXT
+
+# pytaglib 3.1.0 (2025-11-17)
+Annual modernization release. Most relevant changes:
+
+- build wheels for recent Python versions (up to 3.14)
+- build wheels for PyPy again
+- bump bundled taglib (in wheels) to v2.1.1
+
+
 - [!183](https://github.com/supermihi/pytaglib/pull/183): re-enable binary wheels for PyPy
 - [!180](https://github.com/supermihi/pytaglib/pull/180): remove deprecated Cython IF by implementing custom C++ FileRef factory
 - [!181](https://github.com/supermihi/pytaglib/pull/181): no longer build for Mac OS 13
 - [!182](https://github.com/supermihi/pytaglib/pull/182): bump bundled taglib to v2.1.1 and bundled utfcpp to 4.0.8
+
 # pytaglib 3.0.1 (2025-03-21)
 - [!155](https://github.com/supermihi/pytaglib/pull/155): build wheels for Python 3.13 and MacOS 15
 
