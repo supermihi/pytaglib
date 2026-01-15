@@ -6,6 +6,7 @@
 
 """This file contains the external C/C++ definitions used by taglib.pyx."""
 
+from libcpp cimport bool as cppbool
 from libcpp.list cimport list
 from libcpp.map cimport map
 from libcpp.string cimport string
@@ -23,11 +24,77 @@ cdef extern from 'taglib/tstring.h' namespace 'TagLib':
         string to8Bit(bint)
 
 
+cdef extern from 'taglib/tbytevector.h' namespace 'TagLib':
+    cdef cppclass ByteVector:
+        ByteVector()
+        ByteVector(const char* data, unsigned int length)
+        const char* data()
+        unsigned int size()
+        cppbool isEmpty()
+
+
 cdef extern from 'taglib/tstringlist.h' namespace 'TagLib':
     cdef cppclass StringList:
         list[String].iterator begin()
         list[String].iterator end()
         void append(String&)
+
+
+cdef extern from 'taglib/tmap.h' namespace 'TagLib':
+    cdef cppclass Map[K, V]:
+        Map()
+        map[K, V].iterator begin()
+        map[K, V].iterator end()
+        V& operator[](const K&)
+        unsigned int size()
+        cppbool isEmpty()
+
+
+cdef extern from 'taglib/tlist.h' namespace 'TagLib':
+    cdef cppclass List[T]:
+        List()
+        list[T].iterator begin()
+        list[T].iterator end()
+        void append(const T&)
+        unsigned int size()
+        cppbool isEmpty()
+
+
+cdef extern from 'taglib/tvariant.h' namespace 'TagLib::Variant':
+    cdef extern enum VariantType "TagLib::Variant::Type":
+        Void "TagLib::Variant::Void"
+        Bool "TagLib::Variant::Bool"
+        Int "TagLib::Variant::Int"
+        UInt "TagLib::Variant::UInt"
+        LongLong "TagLib::Variant::LongLong"
+        ULongLong "TagLib::Variant::ULongLong"
+        Double "TagLib::Variant::Double"
+        VString "TagLib::Variant::String"
+        VStringList "TagLib::Variant::StringList"
+        VByteVector "TagLib::Variant::ByteVector"
+        VByteVectorList "TagLib::Variant::ByteVectorList"
+        VVariantList "TagLib::Variant::VariantList"
+        VVariantMap "TagLib::Variant::VariantMap"
+
+
+cdef extern from 'taglib/tvariant.h' namespace 'TagLib':
+    cdef cppclass Variant:
+        Variant()
+        Variant(int val)
+        Variant(const String& val)
+        Variant(const ByteVector& val)
+        Variant(const Map[String, Variant]& val)
+        VariantType type()
+        cppbool isEmpty()
+        int toInt(cppbool* ok)
+        unsigned int toUInt(cppbool* ok)
+        cppbool toBool(cppbool* ok)
+        String toString(cppbool* ok)
+        ByteVector toByteVector(cppbool* ok)
+        Map[String, Variant] toMap(cppbool* ok)
+
+# Convenience typedef for use in Python code
+ctypedef Map[String, Variant] VariantMap
 
 
 cdef extern from 'taglib/tpropertymap.h' namespace 'TagLib':
@@ -71,6 +138,9 @@ cdef extern from 'taglib/fileref.h' namespace 'TagLib':
         PropertyMap properties()
         PropertyMap setProperties(PropertyMap&)
         void removeUnsupportedProperties(StringList&)
+        StringList complexPropertyKeys()
+        List[VariantMap] complexProperties(const String& key)
+        cppbool setComplexProperties(const String& key, const List[VariantMap]& value)
 
 cdef extern from 'taglib/taglib.h':
     int TAGLIB_MAJOR_VERSION
