@@ -5,6 +5,9 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
+from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import dataclass
+from typing import Optional
 
 from libcpp cimport bool as cppbool
 from libcpp.utility cimport pair
@@ -12,6 +15,75 @@ from pathlib import Path
 cimport ctypes
 
 version = '3.1.0'
+
+Variant = None | bool | int | bytes | "VariantMap"
+VariantMap = Mapping[str, Variant]
+
+
+@dataclass(slots=True)
+class Picture:
+    """Represents an embedded picture (cover art) in an audio file.
+
+    Attributes
+    ----------
+    data : bytes
+        The raw image data (e.g., JPEG or PNG bytes)
+    mime_type : str
+        MIME type of the image (e.g., "image/jpeg", "image/png")
+    description : str
+        Optional description of the picture (default: "")
+    picture_type : str
+        Type of picture (default: "Front Cover"). Common values:
+        "Front Cover", "Back Cover", "Artist", "Band", etc.
+    width : int or None
+        Image width in pixels (may be None, mainly available for FLAC)
+    height : int or None
+        Image height in pixels (may be None, mainly available for FLAC)
+
+    Example
+    -------
+    >>> # Create a picture from a file
+    >>> with open('cover.jpg', 'rb') as img:
+    ...     pic = taglib.Picture(
+    ...         data=img.read(),
+    ...         mime_type='image/jpeg',
+    ...         description='Album artwork',
+    ...         picture_type='Front Cover'
+    ...     )
+    """
+    data: bytes
+    mime_type: str
+    description: str = ""
+    picture_type: str = "Front Cover"
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+    def _to_variant_map(self) -> VariantMap:
+        """Convert to dictionary format for TagLib."""
+        d = {
+            'data': self.data,
+            'mimeType': self.mime_type,
+            'description': self.description,
+            'pictureType': self.picture_type,
+        }
+        if self.width is not None:
+            d['width'] = self.width
+        if self.height is not None:
+            d['height'] = self.height
+        return d
+
+    @classmethod
+    def _from_variant_map(cls, d: VariantMap) -> 'Picture':
+        """Create Picture from dictionary returned by TagLib."""
+        return cls(
+            data=d.get('data', b''),
+            mime_type=d.get('mimeType', ''),
+            description=d.get('description', ''),
+            picture_type=d.get('pictureType', 'Front Cover'),
+            width=d.get('width'),
+            height=d.get('height'),
+        )
+
 
 cdef str toStr(ctypes.String s):
     """Converts TagLib::String to a Python str."""
@@ -221,7 +293,7 @@ cdef class File:
             cKey = toCStr(key.upper())
             if isinstance(values, (bytes, str)):
                 # the user has accidentally used a single tag value instead a length-1 list
-                values = [ values ]
+                values = [values]
             for value in values:
                 cTagdict[cKey].append(toCStr(value))
 
@@ -239,6 +311,98 @@ cdef class File:
         for value in properties:
             cProps.append(toCStr(value))
         self.cFile.removeUnsupportedProperties(cProps)
+
+    @property
+    def complex_property_keys(self) -> Sequence[str]:
+        """Get the keys of complex properties (e.g., "PICTURE" for cover art).
+
+        Complex properties are metadata that cannot be represented as simple strings,
+        such as embedded cover art images.
+
+        Returns
+        -------
+        The available complex property keys. Common keys include "PICTURE" for embedded cover art.
+        """
+        self.check_closed()
+        cdef:
+            ctypes.StringList keys = self.cFile.complexPropertyKeys()
+            ctypes.String key
+        for key in keys:
+            yield toStr(key)
+
+    def complex_properties(self, key: str) -> Sequence[VariantMap]:
+        """Get complex properties for a given key (e.g., "PICTURE").
+
+        Raises ValueError if the file is closed.
+        """
+        self.check_closed()
+        cdef ctypes.List[ctypes.VariantMap] props = self.cFile.complexProperties(toCStr(key))
+        return variant_map_to_list(props)
+
+    def set_complex_properties(self, key: str, value: list[VariantMap]) -> bool:
+        """Set complex properties for a given key (e.g., "PICTURE").
+
+        Pass an empty list to remove all complex properties for the key.
+        Raises ValueError if closed, OSError if read-only.
+        """
+        self.check_writable()
+        cdef ctypes.List[ctypes.VariantMap] cProps = list_to_ariant_map_list(value)
+        return self.cFile.setComplexProperties(toCStr(key), cProps)
+
+    @property
+    def pictures(self) -> list[Picture]:
+        """Get embedded pictures (cover art) from the file.
+
+        Returns
+        -------
+        list[Picture]
+            List of Picture objects, empty if no pictures embedded.
+        """
+        return [Picture._from_variant_map(d) for d in self.complex_properties('PICTURE')]
+
+    @pictures.setter
+    def pictures(self, value: list[Picture]) -> None:
+        """Set embedded pictures (cover art) in the file.
+
+        Set to an empty list to remove all pictures.
+
+        Note: Call save() after setting pictures to write changes to disk.
+
+        Parameters
+        ----------
+        value : list[Picture]
+            List of Picture objects
+
+        Example
+        -------
+        >>> f = taglib.File('song.mp3')
+        >>> with open('cover.jpg', 'rb') as img:
+        ...     f.pictures = [taglib.Picture(
+        ...         data=img.read(),
+        ...         mime_type='image/jpeg',
+        ...         picture_type='Front Cover'
+        ...     )]
+        >>> f.save()
+        """
+        self.set_complex_properties('PICTURE', [p._to_variant_map() for p in value])
+
+    def remove_pictures(self) -> bool:
+        """Remove all embedded pictures from the file.
+
+        Note: Call save() after removing pictures to write changes to disk.
+
+        Returns
+        -------
+        bool
+            True if the operation succeeded
+
+        Example
+        -------
+        >>> f = taglib.File('song.mp3')
+        >>> f.remove_pictures()
+        >>> f.save()
+        """
+        return self.set_complex_properties('PICTURE', [])
 
     def close(self):
         """Closes the file by deleting the underlying Taglib::File object. This will close any open
@@ -286,7 +450,7 @@ cdef class File:
         if self.is_closed:
             raise ValueError('I/O operation on closed file.')
 
-    cdef void check_writable(self) -> None:
+    cdef void check_writable(self):
         if self.readOnly:
             raise OSError(f'File is read-only.')
 
@@ -300,8 +464,6 @@ cdef class File:
 
     def __repr__(self) -> str:
         return f"File('{self.path}')"
-
-
 
 def taglib_version() -> tuple[int, int]:
     """Taglib major and minor version, as 2-tuple.
