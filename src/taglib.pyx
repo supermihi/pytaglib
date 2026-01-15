@@ -119,10 +119,7 @@ cdef class File:
         ValueError
             When attempting to save after the file was closed.
         """
-        if self.is_closed:
-            raise ValueError('I/O operation on closed file.')
-        if self.readOnly:
-            raise OSError(f'Unable to save tags: file is read-only')
+        self.check_writable()
         cdef:
             ctypes.PropertyMap cTagdict, cRemaining
             ctypes.String cKey, cValue
@@ -196,6 +193,10 @@ cdef class File:
     cdef void check_closed(self):
         if self.is_closed:
             raise ValueError('I/O operation on closed file.')
+
+    cdef void check_writable(self) -> None:
+        if self.readOnly:
+            raise OSError(f'File is read-only.')
 
     def __enter__(self) -> File:
         return self
