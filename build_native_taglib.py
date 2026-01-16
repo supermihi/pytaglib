@@ -112,7 +112,7 @@ def get_config() -> Configuration:
 
 
 def _download(url: str, target: Path, sha256sum: str = None):
-    print(f"downloading {url} ...")
+    print(f"downloading {url} into {target} ...")
     if target.exists():
         print("skipping download, file exists")
         return
