@@ -7,7 +7,7 @@
 # published by the Free Software Foundation
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
 from pathlib import Path
 cimport ctypes
@@ -16,7 +16,7 @@ include "_cdef_helpers.pxi"
 
 version = '3.1.0'
 
-Variant = None | bool | int | bytes | "VariantMap"
+Variant = Union[None, bool, int, bytes, "VariantMap"]
 VariantMap = Mapping[str, Variant]
 
 
