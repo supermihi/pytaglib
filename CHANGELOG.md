@@ -1,4 +1,6 @@
 # Changelog
+# NEXT
+- [!199](https://github.com/supermihi/pytaglib/pull/199): add support for embedded pictures and other binary data
 
 # pytaglib 3.1.0 (2025-11-17)
 Annual modernization release. Most relevant changes:

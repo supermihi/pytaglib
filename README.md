@@ -5,8 +5,9 @@
 pytaglib is a [Python](https://www.python.org) audio tagging library. It is cross-platform and very simple to use yet fully featured:
 
 - [supports more than a dozen file formats](https://taglib.org/) including mp3, flac, ogg, wma, and mp4,
-- support arbitrary, non-standard tag names,
-- support multiple values per tag.
+- supports arbitrary, non-standard tag names,
+- supports multiple values per tag,
+- supports reading and writing embedded pictures (cover art).
 
 pytaglib is a very thin wrapper around the fast and rock-solid [TagLib](https://taglib.org/) C++ library.
 
@@ -44,6 +45,33 @@ installation fails, see [below](#installation-notes).
 >>>     song.tags["GENRE"] = ["Vocal", "Classical"]
 >>>     song.tags["PERFORMER:HARPSICHORD"] = ["Ton Koopman"]
 >>> # with save_on_exit=True, file will be saved at the end of the 'with' block
+```
+
+### Pictures (Cover Art)
+
+pytaglib supports reading and writing embedded pictures (cover art) for formats that support it (MP3, FLAC, etc.):
+
+```python
+>>> import taglib
+>>> f = taglib.File("song.mp3")
+
+>>> # Read existing pictures
+>>> for pic in f.pictures:
+...     print(f"{pic.picture_type}: {pic.mime_type}, {len(pic.data)} bytes")
+Front Cover: image/jpeg, 50000 bytes
+
+>>> # Add a new picture
+>>> with open("cover.jpg", "rb") as img:
+...     f.pictures = [taglib.Picture(
+...         data=img.read(),
+...         mime_type="image/jpeg",
+...         picture_type="Front Cover"
+...     )]
+>>> f.save()
+
+>>> # Remove all pictures
+>>> f.pictures = []
+>>> f.save()
 ```
 
 For detailed API documentation, use the docstrings of the `taglib.File` class or view the [source code](src/taglib.pyx) directly.

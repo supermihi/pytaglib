@@ -5,67 +5,111 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
+from collections.abc import Mapping, Sequence, Iterable
+from dataclasses import dataclass
+from typing import Optional, Union
 
-from libcpp.utility cimport pair
 from pathlib import Path
 cimport ctypes
 
+include "_cdef_helpers.pxi"
+
 version = '3.1.0'
 
-cdef str toStr(ctypes.String s):
-    """Converts TagLib::String to a Python str."""
-    return s.to8Bit(True).decode('UTF-8', 'replace')
+Variant = Union[None, bool, int, bytes, "VariantMap"]
+VariantMap = Mapping[str, Variant]
 
-cdef ctypes.String toCStr(value: str | bytes):
-    """Convert a Python string or bytes to TagLib::String"""
-    if isinstance(value, str):
-        value = value.encode('UTF-8')
-    return ctypes.String(value, ctypes.UTF8)
 
-cdef dict[str, str] propertyMapToDict(ctypes.PropertyMap map):
-    """Convert a TagLib::PropertyMap to a dict mapping unicode string to list of unicode strings."""
-    cdef:
-        ctypes.StringList values
-        pair[ctypes.String, ctypes.StringList] mapIter
-        dict dct = {}
-        str tag
-    for mapIter in map:
-        tag = toStr(mapIter.first)
-        dct[tag] = []
-        values = mapIter.second
-        for value in values:
-            dct[tag].append(toStr(value))
-    return dct
+@dataclass(slots=True)
+class Picture:
+    """Represents an embedded picture (cover art) in an audio file.
 
+    Attributes:
+        data: The raw image data (e.g., JPEG or PNG bytes).
+        mime_type: MIME type of the image (e.g., "image/jpeg", "image/png").
+        description: Optional description of the picture (default: "").
+        picture_type: Type of picture (default: "Front Cover"). Common values:
+            "Front Cover", "Back Cover", "Artist", "Band", etc.
+        width: Image width in pixels (may be None, mainly available for FLAC).
+        height: Image height in pixels (may be None, mainly available for FLAC).
+
+    Example:
+        Create a picture from a file::
+
+            with open('cover.jpg', 'rb') as img:
+                pic = taglib.Picture(
+                    data=img.read(),
+                    mime_type='image/jpeg',
+                    description='Album artwork',
+                    picture_type='Front Cover'
+                )
+    """
+    data: bytes
+    mime_type: str
+    description: str = ""
+    picture_type: str = "Front Cover"
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+    def _to_variant_map(self) -> VariantMap:
+        """Convert to dictionary format for TagLib."""
+        d = {
+            'data': self.data,
+            'mimeType': self.mime_type,
+            'description': self.description,
+            'pictureType': self.picture_type,
+        }
+        if self.width is not None:
+            d['width'] = self.width
+        if self.height is not None:
+            d['height'] = self.height
+        return d
+
+    @classmethod
+    def _from_variant_map(cls, d: VariantMap) -> 'Picture':
+        """Create Picture from dictionary returned by TagLib."""
+        return cls(
+            data=d.get('data', b''),
+            mime_type=d.get('mimeType', ''),
+            description=d.get('description', ''),
+            picture_type=d.get('pictureType', 'Front Cover'),
+            width=d.get('width'),
+            height=d.get('height'),
+        )
 
 
 cdef class File:
     """Class representing an audio file with metadata ("tags").
 
-    To read tags from an audio file, create a *File* object, passing the file's path to the
-    constructor (should be a unicode string):
+    To read tags from an audio file, create a File object, passing the file's path to the
+    constructor (should be a unicode string).
 
-    >>> f = taglib.File('/path/to/file.ogg')
-
-    The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
+    The tags are stored in the attribute ``tags`` as a dict mapping strings (tag names)
     to lists of strings (tag values).
-
-    >>> for tag, values in f:
-    >>>     print('{}->{}'.format(tag, ', '.join(values)))
 
     If the file contains some metadata that is not supported by pytaglib or not representable
     as strings (e.g. cover art, proprietary data written by some programs, ...), according
-    identifiers will be placed into the *unsupported* attribute of the File object. Using the
-    method *removeUnsupportedProperties*, some or all of those can be removed.
+    identifiers will be placed into the ``unsupported`` attribute of the File object. Using the
+    method ``removeUnsupportedProperties``, some or all of those can be removed.
 
-    Additionally, the readonly attributes *length*, *bitrate*, *sampleRate*, and *channels* are
-    available with their obvious meanings.
+    Additionally, the readonly attributes ``length``, ``bitrate``, ``sampleRate``, and
+    ``channels`` are available with their obvious meanings.
 
-    >>> print('File length: {}'.format(f.length))
+    Changes to the ``tags`` attribute are stored using the ``save`` method.
 
-    Changes to the *tags* attribute are stored using the *save* method.
+    Attributes:
+        tags: Dict mapping tag names to lists of tag values.
+        path: Path to the audio file.
+        unsupported: List of unsupported property identifiers.
 
-    >>> f.save()
+    Example:
+        ::
+
+            f = taglib.File('/path/to/file.ogg')
+            for tag, values in f.tags.items():
+                print(f'{tag}->{", ".join(values)}')
+            print(f'File length: {f.length}')
+            f.save()
     """
     cdef ctypes.FileRef *cFile
     cdef public dict[str | bytes, str | bytes] tags
@@ -106,23 +150,21 @@ cdef class File:
             self.unsupported.append(toStr(cString))
 
     def save(self) -> dict[str, str]:
-        """Store the tags currently hold in the `tags` attribute into the file.
+        """Store the tags currently held in the ``tags`` attribute into the file.
 
         If some tags cannot be stored because the underlying metadata format does not support them,
-        the unsuccesful tags are returned as a "sub-dictionary" of `self.tags` which will be empty
-        if everything is ok.
+        the unsuccessful tags are returned as a "sub-dictionary" of ``self.tags`` which will be
+        empty if everything is ok.
 
-        Raises
-        ------
-        OSError
-            If the save operation fails completely (file does not exist, insufficient rights, ...).
-        ValueError
-            When attempting to save after the file was closed.
+        Returns:
+            Dict of tags that could not be saved (empty if all saved successfully).
+
+        Raises:
+            OSError: If the save operation fails completely (file does not exist,
+                insufficient rights, ...).
+            ValueError: When attempting to save after the file was closed.
         """
-        if self.is_closed:
-            raise ValueError('I/O operation on closed file.')
-        if self.readOnly:
-            raise OSError(f'Unable to save tags: file is read-only')
+        self.check_writable()
         cdef:
             ctypes.PropertyMap cTagdict, cRemaining
             ctypes.String cKey, cValue
@@ -132,7 +174,7 @@ cdef class File:
             cKey = toCStr(key.upper())
             if isinstance(values, (bytes, str)):
                 # the user has accidentally used a single tag value instead a length-1 list
-                values = [ values ]
+                values = [values]
             for value in values:
                 cTagdict[cKey].append(toCStr(value))
 
@@ -151,10 +193,91 @@ cdef class File:
             cProps.append(toCStr(value))
         self.cFile.removeUnsupportedProperties(cProps)
 
+    @property
+    def complex_property_keys(self) -> Iterable[str]:
+        """Get the keys of complex properties (e.g., "PICTURE" for cover art).
+
+        Complex properties are metadata that cannot be represented as simple strings,
+        such as embedded cover art images.
+
+        Yields:
+            Keys of available complex properties.
+        """
+        self.check_closed()
+        cdef:
+            ctypes.StringList keys = self.cFile.complexPropertyKeys()
+            ctypes.String key
+        for key in keys:
+            yield toStr(key)
+
+    def complex_properties(self, key: str) -> Sequence[VariantMap]:
+        """Get complex properties for a given key (e.g., "PICTURE").
+
+        Args:
+            key: The complex property key to retrieve.
+
+        Returns:
+            Sequence of variant maps containing the complex property data.
+
+        Raises:
+            ValueError: If the file is closed.
+        """
+        self.check_closed()
+        cdef ctypes.List[ctypes.VariantMap] props = self.cFile.complexProperties(toCStr(key))
+        return variant_map_to_list(props)
+
+    def set_complex_properties(self, key: str, value: Iterable[VariantMap]) -> bool:
+        """Set complex properties for a given key (e.g., "PICTURE").
+
+        Pass an empty list to remove all complex properties for the key.
+
+        Args:
+            key: The complex property key to set.
+            value: Iterable of variant maps containing the complex property data.
+
+        Returns:
+            True if the operation was successful.
+
+        Raises:
+            ValueError: If the file is closed.
+            OSError: If the file is read-only.
+        """
+        self.check_writable()
+        cdef ctypes.List[ctypes.VariantMap] cProps = list_to_variant_map_list(list(value))
+        return self.cFile.setComplexProperties(toCStr(key), cProps)
+
+    @property
+    def pictures(self) -> list[Picture]:
+        """Get embedded pictures (cover art) from the file.
+
+        This is a convenience method for the complex_properties interface that only works for pictures.
+
+        Returns:
+            List of Picture objects, empty if no pictures embedded.
+        """
+        return [Picture._from_variant_map(d) for d in self.complex_properties('PICTURE')]
+
+    @pictures.setter
+    def pictures(self, value: Iterable[Picture]) -> None:
+        """Set embedded pictures (cover art) in the file.
+
+        Set to an empty list to remove all pictures.
+
+        This is a convenience method for the complex_properties interface that only works for pictures.
+
+        Args:
+            value: List of Picture objects.
+        """
+        self.set_complex_properties('PICTURE', [p._to_variant_map() for p in value])
+
     def close(self):
-        """Closes the file by deleting the underlying Taglib::File object. This will close any open
-        streams. Calling methods like `save()` or the read-only properties after `close()` will
-        raise an exception."""
+        """Close the file by deleting the underlying Taglib::File object.
+
+        Calling any method on the file after calling close will raise an exception.
+
+        Raises:
+            ValueError: If the file is already closed.
+        """
         if self.is_closed:
             raise ValueError("File already closed")
         del self.cFile
@@ -197,6 +320,10 @@ cdef class File:
         if self.is_closed:
             raise ValueError('I/O operation on closed file.')
 
+    cdef void check_writable(self):
+        if self.readOnly:
+            raise OSError(f'File is read-only.')
+
     def __enter__(self) -> File:
         return self
 
@@ -208,13 +335,15 @@ cdef class File:
     def __repr__(self) -> str:
         return f"File('{self.path}')"
 
-
-
 def taglib_version() -> tuple[int, int]:
-    """Taglib major and minor version, as 2-tuple.
+    """Get Taglib major and minor version as a 2-tuple.
 
-    Note: this is the version used for compiling the Cython module. Under certain
-    circumstances (e.g. dynamic linking, or re-using the cythonized code after
-    upgrading Taglib) the actually running Taglib version might be different.
+    Note:
+        This is the version used for compiling the Cython module. Under certain
+        circumstances (e.g. dynamic linking, or re-using the cythonized code after
+        upgrading Taglib) the actually running Taglib version might be different.
+
+    Returns:
+        Tuple of (major_version, minor_version).
     """
     return ctypes.TAGLIB_MAJOR_VERSION, ctypes.TAGLIB_MINOR_VERSION
