@@ -86,7 +86,7 @@ def test_mp3_remove_pictures(test_data, tiny_png):
 
     # Remove all pictures
     with taglib.File(path) as f:
-        f.remove_pictures()
+        f.pictures = []
         f.save()
 
     # Verify removal

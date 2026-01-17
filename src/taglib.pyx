@@ -5,7 +5,7 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
 # published by the Free Software Foundation
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, Sequence, Iterable
 from dataclasses import dataclass
 from typing import Optional, Union
 
@@ -195,7 +195,7 @@ cdef class File:
         self.cFile.removeUnsupportedProperties(cProps)
 
     @property
-    def complex_property_keys(self) -> Sequence[str]:
+    def complex_property_keys(self) -> Iterable[str]:
         """Get the keys of complex properties (e.g., "PICTURE" for cover art).
 
         Complex properties are metadata that cannot be represented as simple strings,
@@ -217,14 +217,14 @@ cdef class File:
         cdef ctypes.List[ctypes.VariantMap] props = self.cFile.complexProperties(toCStr(key))
         return variant_map_to_list(props)
 
-    def set_complex_properties(self, key: str, value: list[VariantMap]) -> bool:
+    def set_complex_properties(self, key: str, value: Iterable[VariantMap]) -> bool:
         """Set complex properties for a given key (e.g., "PICTURE").
 
         Pass an empty list to remove all complex properties for the key.
         Raises ValueError if closed, OSError if read-only.
         """
         self.check_writable()
-        cdef ctypes.List[ctypes.VariantMap] cProps = list_to_variant_map_list(value)
+        cdef ctypes.List[ctypes.VariantMap] cProps = list_to_variant_map_list(list(value))
         return self.cFile.setComplexProperties(toCStr(key), cProps)
 
     @property
@@ -239,12 +239,10 @@ cdef class File:
         return [Picture._from_variant_map(d) for d in self.complex_properties('PICTURE')]
 
     @pictures.setter
-    def pictures(self, value: list[Picture]) -> None:
+    def pictures(self, value: Iterable[Picture]) -> None:
         """Set embedded pictures (cover art) in the file.
 
         Set to an empty list to remove all pictures.
-
-        Note: Call save() after setting pictures to write changes to disk.
 
         Parameters
         ----------
@@ -254,33 +252,10 @@ cdef class File:
         Example
         -------
         >>> f = taglib.File('song.mp3')
-        >>> with open('cover.jpg', 'rb') as img:
-        ...     f.pictures = [taglib.Picture(
-        ...         data=img.read(),
-        ...         mime_type='image/jpeg',
-        ...         picture_type='Front Cover'
-        ...     )]
+        >>> f.pictures = [pic1, pic2]
         >>> f.save()
         """
         self.set_complex_properties('PICTURE', [p._to_variant_map() for p in value])
-
-    def remove_pictures(self) -> bool:
-        """Remove all embedded pictures from the file.
-
-        Note: Call save() after removing pictures to write changes to disk.
-
-        Returns
-        -------
-        bool
-            True if the operation succeeded
-
-        Example
-        -------
-        >>> f = taglib.File('song.mp3')
-        >>> f.remove_pictures()
-        >>> f.save()
-        """
-        return self.set_complex_properties('PICTURE', [])
 
     def close(self):
         """Closes the file by deleting the underlying Taglib::File object. This will close any open
