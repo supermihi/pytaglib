@@ -117,7 +117,7 @@ cdef ctypes.VariantMap dict_to_variant_map(dict d):
         vm[key] = object_to_variant(v)
     return vm
 
-cdef ctypes.List[ctypes.VariantMap] list_to_ariant_map_list(list lst):
+cdef ctypes.List[ctypes.VariantMap] list_to_variant_map_list(list lst):
     """Convert a Python list of dicts to a TagLib::List<VariantMap>."""
     cdef:
         ctypes.List[ctypes.VariantMap] result

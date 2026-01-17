@@ -200,10 +200,6 @@ cdef class File:
 
         Complex properties are metadata that cannot be represented as simple strings,
         such as embedded cover art images.
-
-        Returns
-        -------
-        The available complex property keys. Common keys include "PICTURE" for embedded cover art.
         """
         self.check_closed()
         cdef:
@@ -228,7 +224,7 @@ cdef class File:
         Raises ValueError if closed, OSError if read-only.
         """
         self.check_writable()
-        cdef ctypes.List[ctypes.VariantMap] cProps = list_to_ariant_map_list(value)
+        cdef ctypes.List[ctypes.VariantMap] cProps = list_to_variant_map_list(value)
         return self.cFile.setComplexProperties(toCStr(key), cProps)
 
     @property
