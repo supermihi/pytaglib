@@ -32,6 +32,7 @@ def extension_kwargs():
             raise FileNotFoundError(f"{taglib_lib} not found")
         result["define_macros"] = [("TAGLIB_STATIC", None)]
         result["extra_objects"] = [str(taglib_lib)]
+        result["extra_compile_args"] = ["/std:c++17"]
     else:
         # On unix systems, use the dynamic library. Still, add the (default) TAGLIB_HOME
         # to allow overriding system taglib with custom build.
