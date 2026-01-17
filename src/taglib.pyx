@@ -24,32 +24,25 @@ VariantMap = Mapping[str, Variant]
 class Picture:
     """Represents an embedded picture (cover art) in an audio file.
 
-    Attributes
-    ----------
-    data : bytes
-        The raw image data (e.g., JPEG or PNG bytes)
-    mime_type : str
-        MIME type of the image (e.g., "image/jpeg", "image/png")
-    description : str
-        Optional description of the picture (default: "")
-    picture_type : str
-        Type of picture (default: "Front Cover"). Common values:
-        "Front Cover", "Back Cover", "Artist", "Band", etc.
-    width : int or None
-        Image width in pixels (may be None, mainly available for FLAC)
-    height : int or None
-        Image height in pixels (may be None, mainly available for FLAC)
+    Attributes:
+        data: The raw image data (e.g., JPEG or PNG bytes).
+        mime_type: MIME type of the image (e.g., "image/jpeg", "image/png").
+        description: Optional description of the picture (default: "").
+        picture_type: Type of picture (default: "Front Cover"). Common values:
+            "Front Cover", "Back Cover", "Artist", "Band", etc.
+        width: Image width in pixels (may be None, mainly available for FLAC).
+        height: Image height in pixels (may be None, mainly available for FLAC).
 
-    Example
-    -------
-    >>> # Create a picture from a file
-    >>> with open('cover.jpg', 'rb') as img:
-    ...     pic = taglib.Picture(
-    ...         data=img.read(),
-    ...         mime_type='image/jpeg',
-    ...         description='Album artwork',
-    ...         picture_type='Front Cover'
-    ...     )
+    Example:
+        Create a picture from a file::
+
+            with open('cover.jpg', 'rb') as img:
+                pic = taglib.Picture(
+                    data=img.read(),
+                    mime_type='image/jpeg',
+                    description='Album artwork',
+                    picture_type='Front Cover'
+                )
     """
     data: bytes
     mime_type: str
@@ -88,30 +81,35 @@ class Picture:
 cdef class File:
     """Class representing an audio file with metadata ("tags").
 
-    To read tags from an audio file, create a *File* object, passing the file's path to the
-    constructor (should be a unicode string):
+    To read tags from an audio file, create a File object, passing the file's path to the
+    constructor (should be a unicode string).
 
-    >>> f = taglib.File('/path/to/file.ogg')
-
-    The tags are stored in the attribute *tags* as a *dict* mapping strings (tag names)
+    The tags are stored in the attribute ``tags`` as a dict mapping strings (tag names)
     to lists of strings (tag values).
-
-    >>> for tag, values in f:
-    >>>     print('{}->{}'.format(tag, ', '.join(values)))
 
     If the file contains some metadata that is not supported by pytaglib or not representable
     as strings (e.g. cover art, proprietary data written by some programs, ...), according
-    identifiers will be placed into the *unsupported* attribute of the File object. Using the
-    method *removeUnsupportedProperties*, some or all of those can be removed.
+    identifiers will be placed into the ``unsupported`` attribute of the File object. Using the
+    method ``removeUnsupportedProperties``, some or all of those can be removed.
 
-    Additionally, the readonly attributes *length*, *bitrate*, *sampleRate*, and *channels* are
-    available with their obvious meanings.
+    Additionally, the readonly attributes ``length``, ``bitrate``, ``sampleRate``, and
+    ``channels`` are available with their obvious meanings.
 
-    >>> print('File length: {}'.format(f.length))
+    Changes to the ``tags`` attribute are stored using the ``save`` method.
 
-    Changes to the *tags* attribute are stored using the *save* method.
+    Attributes:
+        tags: Dict mapping tag names to lists of tag values.
+        path: Path to the audio file.
+        unsupported: List of unsupported property identifiers.
 
-    >>> f.save()
+    Example:
+        ::
+
+            f = taglib.File('/path/to/file.ogg')
+            for tag, values in f.tags.items():
+                print(f'{tag}->{", ".join(values)}')
+            print(f'File length: {f.length}')
+            f.save()
     """
     cdef ctypes.FileRef *cFile
     cdef public dict[str | bytes, str | bytes] tags
@@ -152,18 +150,19 @@ cdef class File:
             self.unsupported.append(toStr(cString))
 
     def save(self) -> dict[str, str]:
-        """Store the tags currently hold in the `tags` attribute into the file.
+        """Store the tags currently held in the ``tags`` attribute into the file.
 
         If some tags cannot be stored because the underlying metadata format does not support them,
-        the unsuccesful tags are returned as a "sub-dictionary" of `self.tags` which will be empty
-        if everything is ok.
+        the unsuccessful tags are returned as a "sub-dictionary" of ``self.tags`` which will be
+        empty if everything is ok.
 
-        Raises
-        ------
-        OSError
-            If the save operation fails completely (file does not exist, insufficient rights, ...).
-        ValueError
-            When attempting to save after the file was closed.
+        Returns:
+            Dict of tags that could not be saved (empty if all saved successfully).
+
+        Raises:
+            OSError: If the save operation fails completely (file does not exist,
+                insufficient rights, ...).
+            ValueError: When attempting to save after the file was closed.
         """
         self.check_writable()
         cdef:
@@ -200,6 +199,9 @@ cdef class File:
 
         Complex properties are metadata that cannot be represented as simple strings,
         such as embedded cover art images.
+
+        Yields:
+            Keys of available complex properties.
         """
         self.check_closed()
         cdef:
@@ -211,7 +213,14 @@ cdef class File:
     def complex_properties(self, key: str) -> Sequence[VariantMap]:
         """Get complex properties for a given key (e.g., "PICTURE").
 
-        Raises ValueError if the file is closed.
+        Args:
+            key: The complex property key to retrieve.
+
+        Returns:
+            Sequence of variant maps containing the complex property data.
+
+        Raises:
+            ValueError: If the file is closed.
         """
         self.check_closed()
         cdef ctypes.List[ctypes.VariantMap] props = self.cFile.complexProperties(toCStr(key))
@@ -221,7 +230,17 @@ cdef class File:
         """Set complex properties for a given key (e.g., "PICTURE").
 
         Pass an empty list to remove all complex properties for the key.
-        Raises ValueError if closed, OSError if read-only.
+
+        Args:
+            key: The complex property key to set.
+            value: Iterable of variant maps containing the complex property data.
+
+        Returns:
+            True if the operation was successful.
+
+        Raises:
+            ValueError: If the file is closed.
+            OSError: If the file is read-only.
         """
         self.check_writable()
         cdef ctypes.List[ctypes.VariantMap] cProps = list_to_variant_map_list(list(value))
@@ -231,9 +250,9 @@ cdef class File:
     def pictures(self) -> list[Picture]:
         """Get embedded pictures (cover art) from the file.
 
-        Returns
-        -------
-        list[Picture]
+        This is a convenience method for the complex_properties interface that only works for pictures.
+
+        Returns:
             List of Picture objects, empty if no pictures embedded.
         """
         return [Picture._from_variant_map(d) for d in self.complex_properties('PICTURE')]
@@ -244,23 +263,21 @@ cdef class File:
 
         Set to an empty list to remove all pictures.
 
-        Parameters
-        ----------
-        value : list[Picture]
-            List of Picture objects
+        This is a convenience method for the complex_properties interface that only works for pictures.
 
-        Example
-        -------
-        >>> f = taglib.File('song.mp3')
-        >>> f.pictures = [pic1, pic2]
-        >>> f.save()
+        Args:
+            value: List of Picture objects.
         """
         self.set_complex_properties('PICTURE', [p._to_variant_map() for p in value])
 
     def close(self):
-        """Closes the file by deleting the underlying Taglib::File object. This will close any open
-        streams. Calling methods like `save()` or the read-only properties after `close()` will
-        raise an exception."""
+        """Close the file by deleting the underlying Taglib::File object.
+
+        Calling any method on the file after calling close will raise an exception.
+
+        Raises:
+            ValueError: If the file is already closed.
+        """
         if self.is_closed:
             raise ValueError("File already closed")
         del self.cFile
@@ -319,10 +336,14 @@ cdef class File:
         return f"File('{self.path}')"
 
 def taglib_version() -> tuple[int, int]:
-    """Taglib major and minor version, as 2-tuple.
+    """Get Taglib major and minor version as a 2-tuple.
 
-    Note: this is the version used for compiling the Cython module. Under certain
-    circumstances (e.g. dynamic linking, or re-using the cythonized code after
-    upgrading Taglib) the actually running Taglib version might be different.
+    Note:
+        This is the version used for compiling the Cython module. Under certain
+        circumstances (e.g. dynamic linking, or re-using the cythonized code after
+        upgrading Taglib) the actually running Taglib version might be different.
+
+    Returns:
+        Tuple of (major_version, minor_version).
     """
     return ctypes.TAGLIB_MAJOR_VERSION, ctypes.TAGLIB_MINOR_VERSION
