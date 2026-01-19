@@ -28,7 +28,7 @@ Issues = "https://github.com/supermihi/pytaglib/issues"
 Changelog = "https://github.com/supermihi/pytaglib/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-tests = ["pytest>=8.1.1,<8.5.0"]
+tests = ["pytest>=8.1.1,<9.1.0"]
 
 [project.scripts]
 pyprinttags = "pyprinttags:script"
