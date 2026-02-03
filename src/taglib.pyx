@@ -14,7 +14,7 @@ cimport ctypes
 
 include "_cdef_helpers.pxi"
 
-version = '3.1.0'
+version = '3.2.0'
 
 Variant = Union[None, bool, int, bytes, "VariantMap"]
 VariantMap = Mapping[str, Variant]
