@@ -1,6 +1,10 @@
 # Changelog
-# NEXT
+# pytaglib 3.2.0 (2026-02-03)
 - [!199](https://github.com/supermihi/pytaglib/pull/199): add support for embedded pictures and other binary data
+- drop support for Python 3.9 (EOL)
+- fix: add C++17 flag for MSVC on Windows
+- bump Cython to 3.2.4
+- bump cibuildwheel to 3.3.0
 
 # pytaglib 3.1.0 (2025-11-17)
 Annual modernization release. Most relevant changes:
